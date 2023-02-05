@@ -29,7 +29,7 @@ Our system should be able to accept and process tickets orders from *consumers* 
 
 For now, we can safely assume that users will communicate in English and make purchases in Canadian dollars. In order for the product to be used in multiple countries, it should be designed in a matter such that it can easily support other languages and currencies in the future.
 
-Our current team has background using the Python language and its associated web frameworks.  Examples of these frameworks include [Django]{https://www.djangoproject.com/} and  [Flask]{https://flask.palletsprojects.com/en/2.2.x/}.  They also have experience with socket-level programming. 
+Our current team has background using the Python language and its associated web frameworks.  Examples of these frameworks include [Django](https://www.djangoproject.com/) and  [Flask](https://flask.palletsprojects.com/en/2.2.x/).  They also have experience with socket-level programming. 
 
 ## Deliverables
 
