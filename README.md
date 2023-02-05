@@ -1,5 +1,8 @@
 # BTP405 Winter 2023: Project 1 - Due March 6 (20\%)
 
+[![Django CI](https://github.com/seneca-btp405/project1-group-1/actions/workflows/django.yml/badge.svg?branch=main)](https://github.com/seneca-btp405/project1-group-1/actions/workflows/django.yml)
+[![Pylint](https://github.com/seneca-btp405/project1-group-1/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/seneca-btp405/project1-group-1/actions/workflows/pylint.yml)
+
 ## Learning Objectives
 
 * identify a potential product and feature set based on customer need
