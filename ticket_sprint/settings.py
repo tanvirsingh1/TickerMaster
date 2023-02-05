@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Ticketing.apps.TicketsprintConfig',
+    'ticketing.apps.TicketSprintConfig',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'TicketSprint.urls'
+ROOT_URLCONF = 'ticket_sprint.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'TicketSprint.wsgi.application'
+WSGI_APPLICATION = 'ticket_sprint.wsgi.application'
 
 
 # Database
