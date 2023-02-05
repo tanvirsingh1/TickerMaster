@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'BTP405_Project1.urls'
+ROOT_URLCONF = 'TicketSprint.urls'
 
 TEMPLATES = [
     {
