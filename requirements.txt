@@ -1,0 +1,4 @@
+# Project Requirements
+
+# Django
+Django ~= 4.1.6
