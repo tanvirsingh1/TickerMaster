@@ -6,6 +6,7 @@ Members: Zander Maitland, Meetsimar Kaur, Tanvir Singh, Maria Dmytrenko
 [![Pylint](https://github.com/seneca-btp405/project1-group-1/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/seneca-btp405/project1-group-1/actions/workflows/pylint.yml)
 
 
+
 ## Learning Objectives
 
 * identify a potential product and feature set based on customer need
