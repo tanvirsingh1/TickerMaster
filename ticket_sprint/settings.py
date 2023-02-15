@@ -129,18 +129,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Settings (SMTP)
 # https://docs.djangoproject.com/en/4.1/topics/email/#smtp-backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('SMTP_HOST')
-EMAIL_PORT = int(os.getenv('SMTP_PORT'))
-EMAIL_HOST_USER = os.getenv('SMTP_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('SMTP_HOST_PASSWORD')
-EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL').lower() == 'true'
-EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS').lower() == 'true'
-EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX').strip("'")
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-EMAIL_SSL_KEYFILE = None if os.getenv('EMAIL_SSL_KEYFILE').lower() == 'none' else os.getenv('EMAIL_SSL_KEYFILE')
-EMAIL_SSL_CERTFILE = None if os.getenv('EMAIL_SSL_CERTFILE').lower() == 'none' else os.getenv('EMAIL_SSL_CERTFILE')
-EMAIL_TIMEOUT = None if os.getenv('EMAIL_TIMEOUT').lower() == 'none' else int(os.getenv('EMAIL_TIMEOUT'))
+try:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('SMTP_HOST')
+    EMAIL_PORT = int(os.getenv('SMTP_PORT'))
+    EMAIL_HOST_USER = os.getenv('SMTP_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('SMTP_HOST_PASSWORD')
+    EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL').lower() == 'true'
+    EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS').lower() == 'true'
+    EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX').strip("'")
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+    EMAIL_SSL_KEYFILE = None if os.getenv('EMAIL_SSL_KEYFILE').lower() == 'none' else os.getenv('EMAIL_SSL_KEYFILE')
+    EMAIL_SSL_CERTFILE = None if os.getenv('EMAIL_SSL_CERTFILE').lower() == 'none' else os.getenv('EMAIL_SSL_CERTFILE')
+    EMAIL_TIMEOUT = None if os.getenv('EMAIL_TIMEOUT').lower() == 'none' else int(os.getenv('EMAIL_TIMEOUT'))
+except TypeError:
+    print(".env file missing. Email support disabled.")
 
 # Caching Backend
 # https://docs.djangoproject.com/en/dev/topics/cache/
