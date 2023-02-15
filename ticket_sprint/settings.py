@@ -134,9 +134,9 @@ EMAIL_HOST = os.getenv('SMTP_HOST')
 EMAIL_PORT = int(os.getenv('SMTP_PORT'))
 EMAIL_HOST_USER = os.getenv('SMTP_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_HOST_PASSWORD')
-EMAIL_USE_SSL = bool(os.getenv('SMTP_USE_SSL'))
-EMAIL_USE_TLS = bool(os.getenv('SMTP_USE_TLS'))
-EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX')
+EMAIL_USE_SSL = True if os.getenv('SMTP_USE_SSL').lower() == 'true' else False
+EMAIL_USE_TLS = True if os.getenv('SMTP_USE_TLS').lower() == 'true' else False
+EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX').strip("'")
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 EMAIL_SSL_KEYFILE = None if os.getenv('EMAIL_SSL_KEYFILE').lower() == 'none' else os.getenv('EMAIL_SSL_KEYFILE')
 EMAIL_SSL_CERTFILE = None if os.getenv('EMAIL_SSL_CERTFILE').lower() == 'none' else os.getenv('EMAIL_SSL_CERTFILE')
