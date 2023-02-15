@@ -1,3 +1,7 @@
+"""
+apps.py - Responsible for storing the application's metadata
+"""
+
 from django.apps import AppConfig
 
 
