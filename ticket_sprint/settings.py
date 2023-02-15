@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()  # Load the config file.
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -105,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-ca'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Toronto'
 
 USE_I18N = True
 
@@ -123,3 +126,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Settings (SMTP)
+# https://docs.djangoproject.com/en/4.1/topics/email/#smtp-backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('SMTP_HOST')
+EMAIL_PORT = int(os.getenv('SMTP_PORT'))
+EMAIL_HOST_USER = os.getenv('SMTP_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_HOST_PASSWORD')
+EMAIL_USE_SSL = bool(os.getenv('SMTP_USE_SSL'))
+EMAIL_USE_TLS = bool(os.getenv('SMTP_USE_TLS'))
+EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+EMAIL_SSL_KEYFILE = None if os.getenv('EMAIL_SSL_KEYFILE').lower() == 'none' else os.getenv('EMAIL_SSL_KEYFILE')
+EMAIL_SSL_CERTFILE = None if os.getenv('EMAIL_SSL_CERTFILE').lower() == 'none' else os.getenv('EMAIL_SSL_CERTFILE')
+EMAIL_TIMEOUT = None if os.getenv('EMAIL_TIMEOUT').lower() == 'none' else int(os.getenv('EMAIL_TIMEOUT'))
+
+# Caching Backend
+# https://docs.djangoproject.com/en/dev/topics/cache/
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
