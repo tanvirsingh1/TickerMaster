@@ -1,5 +1,12 @@
 [MASTER]
-ignore=manage.py
+ignore=manage.py,pylint_ignore.py
+init-hook=
+    sys.path.append(os.getcwd());
+    from pylint_ignore import PylintIgnorePaths;
+    PylintIgnorePaths('venue_management/migrations')
 
 [FORMAT]
 max-line-length=120
+
+[MESSAGES CONTROL]
+disable=too-few-public-methods
