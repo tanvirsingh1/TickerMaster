@@ -11,6 +11,13 @@ class VenueManager(AbstractBaseUser):
     Sets out the attributes for a Venue Manager's account.
     """
 
+    class Meta:
+        """
+        Metadata describing the VenueManager model
+        """
+        verbose_name = "Venue Manager"
+        verbose_name_plural = "Venue Managers"
+
     # Account Attributes
     first_name = models.CharField(max_length=30, verbose_name='First Name')
     last_name = models.CharField(max_length=30, verbose_name='Last Name')
