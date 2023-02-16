@@ -1,8 +1,7 @@
-import os
-
 [MASTER]
 ignore=manage.py,pylint_ignore.py
 init-hook=
+    import os;
     sys.path.append(os.getcwd());
     from pylint_ignore import PylintIgnorePaths;
     PylintIgnorePaths('venue_management/migrations')
