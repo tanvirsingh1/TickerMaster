@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ticketing.apps.TicketingConfig',
+    'venue_management.apps.VenueManagementConfig'
 ]
 
 MIDDLEWARE = [
