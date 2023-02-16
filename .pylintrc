@@ -1,3 +1,5 @@
+import os
+
 [MASTER]
 ignore=manage.py,pylint_ignore.py
 init-hook=
