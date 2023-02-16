@@ -5,4 +5,4 @@ ignore=manage.py
 max-line-length=120
 
 [MESSAGES CONTROL]
-disable=too-few-public-methods,invalid-name
+disable=too-few-public-methods,invalid-name,duplicate-code
