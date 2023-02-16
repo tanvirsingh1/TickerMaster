@@ -4,7 +4,7 @@ init-hook=
     import os;
     sys.path.append(os.getcwd());
     from pylint_ignore import PylintIgnorePaths;
-    PylintIgnorePaths('venue_management/migrations')
+    PylintIgnorePaths('/venue_management/migrations/')
 
 [FORMAT]
 max-line-length=120
