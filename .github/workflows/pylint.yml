@@ -1,7 +1,10 @@
 name: Pylint
 
-on: [push]
-
+on: 
+  push:
+     paths-ignore:
+      - 'venue_management/migrations/**'
+      - 'ticketing/migrations/**'
 jobs:
   build:
     runs-on: ubuntu-latest
