@@ -1,2 +1,5 @@
 [MASTER]
 ignore=manage.py
+
+[FORMAT]
+max-line-length=120
