@@ -5,6 +5,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Eventgoer
 
 
 class RegisterForm(UserCreationForm):
@@ -22,5 +23,5 @@ class RegisterForm(UserCreationForm):
         """
         Defines the form's metadata
         """
-        model = User
+        model = Eventgoer
         fields = ['username', 'password1', 'password2']
