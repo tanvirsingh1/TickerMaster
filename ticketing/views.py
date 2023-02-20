@@ -9,6 +9,11 @@ from .forms import RegisterForm
 
 
 def login_window(request):
+    """
+    The login page for the ticketing application. Accepts a username and password.
+    :param request: (Django) object of the request's properties
+    :return: the login page
+    """
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -25,6 +30,11 @@ def login_window(request):
 
 
 def register_window(request):
+    """
+    The registration page for the ticketing application. Accepts a username and password.
+    :param request: (Django) object of the request's properties
+    :return: the registration page
+    """
     if request.method == "POST":
 
         form = RegisterForm(request.POST)
