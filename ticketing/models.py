@@ -46,3 +46,13 @@ class Eventgoer(AbstractBaseUser):
         :return: first name of the Venue Manager
         """
         return self.first_name
+
+
+# Class for Concert Window displaying Concerts
+class Concert(models.Model):
+    artist_name = models.CharField(max_length=100)
+    concert_date = models.DateTimeField()
+    venue = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    # Add any other fields that you need for your concert model

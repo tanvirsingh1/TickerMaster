@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
+from .models import Concert
 
 
 def login_window(request):
@@ -50,3 +51,9 @@ def register_window(request):
     else:
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})
+
+
+def concert_window(request):
+    concerts = Concert.objects.all()
+    context = {'concerts': concerts}
+    return render(request, 'ticketing/concert_window.html', context)

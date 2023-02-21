@@ -5,6 +5,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Eventgoer
+from .models import Concert
 
 
 class RegisterForm(UserCreationForm):
@@ -24,3 +25,11 @@ class RegisterForm(UserCreationForm):
         """
         model = Eventgoer
         fields = ['username', 'password1', 'password2']
+
+
+
+class ConcertForm(forms.ModelForm):
+    class Meta:
+        model = Concert
+        fields = ['artist_name', 'concert_date', 'venue', 'city', 'country']
+        # Add any other fields that you need for your concert form
