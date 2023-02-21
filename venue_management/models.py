@@ -4,6 +4,7 @@ models.py - Contains all data models for the application
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.core import validators
 
 
 class VenueManager(AbstractBaseUser):
@@ -43,3 +44,15 @@ class VenueManager(AbstractBaseUser):
         :return: first name of the Venue Manager
         """
         return self.first_name
+
+
+class PromoCode(models.Model):
+    code = models.CharField(max_length=20, unique=True, validators=[
+                            validators.RegexValidator(r'^[a-zA-Z0-9]*$', 'Only letters and numbers are allowed.')])
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    expiration_date = models.DateField()
+    venue_manager = models.ForeignKey(VenueManager, on_delete=models.CASCADE)
+    generated_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.code
