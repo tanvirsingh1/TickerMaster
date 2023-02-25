@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+# AUTHENTICATION_BACKENDS = [    'django.contrib.auth.backends.ModelBackend',    'ticketing.backends.EventgoerBackend',]
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

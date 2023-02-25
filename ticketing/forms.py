@@ -11,16 +11,23 @@ class RegisterForm(UserCreationForm):
     """
     The registration form for Eventgoers. Creates an account when valid info is given.
     """
-    username = forms.CharField(label='Username', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Enter your username'}))
+    first_name = forms.CharField(label='First Name', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Enter your First Name'}))
+    last_name = forms.CharField(label='Last Name', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Enter your  Last Name'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(
+        attrs={'class': 'form-control', 'placeholder': 'Enter your Email'}))
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Enter your password'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}))
+
+   # is_active = forms.BooleanField(label='Is Active', widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
+    is_reseller = forms.BooleanField(label='Are you a Reseller?', widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
 
     class Meta:
         """
         Defines the form's metadata
         """
         model = Eventgoer
-        fields = ['username', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']

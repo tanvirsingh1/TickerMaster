@@ -6,5 +6,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index')
+    path('login', views.login_Manager_window, name="Login Window" ),
+    path('register', views.register_Manager_window, name="Register Window")
 ]
