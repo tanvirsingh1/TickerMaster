@@ -6,7 +6,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Eventgoer
 
-
 class RegisterForm(UserCreationForm):
     """
     The registration form for Eventgoers. Creates an account when valid info is given.
@@ -22,7 +21,6 @@ class RegisterForm(UserCreationForm):
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}))
 
-   # is_active = forms.BooleanField(label='Is Active', widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
     is_reseller = forms.BooleanField(label='Are you a Reseller?', widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
 
     class Meta:
@@ -31,3 +29,4 @@ class RegisterForm(UserCreationForm):
         """
         model = Eventgoer
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
+

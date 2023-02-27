@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import VenueManager
-
+from .backends import VenueManagerBackend
 def login_Manager_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.
@@ -15,15 +15,15 @@ def login_Manager_window(request):
     :return: the login page
     """
     if request.method == 'POST':
-        username  = request.POST['email']
+        email  = request.POST['email']
 
         password = request.POST['password']
 
-        user = authenticate(request, username =username , password=password, model=VenueManager)
+        user = authenticate(request, email=email , password=password, model=VenueManager)
 
         if user is not None:
             login(request, user)
-            return redirect('/')
+            return redirect('')
 
         error = 'Invalid username or password. Please try again.'
         print(error)
@@ -46,9 +46,9 @@ def register_Manager_window(request):
 
             form.save()
 
-            username  = form.cleaned_data['username ']
+            email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(request, username =username , password=password, model=VenueManager)
+            user = authenticate(request, email=email, password=password, model=VenueManager)
 
             print(user)
             login(request, user)

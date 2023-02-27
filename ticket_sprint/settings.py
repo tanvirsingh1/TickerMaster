@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# AUTHENTICATION_BACKENDS = [    'django.contrib.auth.backends.ModelBackend',    'ticketing.backends.EventgoerBackend',]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'ticketing.apps.TicketingConfig',
     'venue_management.apps.VenueManagementConfig'
 ]
-
+AUTHENTICATION_BACKENDS = [    'django.contrib.auth.backends.ModelBackend',    'ticketing.backends.EventgoerBackend','venue_management.backends.VenueManagerBackend']
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -117,9 +117,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "ticketing/static",
+    BASE_DIR /"venue_management/static_manager/",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

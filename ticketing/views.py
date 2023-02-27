@@ -1,12 +1,9 @@
-"""
-views.py - Responsible for handling this application's views
-"""
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import Eventgoer
+from .backends import EventgoerBackend
 
 def login_window(request):
     """
@@ -15,11 +12,10 @@ def login_window(request):
     :return: the login page
     """
     if request.method == 'POST':
-        username = request.POST['email']
-
+        email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, username=username, password=password, model=Eventgoer)
+        user = authenticate(request, email=email, password=password, model=Eventgoer)
 
         if user is not None:
             login(request, user)
@@ -41,14 +37,16 @@ def register_window(request):
     if request.method == "POST":
 
         form = RegisterForm(data=request.POST)
+        print(form.errors)
 
         if form.is_valid():
 
             form.save()
 
-            username = form.cleaned_data['email']
+            email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(request, username=username, password=password, model=Eventgoer)
+            user = authenticate(request, email=email, password=password, model=Eventgoer)
+            print("user is " )
             print(user)
             login(request, user)
             return redirect('/login')  # needs to specify where the redirect page goes

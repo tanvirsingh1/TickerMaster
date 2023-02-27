@@ -22,7 +22,7 @@ class Eventgoer(AbstractBaseUser):
     first_name = models.CharField(max_length=30, verbose_name='First Name')
     last_name = models.CharField(max_length=30, verbose_name='Last Name')
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
-    is_active = models.BooleanField(verbose_name='Is Active', default=True)
+    is_active = models.BooleanField(verbose_name='Is Active',default=True)
     is_reseller = models.BooleanField(verbose_name='Reseller Account')
 
     # Django attributes
@@ -46,3 +46,13 @@ class Eventgoer(AbstractBaseUser):
         :return: first name of the Venue Manager
         """
         return self.first_name
+
+
+# Class for Concert Window displaying Concerts
+class Concert(models.Model):
+    artist_name = models.CharField(max_length=100)
+    concert_date = models.DateTimeField()
+    venue = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    # Add any other fields that you need for your concert model
