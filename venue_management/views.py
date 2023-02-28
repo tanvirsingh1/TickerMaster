@@ -23,7 +23,7 @@ def login_Manager_window(request):
 
         if user is not None:
             login(request, user)
-            return redirect('')
+            return redirect('/')
 
         error = 'Invalid username or password. Please try again.'
         print(error)
