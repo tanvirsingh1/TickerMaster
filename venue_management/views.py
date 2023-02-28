@@ -3,7 +3,6 @@ views.py - Responsible for handling this application's views
 """
 
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import VenueManager
