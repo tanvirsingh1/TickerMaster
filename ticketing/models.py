@@ -48,8 +48,11 @@ class Eventgoer(AbstractBaseUser):
         return self.first_name
 
 
-# Class for Concert Window displaying Concerts
 class Concert(models.Model):
+    """
+    Concert Window displaying Concerts???
+    TODO: Figure out what this is and whether it should be here.
+    """
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
     venue = models.CharField(max_length=100)
