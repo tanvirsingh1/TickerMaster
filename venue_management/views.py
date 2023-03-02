@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import VenueManager
-from .backends import VenueManagerBackend
+
 def login_Manager_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.

@@ -4,7 +4,7 @@ models.py - Contains all data models for the application
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
-
+from .manager import UserManager
 
 class VenueManager(AbstractBaseUser):
     """
@@ -24,11 +24,14 @@ class VenueManager(AbstractBaseUser):
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
     is_active = models.BooleanField(verbose_name='Is Active', default=True)
 
+    is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
+    is_superuser = models.BooleanField(verbose_name='Is Superuser', default=False)
+
     # Django attributes
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
-
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+    objects = UserManager()
     # Methods
     def get_full_name(self) -> str:
         """
@@ -43,3 +46,14 @@ class VenueManager(AbstractBaseUser):
         :return: first name of the Venue Manager
         """
         return self.first_name
+    def has_perm(self, perm, obj=None):
+
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+
+        return self.is_superuser
+
+    class DoesNotExist(Exception):
+        pass
+

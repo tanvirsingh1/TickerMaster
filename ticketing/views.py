@@ -1,16 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import Eventgoer
-from .backends import EventgoerBackend
+
 
 def login_window(request):
-    """
-    The login page for the ticketing application. Accepts a username and password.
-    :param request: (Django) object of the request's properties
-    :return: the login page
-    """
+
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -29,11 +24,7 @@ def login_window(request):
 
 
 def register_window(request):
-    """
-    The registration page for the ticketing application. Accepts a username and password.
-    :param request: (Django) object of the request's properties
-    :return: the registration page
-    """
+
     if request.method == "POST":
 
         form = RegisterForm(data=request.POST)
