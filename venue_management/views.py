@@ -23,6 +23,11 @@ def index(_):
 # @login_required
 # @require_http_methods(["GET", "POST"])
 def generate_promo_code(request):
+    """
+    TODO: What is this?
+    :param request: (Django) object of the request's properties
+    :return: the promo code page
+    """
     if request.method == "POST":
         form = PromoCodeForm(request.POST)
         if form.is_valid():
