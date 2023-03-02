@@ -2,22 +2,13 @@
 views.py - Responsible for handling this application's views
 """
 
+# Imports
 from django.http import HttpResponse
-# from django.shortcuts import render
+from django.shortcuts import render
+from django.template.loader import render_to_string
 
-from django.shortcuts import render, redirect
 from .forms import PromoCodeForm
 from .models import PromoCode
-from django.utils.crypto import get_random_string
-from django.contrib import messages
-from random import randint
-
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from django.conf import settings
 
 
 def index(_):
