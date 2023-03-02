@@ -54,6 +54,12 @@ def register_window(request):
 
 
 def concert_window(request):
+    """
+    The concert window
+    TODO: Find out what this does...
+    :param request: (Django) object of the request's properties
+    :return:
+    """
     concerts = Concert.objects.all()
     context = {'concerts': concerts}
     return render(request, 'ticketing/concert_window.html', context)
