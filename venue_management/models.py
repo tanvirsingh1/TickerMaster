@@ -47,6 +47,9 @@ class VenueManager(AbstractBaseUser):
 
 
 class PromoCode(models.Model):
+    """
+    TODO: What's this?
+    """
     code = models.CharField(max_length=20, unique=True, validators=[
                             validators.RegexValidator(r'^[a-zA-Z0-9]*$', 'Only letters and numbers are allowed.')])
     discount = models.DecimalField(max_digits=5, decimal_places=2)
@@ -55,4 +58,8 @@ class PromoCode(models.Model):
     generated_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.code
+        """
+        Returns the object's promo code
+        :return: the promo code
+        """
+        return str(self.code)
