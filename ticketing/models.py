@@ -44,11 +44,11 @@ class Eventgoer(AbstractBaseUser):
 
         return self.first_name
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self):
 
         return self.is_superuser
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self):
 
         return self.is_superuser
 
