@@ -27,9 +27,16 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'password1', 'password2']
 
 
-
 class ConcertForm(forms.ModelForm):
+    """
+    A form that allows for the registration of a concert. ???
+    TODO: Figure out what this is and whether it should be here.
+    """
+
     class Meta:
+        """
+        Metadata for the Concert Form
+        """
         model = Concert
         fields = ['artist_name', 'concert_date', 'venue', 'city', 'country']
         # Add any other fields that you need for your concert form
