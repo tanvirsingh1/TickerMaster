@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'ticketing.apps.TicketingConfig',
     'venue_management.apps.VenueManagementConfig'
 ]
-#AUTH_USER_MODEL = 'ticketing.Eventgoer'
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'ticketing.backends.EventgoerBackend',

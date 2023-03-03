@@ -73,6 +73,20 @@ class VenueManager(AbstractBaseUser):
         Bypasses the DoesNotExist exception for the venue manager account
         """
 
+
+class Concert(models.Model):
+    """
+    A class describing a concert
+    """
+    artist_name = models.CharField(max_length=100)
+    concert_date = models.DateTimeField()
+    venue = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+
+    # Add any other fields that you need for your concert model
+
+
 class PromoCode(models.Model):
     """
     TODO: What's this?
