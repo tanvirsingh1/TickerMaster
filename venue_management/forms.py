@@ -37,4 +37,3 @@ class PromoCodeForm(forms.Form):
     TODO: What is this?
     """
     name = forms.CharField(label='Your Name')
-
