@@ -7,7 +7,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('login/', views.login_Manager_window, name="Login Window" ),
-    path('register/', views.register_Manager_window, name="Register Window"),
+    path('login/', views.login_manager_window, name="Login Window" ),
+    path('register/', views.register_manager_window, name="Register Window"),
     path('generate-promo-code/', views.generate_promo_code, name='generate_promo_code')
 ]

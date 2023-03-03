@@ -43,7 +43,7 @@ def login_manager_window(request):
     return render(request, 'Ticketing_manager/login.html')
 
 
-def register_Manager_window(request):
+def register_manager_window(request):
     """
     The registration page for the ticketing application. Accepts a username and password.
     :param request: (Django) object of the request's properties
