@@ -11,7 +11,7 @@
       <div class="col-md-6 offset-md-3">
         <div class="card my-5">
 
-          <form class="card-body cardbody-color p-lg-5" method="POST" action="/venue/register">
+          <form class="card-body cardbody-color p-lg-5" method="POST" action="/venue/register/">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="text-center">

@@ -1,5 +1,4 @@
 """TicketSprint URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
@@ -19,5 +18,5 @@ from django.urls import path, include
 urlpatterns = [
     path('', include('ticketing.urls')),
     path('admin/', admin.site.urls),
-    path('', include('venue_management.urls'))
+    path('venue/', include('venue_management.urls'))
 ]
