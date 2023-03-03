@@ -8,7 +8,8 @@ from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
 from .models import Concert
 
-
+def home_window(request):
+    return render(request, 'home.html')
 def login_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.
