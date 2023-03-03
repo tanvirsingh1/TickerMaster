@@ -31,3 +31,10 @@ class RegisterForm(UserCreationForm):
         """
         model = VenueManager
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email']
+
+class PromoCodeForm(forms.Form):
+    """
+    TODO: What is this?
+    """
+    name = forms.CharField(label='Your Name')
+
