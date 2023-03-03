@@ -50,14 +50,29 @@ class Eventgoer(AbstractBaseUser):
         """
         return self.first_name
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, *, _):
+        """
+        Checks if the Eventgoer is a superuser.
+        TODO: Should check if they have the provided permission.
+        :param _: (unused) the permission to check
+        :return: whether the eventgoer is a superuser
+        """
         return self.is_superuser
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, _):
+        """
+        Checks if the admin has permissions for the given module
+        TODO: Actually implement a permission check
+        :param _: (unused) The label of the module to check against
+        :return: Whether the user is a superuser
+        """
         return self.is_superuser
 
-# Class for Concert Window displaying Concerts
+
 class Concert(models.Model):
+    """
+    Class for Concert
+    """
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
     venue = models.CharField(max_length=100)
