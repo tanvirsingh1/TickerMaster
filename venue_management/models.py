@@ -72,7 +72,6 @@ class VenueManager(AbstractBaseUser):
         """
         Bypasses the DoesNotExist exception for the venue manager account
         """
-        pass
 
 class PromoCode(models.Model):
     """
