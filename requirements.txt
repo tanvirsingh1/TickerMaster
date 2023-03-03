@@ -4,7 +4,8 @@
 Django ~= 4.1.7
 
 # Env Configs
-python-dotenv ~= 0.21.1
+python-dotenv ~= 1.0.0
 
 # Linting
 pylint ~= 2.16.2
+pylint-django ~= 2.5.3

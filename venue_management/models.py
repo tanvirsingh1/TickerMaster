@@ -4,6 +4,8 @@ models.py - Contains all data models for the application
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.core import validators
+
 from .manager import UserManager
 
 class VenueManager(AbstractBaseUser):
@@ -32,6 +34,7 @@ class VenueManager(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
     objects = UserManager()
+
     # Methods
     def get_full_name(self) -> str:
         """
@@ -47,14 +50,29 @@ class VenueManager(AbstractBaseUser):
         """
         return self.first_name
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, *_):
+        """
+        Checks if the Venue Manager is a superuser.
+        TODO: Should check if they have the provided permission.
+        :param _: (unused) the permission to check
+        :return: whether the eventgoer is a superuser
+        """
         return self.is_superuser
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, _):
+        """
+        Checks if the admin has permissions for the given module
+        TODO: Actually implement a permission check
+        :param _: (unused) The label of the module to check against
+        :return: Whether the user is a superuser
+        """
         return self.is_superuser
 
     class DoesNotExist(Exception):
-        pass
+        """
+        Bypasses the DoesNotExist exception for the venue manager account
+        """
+
 
 class Concert(models.Model):
     artist_name = models.CharField(max_length=100)
@@ -64,3 +82,21 @@ class Concert(models.Model):
     country = models.CharField(max_length=100)
 
     # Add any other fields that you need for your concert model
+
+class PromoCode(models.Model):
+    """
+    TODO: What's this?
+    """
+    code = models.CharField(max_length=20, unique=True, validators=[
+        validators.RegexValidator(r'^[a-zA-Z0-9]*$', 'Only letters and numbers are allowed.')])
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    expiration_date = models.DateField()
+    venue_manager = models.ForeignKey(VenueManager, on_delete=models.CASCADE)
+    generated_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """
+        Returns the object's promo code
+        :return: the promo code
+        """
+        return str(self.code)

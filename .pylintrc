@@ -1,5 +1,7 @@
 [MASTER]
 ignore=manage.py
+load-plugins=pylint_django
+django-settings-module=ticket_sprint.settings
 
 [FORMAT]
 max-line-length=120

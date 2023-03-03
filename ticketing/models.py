@@ -37,17 +37,33 @@ class Eventgoer(AbstractBaseUser):
         return f"{self.get_full_name()} (Reseller)" if self.is_reseller else self.get_full_name()
 
     def get_full_name(self) -> str:
-
+        """
+        Gets the full name of the Venue Manager
+        :return: full name of the Venue manager
+        """
         return f"{self.first_name} {self.last_name}"
 
     def get_short_name(self) -> str:
-
+        """
+        Gets the short, informal name of the Venue Manager
+        :return: first name of the Venue Manager
+        """
         return self.first_name
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, *, _):
+        """
+        Checks if the Eventgoer is a superuser.
+        TODO: Should check if they have the provided permission.
+        :param _: (unused) the permission to check
+        :return: whether the eventgoer is a superuser
+        """
         return self.is_superuser
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, _):
+        """
+        Checks if the admin has permissions for the given module
+        TODO: Actually implement a permission check
+        :param _: (unused) The label of the module to check against
+        :return: Whether the user is a superuser
+        """
         return self.is_superuser
-
-# Class for Concert Window displaying Concerts
