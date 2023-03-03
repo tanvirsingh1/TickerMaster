@@ -75,6 +75,9 @@ class VenueManager(AbstractBaseUser):
 
 
 class Concert(models.Model):
+    """
+    A class describing a concert
+    """
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
     venue = models.CharField(max_length=100)
@@ -82,6 +85,7 @@ class Concert(models.Model):
     country = models.CharField(max_length=100)
 
     # Add any other fields that you need for your concert model
+
 
 class PromoCode(models.Model):
     """
