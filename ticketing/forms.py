@@ -47,3 +47,9 @@ class ConcertForm(forms.ModelForm):
         model = Concert
         fields = ['artist_name', 'concert_date', 'venue', 'city', 'country']
         # Add any other fields that you need for your concert form
+
+class PromoCodeForm(forms.Form):
+    """
+    TODO: What is this?
+    """
+    name = forms.CharField(label='Your Name')
