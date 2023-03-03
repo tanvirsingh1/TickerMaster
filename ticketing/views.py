@@ -52,4 +52,3 @@ def register_window(request):
     else:
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})
-

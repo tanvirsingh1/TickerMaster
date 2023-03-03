@@ -30,4 +30,3 @@ class RegisterForm(UserCreationForm):
         """
         model = Eventgoer
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
-
