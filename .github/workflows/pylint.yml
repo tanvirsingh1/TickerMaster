@@ -5,7 +5,6 @@ on:
      paths-ignore:
       - 'venue_management/migrations/**'
       - 'ticketing/migrations/**'
-      - 'migrations\/.*'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,4 +24,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files -- '*.py' ':!:migrations\/.*')
+        pylint $(git ls-files '*.py' | grep -v -E "^.*migrations\/.*$")
