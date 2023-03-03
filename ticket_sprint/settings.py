@@ -41,8 +41,13 @@ INSTALLED_APPS = [
     'venue_management.apps.VenueManagementConfig'
 ]
 #AUTH_USER_MODEL = 'ticketing.Eventgoer'
-AUTHENTICATION_BACKENDS = [    'django.contrib.auth.backends.ModelBackend',    'ticketing.backends.EventgoerBackend','venue_management.backends.VenueManagerBackend']
-#
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'ticketing.backends.EventgoerBackend',
+    'venue_management.backends.VenueManagerBackend'
+]
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
