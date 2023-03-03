@@ -1,12 +1,21 @@
-"""This code defines a custom user manager UserManager by extending the built-in BaseUserManager class in Django. It has two methods - create_user and create_superuser."""
+"""
+manager.py - Manages Venue Manager Accounts
+"""
 from django.contrib.auth.base_user import BaseUserManager
 
-"""create_user method creates a new user instance with the given email and password, and saves it in the database. It also normalizes the email address and sets the password using the set_password method provided by Django."""
 class UserManager(BaseUserManager):
-    use_in_migrations =True
-    """create_user method creates a new user instance with the given email and password, and saves it in the database. It also normalizes the email address and sets the password using the set_password method provided by Django."""
+    """A custom user manager for managing the creation of Venue Managers"""
+    use_in_migrations = True
 
     def  create_user(self,email,password=None,**kwargs):
+        """
+        Creates an Eventgoer user account
+        :param email: email to create the user with
+        :param password: password to create the new user with
+        :param kwargs: (Passed to the model)
+        :return:
+        """
+
         if not email:
             raise ValueError('Email is required')
         email = self.normalize_email(email)
@@ -14,9 +23,15 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self.db)
         return user
-    """create_superuser method calls create_user method and sets the user's is_staff, is_superuser, and is_active fields to True by default. If is_staff is not set to True, it raises a ValueError."""
 
     def create_superuser(self,email,password,**kwargs):
+        """
+        (DO NOT USE! UNSECURE!) Creates a superuser Eventgoer account
+        :param email: email to create the user with
+        :param password: password to create the new user with
+        :param kwargs: is_staff, is_superuser, is_active
+        :return: the newly created user
+        """
         kwargs.setdefault('is_staff',True)
         kwargs.setdefault('is_superuser',True)
         kwargs.setdefault('is_active',True)

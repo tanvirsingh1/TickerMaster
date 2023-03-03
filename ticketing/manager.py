@@ -1,4 +1,6 @@
-"""Manager class"""
+"""
+manager.py - Manages Eventgoer Accounts
+"""
 
 from django.contrib.auth.base_user import BaseUserManager
 
