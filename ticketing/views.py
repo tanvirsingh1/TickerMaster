@@ -3,10 +3,9 @@ views.py - Responsible for handling this application's views
 """
 
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm
-from .models import Concert
+from .models import Eventgoer, Concert
 
 
 def login_window(request):
@@ -16,12 +15,14 @@ def login_window(request):
     :return: the login page
     """
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+
+        user = authenticate(request, email=email, password=password, model=Eventgoer)
+
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('/')
 
         error = 'Invalid username or password. Please try again.'
         print(error)
@@ -38,16 +39,16 @@ def register_window(request):
     """
     if request.method == "POST":
 
-        form = RegisterForm(request.POST)
+        form = RegisterForm(data=request.POST)
+        print(form.errors)
 
         if form.is_valid():
             form.save()
-            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, email=email, password=password, model=Eventgoer)
             login(request, user)
-            messages.success(request, 'Registered Successfully.')
-            return redirect('#')  # needs to specify where the redirect page goes
+            return redirect('/login')  # needs to specify where the redirect page goes
     else:
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})

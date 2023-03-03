@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core import validators
 
+from .manager import UserManager
 
 class VenueManager(AbstractBaseUser):
     """
@@ -23,12 +24,16 @@ class VenueManager(AbstractBaseUser):
     first_name = models.CharField(max_length=30, verbose_name='First Name')
     last_name = models.CharField(max_length=30, verbose_name='Last Name')
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
-    is_active = models.BooleanField(verbose_name='Is Active')
+    is_active = models.BooleanField(verbose_name='Is Active', default=True)
+
+    is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
+    is_superuser = models.BooleanField(verbose_name='Is Superuser', default=False)
 
     # Django attributes
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+    objects = UserManager()
 
     # Methods
     def get_full_name(self) -> str:
@@ -45,13 +50,35 @@ class VenueManager(AbstractBaseUser):
         """
         return self.first_name
 
+    def has_perm(self, *_):
+        """
+        Checks if the Venue Manager is a superuser.
+        TODO: Should check if they have the provided permission.
+        :param _: (unused) the permission to check
+        :return: whether the eventgoer is a superuser
+        """
+        return self.is_superuser
+
+    def has_module_perms(self, _):
+        """
+        Checks if the admin has permissions for the given module
+        TODO: Actually implement a permission check
+        :param _: (unused) The label of the module to check against
+        :return: Whether the user is a superuser
+        """
+        return self.is_superuser
+
+    class DoesNotExist(Exception):
+        """
+        Bypasses the DoesNotExist exception for the venue manager account
+        """
 
 class PromoCode(models.Model):
     """
     TODO: What's this?
     """
     code = models.CharField(max_length=20, unique=True, validators=[
-                            validators.RegexValidator(r'^[a-zA-Z0-9]*$', 'Only letters and numbers are allowed.')])
+        validators.RegexValidator(r'^[a-zA-Z0-9]*$', 'Only letters and numbers are allowed.')])
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     expiration_date = models.DateField()
     venue_manager = models.ForeignKey(VenueManager, on_delete=models.CASCADE)
