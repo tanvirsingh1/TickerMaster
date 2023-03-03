@@ -1,3 +1,6 @@
+"""Eventgoer customer backend used for authenticating and logging in"""
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.backends import BaseBackend
 from .models import Eventgoer
 
@@ -11,11 +14,13 @@ class EventgoerBackend(BaseBackend):
             eventgoer = Eventgoer.objects.get(email=email)
             if eventgoer.check_password(password):
                 return eventgoer
-        except Eventgoer.DoesNotExist:
-            return None
+        except ObjectDoesNotExist:
+            pass
+        return  None
 
     def get_user(self, user_id):
         try:
             return Eventgoer.objects.get(pk=user_id)
-        except Eventgoer.DoesNotExist:
-            return None
+        except ObjectDoesNotExist:
+            pass
+        return None
