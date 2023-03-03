@@ -37,11 +37,17 @@ class Eventgoer(AbstractBaseUser):
         return f"{self.get_full_name()} (Reseller)" if self.is_reseller else self.get_full_name()
 
     def get_full_name(self) -> str:
-
+        """
+        Gets the full name of the Venue Manager
+        :return: full name of the Venue manager
+        """
         return f"{self.first_name} {self.last_name}"
 
     def get_short_name(self) -> str:
-
+        """
+        Gets the short, informal name of the Venue Manager
+        :return: first name of the Venue Manager
+        """
         return self.first_name
 
     def has_perm(self, perm, obj=None):
