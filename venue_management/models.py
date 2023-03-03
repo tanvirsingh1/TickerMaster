@@ -34,6 +34,7 @@ class VenueManager(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
     objects = UserManager()
+
     # Methods
     def get_full_name(self) -> str:
         """
@@ -49,13 +50,28 @@ class VenueManager(AbstractBaseUser):
         """
         return self.first_name
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, *_):
+        """
+        Checks if the Venue Manager is a superuser.
+        TODO: Should check if they have the provided permission.
+        :param _: (unused) the permission to check
+        :return: whether the eventgoer is a superuser
+        """
         return self.is_superuser
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, _):
+        """
+        Checks if the admin has permissions for the given module
+        TODO: Actually implement a permission check
+        :param _: (unused) The label of the module to check against
+        :return: Whether the user is a superuser
+        """
         return self.is_superuser
 
     class DoesNotExist(Exception):
+        """
+        Bypasses the DoesNotExist exception for the venue manager account
+        """
         pass
 
 class PromoCode(models.Model):
