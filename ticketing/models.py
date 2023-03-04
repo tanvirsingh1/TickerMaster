@@ -1,10 +1,11 @@
 """
 models.py - Contains all data models for the application
 """
-from .manager import UserManager
+
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
+from .manager import UserManager
 User = get_user_model()
 
 
