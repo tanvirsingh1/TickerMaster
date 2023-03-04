@@ -11,13 +11,14 @@ from django.template.loader import render_to_string
 from .forms import RegisterForm, PromoCodeForm
 from .models import VenueManager, PromoCode
 
-def index(_):
+def index(request):
     """
     The default index view for the Venue Management panel.
-    :param _: (throwaway) request parameter
+    :param request: (Django) object of the request's properties
     :return:
     """
-    return HttpResponse("This is the Venue_Management index.")
+    return render(request, 'venue_management/index.html')
+
 
 def login_manager_window(request):
     """
@@ -38,9 +39,9 @@ def login_manager_window(request):
 
         error = 'Invalid username or password. Please try again.'
         print(error)
-        return render(request, 'Ticketing_manager/login.html', {'messages': error})
+        return render(request, 'venue_management/login.html', {'messages': error})
 
-    return render(request, 'Ticketing_manager/login.html')
+    return render(request, 'venue_management/login.html')
 
 
 def register_manager_window(request):
@@ -66,7 +67,7 @@ def register_manager_window(request):
             return redirect('/venue/login')  # needs to specify where the redirect page goes
     else:
         form = RegisterForm()
-    return render(request, 'Ticketing_manager/register.html', {'form': form})
+    return render(request, 'venue_management/register.html', {'form': form})
 
 
 # @login_required
