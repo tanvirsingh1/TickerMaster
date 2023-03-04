@@ -86,10 +86,3 @@ def support_ticket(request):
         form = SupportTicketForm()
 
     return render(request, 'ticketing/support_ticket.html', {'form': form})
-
-
-
-
-
-
-

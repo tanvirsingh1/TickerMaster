@@ -102,8 +102,3 @@ class SupportTicket(models.Model):
         Returns the subject of the support ticket as a string.
         """
         return str(self.subject)
-    
-    
-    
-    
-    
