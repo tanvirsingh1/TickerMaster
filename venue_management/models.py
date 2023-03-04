@@ -74,17 +74,83 @@ class VenueManager(AbstractBaseUser):
         """
 
 
+class Location(models.Model):
+    """
+    Describes a location/address
+    """
+    class Province(models.TextChoices):
+        """
+        A list of valid provinces
+        """
+        ONTARIO = 'ON', "Ontario"
+        QUEBEC = 'QC', "Quebec"
+        NOVA_SCOTIA = 'NS', "Nova Scotia"
+        NEW_BRUNSWICK = 'NB', "New Brunswick"
+        MANITOBA = 'MB', "Manitoba"
+        BRITISH_COLUMBIA = 'BC', "British Columbia"
+        PEI = 'PE', "Prince Edward Island"
+        SASKATCHEWAN = 'SK', "Saskatchewan"
+        ALBERTA = 'AB', "Alberta"
+        NEWFOUNDLAND = 'NL', "Newfoundland and Labrador"
+        NORTHWEST_TERRITORIES = 'NT', "Northwest Territories"
+        YUKON_TERRITORIES = 'YT', "Yukon Territories"
+        NUNAVUT = 'NU', "Nunavut"
+
+    # --- Member Values ---
+    street_num = models.IntegerField(validators=(
+        validators.MinValueValidator(limit_value=1),
+        validators.MaxValueValidator(limit_value=100_000)
+    ))
+    street_name = models.CharField(max_length=200)
+    city = models.CharField(max_length=20)
+    province = models.CharField(max_length=2, choices=Province.choices)
+
+
+    def get_province(self):
+        """
+        Gets the name of the province that is associated with this location
+        :return: name of the province
+        """
+        return self.Province[self.province]
+
 class Concert(models.Model):
     """
     A class describing a concert
     """
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
-    venue = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    # venue - created by the ManyToMany field in Venue
 
     # Add any other fields that you need for your concert model
+
+class SeatType(models.Model):
+    """
+    Holds the name and quantity of a particular seat type.
+    """
+    name = models.CharField(max_length=60, verbose_name="Seat Type")
+    description = models.CharField(max_length=255, verbose_name="Seat Description")
+    quantity = models.IntegerField(verbose_name="Number of Seats", validators=(
+        validators.MinValueValidator(limit_value=1),
+        validators.MaxValueValidator(limit_value=1_000_000)
+    ))
+    # venue - created by the ManyToMany field in Venue
+
+class Venue(models.Model):
+    """
+    Describes a Venue
+    """
+    name = models.CharField(max_length=60, verbose_name="Name")
+    image = models.URLField(max_length=255, verbose_name="Image URL")
+    website = models.URLField(max_length=255, verbose_name="Website")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name="Location")
+
+    # ManyToManyField: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/
+    seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
+    concerts = models.ManyToManyField(Concert, verbose_name="Concerts")
+    managers = models.ManyToManyField(VenueManager, verbose_name="Managers")
+
 
 
 class PromoCode(models.Model):
