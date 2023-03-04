@@ -4,8 +4,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Eventgoer
-from .models import Concert
+from .models import Eventgoer, SupportTicket, Concert
 
 
 class RegisterForm(UserCreationForm):
@@ -23,15 +22,15 @@ class RegisterForm(UserCreationForm):
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}))
     is_reseller = forms.BooleanField(label='Are you a Reseller?',
-                widget=forms.RadioSelect(choices=[(True, 'Yes'),(False, 'No')]))
+                                     widget=forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]))
 
     class Meta:
         """
         Defines the form's metadata
         """
         model = Eventgoer
-        fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
-
+        fields = ['first_name', 'last_name', 'password1',
+                  'password2', 'email', 'is_reseller']
 
 
 class ConcertForm(forms.ModelForm):
@@ -47,3 +46,20 @@ class ConcertForm(forms.ModelForm):
         model = Concert
         fields = ['artist_name', 'concert_date', 'venue', 'city', 'country']
         # Add any other fields that you need for your concert form
+
+
+# support ticket form
+class SupportTicketForm(forms.ModelForm):
+    """
+    A form for submitting a support ticket with a subject and message.
+    """
+    class Meta:
+        """
+        Form metadata for the SupportTicketForm.
+        """
+        model = SupportTicket
+        fields = ['subject', 'message']
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'message': forms.Textarea(attrs={'class': 'form-control'}),
+        }
