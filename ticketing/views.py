@@ -4,8 +4,9 @@ views.py - Responsible for handling this application's views
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from .forms import RegisterForm
+from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer, Concert
+from django.contrib.auth.decorators import login_required
 
 
 def login_window(request):
@@ -64,3 +65,18 @@ def concert_window(request):
     concerts = Concert.objects.all()
     context = {'concerts': concerts}
     return render(request, 'ticketing/concert_window.html', context)
+
+
+#support ticket view for storing customer complaints
+def support_ticket(request):
+    if request.method == 'POST':
+        form = SupportTicketForm(request.POST)
+        if form.is_valid():
+            support_ticket = form.save(commit=False)
+            support_ticket.user = request.user
+            support_ticket.save()
+            return redirect('support_ticket_success')
+    else:
+        form = SupportTicketForm()
+
+    return render(request, 'ticketing/support_ticket.html', {'form': form})

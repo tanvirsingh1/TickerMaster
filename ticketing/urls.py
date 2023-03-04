@@ -8,5 +8,6 @@ from . import views
 urlpatterns = [
     path('login', views.login_window, name="Login Window" ),
     path('register', views.register_window, name="Register Window"),
-    path('concert-window-display/', views.concert_window, name="View Concerts")
+    path('concert-window-display/', views.concert_window, name="View Concerts"),
+    path('support/', views.support_ticket, name="Support Ticket Form")
 ]
