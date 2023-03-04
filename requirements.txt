@@ -7,7 +7,7 @@ Django ~= 4.1.7
 python-dotenv ~= 1.0.0
 
 # Linting
-pylint ~= 2.16.2
+pylint ~= 2.16.3
 pylint-django ~= 2.5.3
 
 # Image Processing
