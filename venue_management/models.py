@@ -105,13 +105,19 @@ class Location(models.Model):
     city = models.CharField(max_length=20)
     province = models.CharField(max_length=2, choices=Province.choices)
 
+    def __str__(self):
+        """
+        :return: a string representation of the address
+        """
+        return f"{self.street_num} {self.street_name}, {self.city}, {self.get_province()}"
+
 
     def get_province(self):
         """
         Gets the name of the province that is associated with this location
         :return: name of the province
         """
-        return self.Province[self.province]
+        return self.Province(self.province)
 
 class Concert(models.Model):
     """
@@ -159,7 +165,7 @@ class Venue(models.Model):
     name = models.CharField(max_length=60, verbose_name="Name")
     image = models.URLField(max_length=255, verbose_name="Image URL")
     website = models.URLField(max_length=255, verbose_name="Website")
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name="Location")
+    location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
 
     # ManyToManyField: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/
     seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
