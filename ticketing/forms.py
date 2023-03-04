@@ -54,7 +54,8 @@ class SupportTicketForm(forms.ModelForm):
     A form for submitting a support ticket with a subject and message.
     """
     class Meta:
-        """_summary_
+        """
+        Form metadata for the SupportTicketForm.
         """
         model = SupportTicket
         fields = ['subject', 'message']
@@ -62,4 +63,5 @@ class SupportTicketForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'message': forms.Textarea(attrs={'class': 'form-control'}),
         }
+        
 

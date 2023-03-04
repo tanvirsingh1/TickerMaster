@@ -4,7 +4,8 @@ models.py - Contains all data models for the application
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from .manager import UserManager
 
 
@@ -102,4 +103,5 @@ class SupportTicket(models.Model):
         Returns the subject of the support ticket as a string.
         """
         return str(self.subject)
+    
     
