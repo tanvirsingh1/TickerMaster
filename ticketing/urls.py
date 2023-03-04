@@ -8,7 +8,7 @@ from . import views
 app_name = 'ticketing'
 
 urlpatterns = [
-    path('', views.home_window, name='index')
+    path('', views.home_window, name='index'),
     path('login', views.login_window, name="login"),
     path('register', views.register_window, name="register")
 ]
