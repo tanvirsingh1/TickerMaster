@@ -27,8 +27,7 @@ def login_manager_window(request):
     :return: the login page
     """
     if request.method == 'POST':
-        email  = request.POST['email']
-
+        email = request.POST['email']
         password = request.POST['password']
 
         user = authenticate(request, email=email , password=password, model=VenueManager)
@@ -51,13 +50,10 @@ def register_manager_window(request):
     :return: the registration page
     """
     if request.method == "POST":
-
         form = RegisterForm(data=request.POST)
 
         if form.is_valid():
-
             form.save()
-
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
             user = authenticate(request, email=email, password=password, model=VenueManager)
