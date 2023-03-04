@@ -117,13 +117,22 @@ class Concert(models.Model):
     """
     A class describing a concert
     """
+    name = models.CharField(max_length=60, default='')
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    min_age = models.IntegerField(verbose_name="Minimum Age", null=True, validators=(
+        validators.MinValueValidator(limit_value=1),
+        validators.MaxValueValidator(limit_value=100)
+    ))
     # venue - created by the ManyToMany field in Venue
 
-    # Add any other fields that you need for your concert model
+    def __str__(self):
+        """
+        :return: the concert's name
+        """
+        return str(self.name)
 
 class SeatType(models.Model):
     """
@@ -136,6 +145,12 @@ class SeatType(models.Model):
         validators.MaxValueValidator(limit_value=1_000_000)
     ))
     # venue - created by the ManyToMany field in Venue
+
+    def __str__(self):
+        """
+        :return: the seat type's name
+        """
+        return str(self.name)
 
 class Venue(models.Model):
     """
@@ -150,6 +165,12 @@ class Venue(models.Model):
     seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
     concerts = models.ManyToManyField(Concert, verbose_name="Concerts")
     managers = models.ManyToManyField(VenueManager, verbose_name="Managers")
+
+    def __str__(self):
+        """
+        :return: the venue's name
+        """
+        return str(self.name)
 
 
 
