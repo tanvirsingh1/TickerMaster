@@ -7,3 +7,5 @@ from . import models
 
 # Register models with the Admin site.
 admin.site.register(models.VenueManager)
+admin.site.register(models.Venue)
+admin.site.register(models.Concert)
