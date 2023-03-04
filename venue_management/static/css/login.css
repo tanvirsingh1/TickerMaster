@@ -8,27 +8,3 @@
   background-color: #ebf2fa;
 }
 
-a {
-  text-decoration: none;
-  color: #8DA9C4;
-}
-
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: 60px; /* Height of the footer */
-  background-color: #1E3859;
-}
-
-body {
-  background-color: #222222;
-}
-
-/* Set the text color to white */
-body, h1, h2, h3, h4, h5, h6, p, a {
-  color: white;
-}
-
-/* Set the navbar color to a darker blue */
-
