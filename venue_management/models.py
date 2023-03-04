@@ -199,4 +199,3 @@ class PromoCode(models.Model):
         :return: the promo code
         """
         return str(self.code)
-
