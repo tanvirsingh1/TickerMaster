@@ -9,3 +9,6 @@ python-dotenv ~= 1.0.0
 # Linting
 pylint ~= 2.16.2
 pylint-django ~= 2.5.3
+
+# Image Processing
+Pillow ~= 9.4.0
