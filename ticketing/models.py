@@ -89,7 +89,6 @@ class Concert(models.Model):
 class SupportTicket(models.Model):
     """
     Model representing a support ticket.
-    
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -100,6 +99,11 @@ class SupportTicket(models.Model):
 
     def __str__(self):
         """
-        Returns the subject of the support ticket.
+        Returns the subject of the support ticket as a string.
         """
-        return self.subject
+        return str(self.subject)
+    
+    
+    
+    
+    
