@@ -28,8 +28,7 @@ class Eventgoer(AbstractBaseUser):
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
     is_active = models.BooleanField(verbose_name='Is Active', default=True)
     is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
-    is_superuser = models.BooleanField(
-        verbose_name='Is Superuser', default=False)
+    is_superuser = models.BooleanField(verbose_name='Is Superuser', default=False)
     is_reseller = models.BooleanField(verbose_name='Reseller Account')
 
     # Django attributes

@@ -8,8 +8,13 @@ from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
 def home_window(request):
-    """:returns the main page"""
+    """
+    Main index page
+    :returns the main page
+    """
     return render(request, 'ticketing/home.html')
+
+
 def login_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.
@@ -20,8 +25,7 @@ def login_window(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, email=email,
-                            password=password, model=Eventgoer)
+        user = authenticate(request, email=email, password=password, model=Eventgoer)
 
         if user is not None:
             login(request, user)
@@ -49,8 +53,7 @@ def register_window(request):
             form.save()
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(request, email=email,
-                                password=password, model=Eventgoer)
+            user = authenticate(request, email=email, password=password, model=Eventgoer)
             login(request, user)
             # needs to specify where the redirect page goes
             return redirect('/login')
@@ -76,3 +79,37 @@ def support_ticket(request):
         form = SupportTicketForm()
 
     return render(request, 'ticketing/support_ticket.html', {'form': form})
+
+
+#FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
+def purchase_ticket(request):
+    """
+    select a ticket --> login, registration required
+    """
+    #check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+    user = request.user
+    #concert = request.concert
+
+    #retrieve data from form
+    if request.method == 'POST':
+
+        quantity = int(request.POST.get('quantity'))
+        print(quantity)
+        if quantity == 0:
+            error = "Please, select your ticket(s)."
+
+            #promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
+
+            return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user,
+                                                                       'type' : 'select-tickets'})
+            #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
+            # 'user': user, 'concert': concert})
+        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
+
+    print("User is making a payment")
+    # pass the current user object to the template context
+    #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
+    return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})

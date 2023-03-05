@@ -32,7 +32,6 @@ class RegisterForm(UserCreationForm):
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
 
 
-
 class SupportTicketForm(forms.ModelForm):
     """
     A form for submitting a support ticket with a subject and message.
