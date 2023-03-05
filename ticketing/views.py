@@ -9,6 +9,10 @@ from .models import Eventgoer
 
 def home_window(request):
     return render(request, 'ticketing/home.html')
+
+def about_window(request):
+    return render(request, 'ticketing/about.html')
+
 def login_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.
