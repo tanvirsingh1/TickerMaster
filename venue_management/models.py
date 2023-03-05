@@ -126,8 +126,7 @@ class Concert(models.Model):
     name = models.CharField(max_length=60, default='')
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
+
     min_age = models.IntegerField(verbose_name="Minimum Age", null=True, validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)

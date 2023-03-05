@@ -1,3 +1,4 @@
+  {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +13,7 @@
 
   {% load static %}
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
 </head>
 
 <body>
@@ -34,8 +36,12 @@
         </li>
       </ul>
       <ul class="navbar-nav">
-        <li><a class="nav-link" href="{% url 'venue_management:login' %}">Login</a></li>
-        <li><a class="nav-link" href="{% url 'venue_management:register' %}">Register</a></li>
+
+
+          <li><a class="nav-link" href="{% url 'venue_management:list-concerts' %}">Concerts</a></li>
+          <li><a class="nav-link" href="{% url 'venue_management:login' %}">Login</a></li>
+          <li><a class="nav-link" href="{% url 'venue_management:register' %}">Register</a></li>
+
       </ul>
     </div>
   </div>
@@ -46,16 +52,18 @@
   {% endblock %}
 </main>
 
-<footer class="bg-dark text-center text-lg-start mg-3">
-  <!-- Copyright -->
+<!--<footer class="bg-dark text-center text-lg-start mg-3">
+
   <div class="text-center p-3 " style="color: white">
     <p>Copyright © TicketSprint 2023. All Rights Reserved.</p>
   </div>
-  <!-- Copyright -->
-</footer>
+
+</footer> -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
+
 </body>
+
 </html>
