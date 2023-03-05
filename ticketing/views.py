@@ -8,6 +8,7 @@ from .forms import RegisterForm
 from .models import Eventgoer
 
 def home_window(request):
+    """:returns the main page"""
     return render(request, 'ticketing/home.html')
 def login_window(request):
     """

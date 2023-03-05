@@ -119,6 +119,7 @@ class Location(models.Model):
         """
         return self.Province(self.province)
 
+
 class Concert(models.Model):
     """
     A class describing a concert
@@ -142,6 +143,7 @@ class Concert(models.Model):
         """
         return str(self.name)
 
+
 class SeatType(models.Model):
     """
     Holds the name and quantity of a particular seat type.
@@ -159,6 +161,7 @@ class SeatType(models.Model):
         :return: the seat type's name
         """
         return str(self.name)
+
 
 class Venue(models.Model):
     """
@@ -182,6 +185,7 @@ class Venue(models.Model):
 
 
 
+
 class PromoCode(models.Model):
     """
     TODO: What's this?
@@ -199,4 +203,5 @@ class PromoCode(models.Model):
         :return: the promo code
         """
         return str(self.code)
+
 
