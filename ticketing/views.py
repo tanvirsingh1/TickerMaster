@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
-from venue_management.models import PromoCode
 from venue_management.models import Concert
 
 
@@ -104,7 +103,7 @@ def purchase_ticket(request):
 
     #retrieve data from form
     if request.method == 'POST':
-       
+
         quantity = int(request.POST.get('quantity'))
         print(quantity)
         if quantity == 0:
@@ -113,13 +112,13 @@ def purchase_ticket(request):
             """
             promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
             """
-            
-            return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, 'type' : 'select-tickets'})
+
+            return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, \
+                                                                       'type' : 'select-tickets'})
             #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, 'user': user, 'concert': concert})
         else:
             return render(request, f'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
 
-    
     elif request.method == 'PUT':
         print("User is making a payment")
 

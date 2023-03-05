@@ -199,7 +199,7 @@ class PromoCode(models.Model):
         :return: the promo code
         """
         return str(self.code)
-    
+
     def get_discount(self):
         """
         Returns discount percent
