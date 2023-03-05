@@ -21,4 +21,4 @@ urlpatterns = [
     path('', include('ticketing.urls', namespace="ticketing")),
     path('admin/', admin.site.urls),
     path('venue/', include('venue_management.urls', namespace="venue_management"))
-]+ static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

@@ -5,8 +5,7 @@ signals.py - Handles events triggered in the venue_management application
 # Imports
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
-
-import models
+from . import models
 
 @receiver(pre_delete, sender=models.Venue)
 def pre_delete_venue(sender: models.Venue, instance: models.Venue, **kwargs):

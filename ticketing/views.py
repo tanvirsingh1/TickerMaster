@@ -5,7 +5,7 @@ views.py - Responsible for handling this application's views
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm, SupportTicketForm
-from .models import Eventgoer, Concert
+from .models import Eventgoer
 
 def home_window(request):
     """:returns the main page"""

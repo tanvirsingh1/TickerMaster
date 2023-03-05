@@ -4,7 +4,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Eventgoer, SupportTicket, Concert
+from .models import Eventgoer, SupportTicket
 
 
 class RegisterForm(UserCreationForm):
@@ -32,22 +32,7 @@ class RegisterForm(UserCreationForm):
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
 
 
-class ConcertForm(forms.ModelForm):
-    """
-    A form that allows for the registration of a concert. ???
-    TODO: Figure out what this is and whether it should be here.
-    """
 
-    class Meta:
-        """
-        Metadata for the Concert Form
-        """
-        model = Concert
-        fields = ['artist_name', 'concert_date', 'venue', 'city', 'country']
-        # Add any other fields that you need for your concert form
-
-
-# support ticket form
 class SupportTicketForm(forms.ModelForm):
     """
     A form for submitting a support ticket with a subject and message.
