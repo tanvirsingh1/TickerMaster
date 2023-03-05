@@ -72,7 +72,7 @@ class Eventgoer(AbstractBaseUser):
         """
         return self.is_superuser
 
-# class for support tickets
+
 class SupportTicket(models.Model):
     """
     Model representing a support ticket.

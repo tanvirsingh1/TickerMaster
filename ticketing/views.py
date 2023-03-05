@@ -6,7 +6,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from venue_management.models import Concert
 from .forms import RegisterForm, SupportTicketForm
+from .forms import RegisterForm
 from .models import Eventgoer
+
+def home_window(request):
+    """:returns the main page"""
+    return render(request, 'ticketing/home.html')
 
 
 def login_window(request):
@@ -56,16 +61,6 @@ def register_window(request):
     return render(request, 'ticketing/register.html', {'form': form})
 
 
-def concert_window(request):
-    """
-    The concert window
-    TODO: Find out what this does...
-    :param request: (Django) object of the request's properties
-    :return:
-    """
-    concerts = Concert.objects.all()
-    context = {'concerts': concerts}
-    return render(request, 'ticketing/concert_window.html', context)
 # support ticket view for storing customer complaints
 def support_ticket(request):
     """
@@ -83,10 +78,6 @@ def support_ticket(request):
         form = SupportTicketForm()
 
     return render(request, 'ticketing/support_ticket.html', {'form': form})
-
-
-
-
 
 
 #FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)

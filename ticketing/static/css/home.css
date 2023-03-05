@@ -1,0 +1,39 @@
+.navbar-brand{
+  position: absolute;
+  left: 50%;
+  transform:translateX(-50%);
+}
+
+#formclass{
+  position: absolute;
+  bottom:10%;
+  left: 50%;
+  transform:translateX(-50%);
+}
+.profile-image-pic{
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+}
+
+.cardbody-color{
+  background-color: #ebf2fa;
+}
+
+a{
+  text-decoration: none;
+}
+footer {
+  text-align: center;
+   position: fixed;
+   bottom: 0;
+   width: 100%;
+   height: 60px;   /* Height of the footer */
+   background: #6cf;
+}
+
+.container{
+  position: absolute;
+  left: 10%;
+}
+

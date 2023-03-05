@@ -119,6 +119,7 @@ class Location(models.Model):
         """
         return self.Province(self.province)
 
+
 class Concert(models.Model):
     """
     A class describing a concert
@@ -126,12 +127,12 @@ class Concert(models.Model):
     name = models.CharField(max_length=60, default='')
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
+
     min_age = models.IntegerField(verbose_name="Minimum Age", null=True, validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)
     ))
+    price = models.FloatField(default=0,null=True,verbose_name="Ticket Price")
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue
@@ -141,6 +142,7 @@ class Concert(models.Model):
         :return: the concert's name
         """
         return str(self.name)
+
 
 class SeatType(models.Model):
     """
@@ -159,6 +161,7 @@ class SeatType(models.Model):
         :return: the seat type's name
         """
         return str(self.name)
+
 
 class Venue(models.Model):
     """
@@ -179,6 +182,7 @@ class Venue(models.Model):
         :return: the venue's name
         """
         return str(self.name)
+
 
 
 
