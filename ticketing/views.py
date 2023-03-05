@@ -5,8 +5,9 @@ views.py - Responsible for handling this application's views
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm, SupportTicketForm
-from .models import Eventgoer, Concert
+from .models import Eventgoer
 from venue_management.models import PromoCode
+from venue_management.models import Concert
 
 
 def login_window(request):
@@ -19,8 +20,7 @@ def login_window(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, email=email,
-                            password=password, model=Eventgoer)
+        user = authenticate(request, email=email, password=password, model=Eventgoer)
 
         if user is not None:
             login(request, user)
@@ -48,8 +48,7 @@ def register_window(request):
             form.save()
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(request, email=email,
-                                password=password, model=Eventgoer)
+            user = authenticate(request, email=email, password=password, model=Eventgoer)
             login(request, user)
             # needs to specify where the redirect page goes
             return redirect('/login')
@@ -68,8 +67,6 @@ def concert_window(request):
     concerts = Concert.objects.all()
     context = {'concerts': concerts}
     return render(request, 'ticketing/concert_window.html', context)
-
-
 # support ticket view for storing customer complaints
 def support_ticket(request):
     """
@@ -115,7 +112,7 @@ def purchase_ticket(request):
             return render(request, f'Ticketing_manager/purchase_ticket.html', {'messages': error, 'user': user})
             #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, 'user': user, 'concert': concert})
 
-               
+
 
     # pass the current user object to the template context
     #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
@@ -125,23 +122,21 @@ def purchase_ticket(request):
         seating_type = request.POST.get('seating_type')
         price = request.POST.get('price')
         seats_available = request.POST.get('seats_available')
-        
-       
+
+
         #check if the promo code is valid
         promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
         if promo_code:
             price = int(price) * promo_code.get_discount()
-        
+
         #calculate the total price
         total_price = price * quantity
-        
+
         #validation
         if not all([firstname, lastname, email, seating_type, price, seats_available]):
             # error message if any of the required fields are missing
             return render(request, 'purchase_ticket.html', {'error_message': 'Please fill in all required fields.'})
-        
-        
-        
+
         #store the data in session
         request.session['purchase_data'] = {
             'firstname': firstname,
@@ -154,9 +149,9 @@ def purchase_ticket(request):
             'quantity': quantity,
             'total_price': total_price,
         }
-        
+
         #redirect to the next page
         return redirect('payment_info')
-        
+
     else:
         return render(request, 'Ticketing_manager/purchase_ticket.html', {'form': form})

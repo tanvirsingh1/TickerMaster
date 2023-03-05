@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'ticketing.apps.TicketingConfig',
     'venue_management.apps.VenueManagementConfig'
 ]
-#AUTH_USER_MODEL = 'ticketing.Eventgoer'
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'ticketing.backends.EventgoerBackend',
@@ -126,8 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "static"
 ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'venue_management/static/images')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

@@ -5,19 +5,21 @@ views.py - Responsible for handling this application's views
 # Imports
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout as lo
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterForm, PromoCodeForm
 from .models import VenueManager, PromoCode
 
-def index(_):
+def index(request):
     """
     The default index view for the Venue Management panel.
-    :param _: (throwaway) request parameter
+    :param request: (Django) object of the request's properties
     :return:
     """
-    return HttpResponse("This is the Venue_Management index.")
+    return render(request, 'venue_management/index.html')
+
 
 def login_manager_window(request):
     """
@@ -25,22 +27,25 @@ def login_manager_window(request):
     :param request: (Django) object of the request's properties
     :return: the login page
     """
-    if request.method == 'POST':
-        email  = request.POST['email']
+    # Send the user to the panel if already authenticated as a VenueManager.
+    if request.user.is_authenticated and isinstance(request.user, VenueManager):
+        return redirect('/venue/panel')
 
+    if request.method == 'POST':
+        email = request.POST['email']
         password = request.POST['password']
 
         user = authenticate(request, email=email , password=password, model=VenueManager)
 
         if user is not None:
             login(request, user)
-            return redirect('/')
+            return redirect('/venue/panel')
 
         error = 'Invalid username or password. Please try again.'
         print(error)
-        return render(request, 'Ticketing_manager/login.html', {'messages': error})
+        return render(request, 'venue_management/login.html', {'messages': error})
 
-    return render(request, 'Ticketing_manager/login.html')
+    return render(request, 'venue_management/login.html')
 
 
 def register_manager_window(request):
@@ -49,25 +54,44 @@ def register_manager_window(request):
     :param request: (Django) object of the request's properties
     :return: the registration page
     """
-    if request.method == "POST":
+    # Send the user to the panel if already authenticated as a VenueManager.
+    if request.user.is_authenticated and isinstance(request.user, VenueManager):
+        return redirect('/venue/panel')
 
+    if request.method == "POST":
         form = RegisterForm(data=request.POST)
 
         if form.is_valid():
-
             form.save()
-
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
             user = authenticate(request, email=email, password=password, model=VenueManager)
 
             print(user)
             login(request, user)
-            return redirect('/venue/login')  # needs to specify where the redirect page goes
+            return redirect('/venue/panel')
     else:
         form = RegisterForm()
-    return render(request, 'Ticketing_manager/register.html', {'form': form})
+    return render(request, 'venue_management/register.html', {'form': form})
 
+@login_required(login_url='/venue/login')
+def logout(request):
+    """
+    Logs the current user out
+    :param request: (Django) object of the request's properties
+    :return: redirects home
+    """
+    lo(request)
+    return redirect('/venue')
+
+@login_required(login_url='/venue/login')
+def panel(request):
+    """
+    The home page for a signed in venue manager
+    :param request: (Django) object of the request's properties
+    :return: the venue manager's panel
+    """
+    return render(request, 'venue_management/panel.html')
 
 # @login_required
 # @require_http_methods(["GET", "POST"])
