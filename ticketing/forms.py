@@ -4,7 +4,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Eventgoer
+from .models import Eventgoer, SupportTicket
 
 
 class RegisterForm(UserCreationForm):
@@ -21,8 +21,8 @@ class RegisterForm(UserCreationForm):
         attrs={'class': 'form-control', 'placeholder': 'Enter your password'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}))
-    is_reseller = forms.BooleanField(label='Are you a Reseller?',
-                widget=forms.RadioSelect(choices=[(True, 'Yes'),(False, 'No')]))
+    is_reseller = forms.TypedChoiceField(coerce=lambda x: x == 'True',
+                                   choices=((False, 'No'), (True, 'Yes')))
 
     class Meta:
         """
@@ -30,3 +30,20 @@ class RegisterForm(UserCreationForm):
         """
         model = Eventgoer
         fields = ['first_name', 'last_name', 'password1', 'password2', 'email', 'is_reseller']
+
+
+
+class SupportTicketForm(forms.ModelForm):
+    """
+    A form for submitting a support ticket with a subject and message.
+    """
+    class Meta:
+        """
+        Form metadata for the SupportTicketForm.
+        """
+        model = SupportTicket
+        fields = ['subject', 'message']
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'message': forms.Textarea(attrs={'class': 'form-control'}),
+        }

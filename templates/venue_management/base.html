@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
 
   {% load static %}
   {% block stylesheets %}{% endblock %}
-  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'css/venue.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -47,6 +48,8 @@
             </div>
           </li>
         {% else %}
+          <!-- TODO: The client-facing portion of this concerts system should be moved to ticketing -->
+          <li><a class="nav-link" href="{% url 'venue_management:list-concerts' %}">Concerts</a></li>
           <li><a class="nav-link" href="{% url 'venue_management:login' %}">Login</a></li>
           <li><a class="nav-link" href="{% url 'venue_management:register' %}">Register</a></li>
         {% endif %}

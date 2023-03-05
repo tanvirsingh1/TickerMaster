@@ -1,0 +1,13 @@
+{% extends 'ticketing/base.html' %}
+
+{% block body %}
+<div class="container mt-4">
+  <h1>Contact Customer Support</h1>
+  <p>If you are having any issues related to your purchase, please fill out the form below and we will get back to you as soon as possible.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+  </form>
+</div>
+{% endblock %}
