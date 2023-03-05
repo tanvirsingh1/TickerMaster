@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterForm, PromoCodeForm
-from .models import VenueManager, PromoCode
+from .models import VenueManager, PromoCode, Venue, Location
 
 def index(request):
     """
@@ -92,6 +92,31 @@ def panel(request):
     :return: the venue manager's panel
     """
     return render(request, 'venue_management/panel.html')
+
+@login_required(login_url='/venue/login')
+def add_venue(request):
+    """Adds a new venue to the database"""
+    if request.method == 'POST':
+        # General Venue Information
+        name = request.POST['name']
+        website = request.POST['website']
+        image = request.FILES.get('venue_image')
+        manager = request.user
+
+        # Venue Location information
+        street_num = request.POST['street_num']
+        street_name = request.POST['street_name']
+        city = request.POST['city']
+        province = Location.Province(request.POST['province'])
+
+        # Form Models and save to DB
+        venue_location = Location(street_num=street_num, street_name=street_name, city=city, province=province)
+        venue_location.save()
+        venue = Venue(name=name, website=website, image=image, managers=[manager], location=venue_location)
+        venue.save()
+        return redirect('/venue/panel/')
+
+    return render(request, 'venue_management/add_venue.html')
 
 # @login_required
 # @require_http_methods(["GET", "POST"])
