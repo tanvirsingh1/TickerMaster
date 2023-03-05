@@ -5,9 +5,11 @@ views.py - Responsible for handling this application's views
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm, SupportTicketForm
-from .models import Eventgoer, Concert
+from .models import Eventgoer
 
-
+def home_window(request):
+    """:returns the main page"""
+    return render(request, 'ticketing/home.html')
 def login_window(request):
     """
     The login page for the ticketing application. Accepts a username and password.
@@ -55,18 +57,6 @@ def register_window(request):
     else:
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})
-
-
-def concert_window(request):
-    """
-    The concert window
-    TODO: Find out what this does...
-    :param request: (Django) object of the request's properties
-    :return:
-    """
-    concerts = Concert.objects.all()
-    context = {'concerts': concerts}
-    return render(request, 'ticketing/concert_window.html', context)
 
 
 # support ticket view for storing customer complaints

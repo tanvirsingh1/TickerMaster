@@ -74,19 +74,6 @@ class Eventgoer(AbstractBaseUser):
         return self.is_superuser
 
 
-class Concert(models.Model):
-    """
-    Class for Concert
-    """
-    artist_name = models.CharField(max_length=100)
-    concert_date = models.DateTimeField()
-    venue = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    # Add any other fields that you need for your concert model
-
-
-# class for support tickets
 class SupportTicket(models.Model):
     """
     Model representing a support ticket.
@@ -103,4 +90,3 @@ class SupportTicket(models.Model):
         Returns the subject of the support ticket as a string.
         """
         return str(self.subject)
- 
