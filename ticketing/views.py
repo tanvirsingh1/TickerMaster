@@ -4,13 +4,14 @@ views.py - Responsible for handling this application's views
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from venue_management.models import Concert
 from .forms import RegisterForm, SupportTicketForm
-from .forms import RegisterForm
 from .models import Eventgoer
 
 def home_window(request):
-    """:returns the main page"""
+    """
+    Main index page
+    :returns the main page
+    """
     return render(request, 'ticketing/home.html')
 
 
@@ -102,7 +103,7 @@ def purchase_ticket(request):
 
             #promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
 
-            return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user, \
+            return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user,
                                                                        'type' : 'select-tickets'})
             #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
             # 'user': user, 'concert': concert})
