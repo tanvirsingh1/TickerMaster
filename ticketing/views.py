@@ -86,3 +86,67 @@ def support_ticket(request):
         form = SupportTicketForm()
 
     return render(request, 'ticketing/support_ticket.html', {'form': form})
+
+def purchase_ticket(request):
+
+    """
+    buying a ticket --> login, registration required
+    """
+
+    #check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+
+    #retrieve data from form
+    if request.method == 'POST':
+        promo_code = request.POST.get('promo_code')
+        quantity = int(request.POST.get('quantity'))
+
+        if quantity == 0:
+            error = "Please, select your tickets."
+            return render(request, 'Ticketing_manager/purchase_ticket.html', {'messages': error, 'user': request.user})
+
+    # pass the current user object to the template context
+    return render(request, 'Ticketing_manager/purchase_ticket.html', {'user': request.user})
+
+    if request.method == 'POST':
+        #retrieve data from form
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
+        email = request.POST.get('email')
+        seating_type = request.POST.get('seating_type')
+        price = request.POST.get('price')
+        seats_available = request.POST.get('seats_available')
+        
+        
+        #validation
+        if not all([firstname, lastname, email, seating_type, price, seats_available]):
+            # error message if any of the required fields are missing
+            return render(request, 'purchase_ticket.html', {'error_message': 'Please fill in all required fields.'})
+        
+        #check if the promo code is valid
+        if promo_code == 'SPECIAL50':
+            price = int(price) * 0.5
+        
+        #calculate the total price
+        total_price = price * quantity
+        
+        #store the data in session
+        request.session['purchase_data'] = {
+            'firstname': firstname,
+            'lastname': lastname,
+            'email': email,
+            'seating_type': seating_type,
+            'price': price,
+            'seats_available': seats_available,
+            'promo_code': promo_code,
+            'quantity': quantity,
+            'total_price': total_price,
+        }
+        
+        #redirect to the next page
+        return redirect('payment_info')
+        
+    else:
+        return render(request, 'Ticketing_manager/purchase_ticket.html', {'form': form})
