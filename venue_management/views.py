@@ -115,11 +115,11 @@ def add_concert(request):
         artist_name = request.POST['artist_name']
         concert_date= request.POST['concert_date']
         min_age= request.POST['min_age']
-
+        price = request.POST['price']
         concert_image = request.FILES.get('concert_image')
         description= request.POST['description']
 
-        new_concert = Concert(name= name,artist_name=artist_name,concert_date=concert_date,min_age=min_age,concert_image=concert_image,description=description)
+        new_concert = Concert(name= name, artist_name=artist_name,concert_date=concert_date,min_age=min_age,price= price,concert_image=concert_image,description=description)
         new_concert.save()
         return redirect('/venue/concerts/')
 

@@ -21,8 +21,8 @@ class RegisterForm(UserCreationForm):
         attrs={'class': 'form-control', 'placeholder': 'Enter your password'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}))
-    is_reseller = forms.BooleanField(label='Are you a Reseller?',
-                widget=forms.RadioSelect(choices=[(True, 'Yes'),(False, 'No')]))
+    is_reseller = forms.TypedChoiceField(coerce=lambda x: x == 'True',
+                                   choices=((False, 'No'), (True, 'Yes')))
 
     class Meta:
         """
