@@ -115,8 +115,7 @@ def purchase_ticket(request):
                                                                        'type' : 'select-tickets'})
             #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
             # 'user': user, 'concert': concert})
-        else:
-            return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
+        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
 
     elif request.method == 'PUT':
         print("User is making a payment")
