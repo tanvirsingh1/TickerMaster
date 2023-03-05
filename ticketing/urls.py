@@ -12,6 +12,6 @@ urlpatterns = [
     path('register', views.register_window, name="register"),
     path('concert-window-display/', views.concert_window, name="concerts"),
     path('support/', views.support_ticket, name="support"),
-    path('purchase-ticket/', views.purchase_ticket, name='purchase') 
+    path('purchase-ticket/', views.purchase_ticket, name='purchase')
     #path('purchase-ticket/<int:concert_id>/', views.purchase_ticket, name='purchase_ticket')
 ]
