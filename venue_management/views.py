@@ -98,9 +98,9 @@ def generate_promo_code(request):
     return render(request, "venue_management/generate_promo_code.html", {"form": form})
 
 
-""" Used to pull data in the concerts database from models"""
 def all_concerts(request):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the html"""
+    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
+      html"""
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
     p = Paginator( Concert.objects.all(),3)
@@ -111,7 +111,8 @@ def all_concerts(request):
 
 
 def add_concert(request):
-    """This view is used for adding new concert to the html and using POST request that concert is added to the database"""
+    """This view is used for adding new concert to the html and using POST request that concert is added to the
+       database"""
     if request.method == 'POST':
         name = request.POST['name']
         artist_name = request.POST['artist_name']
