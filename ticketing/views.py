@@ -88,70 +88,43 @@ def support_ticket(request):
 
 
 
+
+
+#FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
 def purchase_ticket(request):
-
     """
-    buying a ticket --> login, registration required
+    select a ticket --> login, registration required
     """
-
-    user = request.user
-    #concert = request.concert
-
     #check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
 
-
+    user = request.user
+    #concert = request.concert
+    print("sdjflkjsd")  
     #retrieve data from form
     if request.method == 'POST':
+        print("User is selected a tickets")
         quantity = int(request.POST.get('quantity'))
         print(request.POST.get('promo'))
 
         if quantity == 0:
             error = "Please, select your ticket(s)."
-            return render(request, f'Ticketing_manager/purchase_ticket.html', {'messages': error, 'user': user})
-            #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, 'user': user, 'concert': concert})
 
+            """
+            promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
+            """
+            
+            return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, 'type' : 'select-tickets'})
+            #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, 'user': user, 'concert': concert})
+        else:
+            return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, 'type' : 'purchase-ticket'})
+
+    
+    elif request.method == 'PUT':
+        print("User is making a payment")
 
 
     # pass the current user object to the template context
     #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
-    return render(request, f'Ticketing_manager/purchase_ticket.html', {'user': user})
-
-    if request.method == 'POST':
-        seating_type = request.POST.get('seating_type')
-        price = request.POST.get('price')
-        seats_available = request.POST.get('seats_available')
-
-
-        #check if the promo code is valid
-        promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
-        if promo_code:
-            price = int(price) * promo_code.get_discount()
-
-        #calculate the total price
-        total_price = price * quantity
-
-        #validation
-        if not all([firstname, lastname, email, seating_type, price, seats_available]):
-            # error message if any of the required fields are missing
-            return render(request, 'purchase_ticket.html', {'error_message': 'Please fill in all required fields.'})
-
-        #store the data in session
-        request.session['purchase_data'] = {
-            'firstname': firstname,
-            'lastname': lastname,
-            'email': email,
-            'seating_type': seating_type,
-            'price': price,
-            'seats_available': seats_available,
-            'promo_code': promo_code,
-            'quantity': quantity,
-            'total_price': total_price,
-        }
-
-        #redirect to the next page
-        return redirect('payment_info')
-
-    else:
-        return render(request, 'Ticketing_manager/purchase_ticket.html', {'form': form})
+    return render(request, f'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})

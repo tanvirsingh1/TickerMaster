@@ -4,7 +4,7 @@ forms.py - Responsible for defining forms for the Ticketing application
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Eventgoer, SupportTicket, Concert
+from .models import Eventgoer, SupportTicket
 
 
 class RegisterForm(UserCreationForm):

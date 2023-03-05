@@ -1,0 +1,171 @@
+{% extends 'ticketing/base.html' %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="my-5">
+        {% if messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          {{ messages }}
+        </div>
+        <br>
+        {% endif %}
+
+        {% if type == "select-tickets" %}
+        <form method="post" action="purchase-ticket/">
+          {% csrf_token %}
+          <div class="progress">
+            <div class="progress-bar bg-warning col-md-6" role="progressbar" style="width: 33%; color:black"
+              aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"> 33%</div>
+          </div>
+          <br>
+          <h5>Personal Details</h5>
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}"
+                  readonly>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}"
+                  readonly>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" readonly>
+          </div>
+
+
+          <div class="my-5">
+            <h5 class="my-3">Ticket Details</h5>
+            <hr>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <button class="btn-sm btn-primary" type="button" onclick="decr_quantity()">-</button>
+                  <input type="number" id="quantity" name="quantity" class="form-control text-center" style="padding:0"
+                    value="0" readonly>
+                  <button class="btn-sm btn-primary" type="button" onclick="incr_quantity()">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="my-5">
+            <h5 class="my-3">Total: $0.00</h5>
+            <hr>
+            <form class="card p-2">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Promo code">
+                <button type="submit" class="btn btn-secondary">Redeem</button>
+              </div>
+            </form>
+
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100">Purchase</button>
+
+        </form>
+        {% elif type == "make-payment" %}
+        <form method="put" action="purchase-ticket/">
+          {% csrf_token %}
+          <div class="progress">
+            <div class="progress-bar col-md-6" role="progressbar" style="width: 66%;" aria-valuenow="66"
+              aria-valuemin="0" aria-valuemax="100">66%</div>
+          </div>
+
+          <div class="my-5">
+            <h5 class="my-3">Total: ${{price}}</h5>
+            <hr>
+
+            <div class="row mt-3">
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="card_number">Credit Card Number</label>
+                  <input type="text" id="card_number" name="card_number" class="form-control" maxlength="16">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="cvv">CVV</label>
+                  <input type="number" id="cvv" name="cvv" class="form-control" maxlength="4">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="expiration_month">Expiration Date</label>
+                <div class="form-group">
+                  <input type="number" id="expiration_month" name="expiration_month" class="form-control"
+                    placeholder="MM" maxlength="2">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <input type="number" id="expiration_year" name="expiration_year" class="form-control"
+                    placeholder="YYYY" maxlength="4">
+                </div>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label for="card_number">Cardholder Name</label>
+              <input type="text" id="card_number" name="card_number" class="form-control"
+                placeholder="example: John Doe">
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100">Pay</button>
+
+        </form>
+        {% elif type == "success" %}
+        <div class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Modal title</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <p>Modal body text goes here.</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-primary">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+        {%endif%}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let quantity = 0;
+  function incr_quantity() {
+    //TODO add check if reseller or not
+    document.getElementById("quantity").value = ++quantity;
+  }
+
+  function decr_quantity(qnt) {
+    if (quantity - 1 >= 0)
+      document.getElementById("quantity").value = --quantity;
+  }
+</script>
+{% endblock body %}
