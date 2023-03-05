@@ -117,10 +117,7 @@ def purchase_ticket(request):
             # 'user': user, 'concert': concert})
         return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
 
-    elif request.method == 'PUT':
-        print("User is making a payment")
-
-
+    print("User is making a payment")
     # pass the current user object to the template context
     #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
     return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})
