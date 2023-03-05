@@ -5,13 +5,14 @@ signals.py - Handles events triggered in the venue_management application
 # Imports
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
+
 from . import models
 
 @receiver(pre_delete, sender=models.Venue)
-def pre_delete_venue(sender: models.Venue, instance: models.Venue, **kwargs):
+def pre_delete_venue(_sender: models.Venue, instance: models.Venue, **kwargs):
     """
     Called just before a venue is deleted. Will delete all seat types.
-    :param sender: the class of the model that triggered the signal
+    :param _sender: the class of the model that triggered the signal
     :param instance: the instance of the model that triggered the signal
     :param kwargs: * additional arguments *
     """
