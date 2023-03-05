@@ -101,13 +101,12 @@ def purchase_ticket(request):
 
     user = request.user
     #concert = request.concert
-    print("sdjflkjsd")  
+
     #retrieve data from form
     if request.method == 'POST':
-        print("User is selected a tickets")
+       
         quantity = int(request.POST.get('quantity'))
-        print(request.POST.get('promo'))
-
+        print(quantity)
         if quantity == 0:
             error = "Please, select your ticket(s)."
 
@@ -118,7 +117,7 @@ def purchase_ticket(request):
             return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, 'type' : 'select-tickets'})
             #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, 'user': user, 'concert': concert})
         else:
-            return render(request, f'ticketing/purchase_ticket.html', {'messages': error, 'user': user, 'type' : 'purchase-ticket'})
+            return render(request, f'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
 
     
     elif request.method == 'PUT':
