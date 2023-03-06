@@ -68,6 +68,13 @@ class VenueManager(AbstractBaseUser):
         """
         return self.is_superuser
 
+    def __str__(self):
+        """
+        Gets the name and email of the venue manager
+        :return: name and email of the venue manager
+        """
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
     class DoesNotExist(Exception):
         """
         Bypasses the DoesNotExist exception for the venue manager account
@@ -82,19 +89,19 @@ class Location(models.Model):
         """
         A list of valid provinces
         """
-        ONTARIO = 'ON', "Ontario"
-        QUEBEC = 'QC', "Quebec"
-        NOVA_SCOTIA = 'NS', "Nova Scotia"
-        NEW_BRUNSWICK = 'NB', "New Brunswick"
-        MANITOBA = 'MB', "Manitoba"
-        BRITISH_COLUMBIA = 'BC', "British Columbia"
-        PEI = 'PE', "Prince Edward Island"
-        SASKATCHEWAN = 'SK', "Saskatchewan"
         ALBERTA = 'AB', "Alberta"
+        BRITISH_COLUMBIA = 'BC', "British Columbia"
+        MANITOBA = 'MB', "Manitoba"
+        NEW_BRUNSWICK = 'NB', "New Brunswick"
         NEWFOUNDLAND = 'NL', "Newfoundland and Labrador"
         NORTHWEST_TERRITORIES = 'NT', "Northwest Territories"
-        YUKON_TERRITORIES = 'YT', "Yukon Territories"
+        NOVA_SCOTIA = 'NS', "Nova Scotia"
         NUNAVUT = 'NU', "Nunavut"
+        ONTARIO = 'ON', "Ontario"
+        PEI = 'PE', "Prince Edward Island"
+        QUEBEC = 'QC', "Quebec"
+        SASKATCHEWAN = 'SK', "Saskatchewan"
+        YUKON_TERRITORIES = 'YT', "Yukon Territories"
 
     # --- Member Values ---
     street_num = models.IntegerField(validators=(
@@ -168,22 +175,21 @@ class Venue(models.Model):
     Describes a Venue
     """
     name = models.CharField(max_length=60, verbose_name="Name")
-    image = models.URLField(max_length=255, verbose_name="Image URL")
-    website = models.URLField(max_length=255, verbose_name="Website")
+    description = models.CharField(max_length=255, verbose_name="Description", default=None)
+    image = models.ImageField(max_length=255, verbose_name="Image")
+    website = models.URLField(max_length=255, verbose_name="Website", null=False)
     location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
 
     # ManyToManyField: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/
     seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
     concerts = models.ManyToManyField(Concert, verbose_name="Concerts")
-    managers = models.ManyToManyField(VenueManager, verbose_name="Managers")
+    managers = models.ManyToManyField(VenueManager, verbose_name="Managers", related_name="venues")
 
     def __str__(self):
         """
         :return: the venue's name
         """
         return str(self.name)
-
-
 
 
 class PromoCode(models.Model):
