@@ -24,8 +24,10 @@
               <input type="number" class="form-control item" id="min-age" name="min_age" placeholder="Minimum Age" min="1" max="100" required>
             </div>
           </div>
-          <div class="mb-3 form-group">
-            <input type="number" min="10" step="any" class="form-control item" id="price" name="price" placeholder="Price in CAD" required>
+          <div class="input-group mb-3 form-group">
+            <!-- TODO: Remove once seat_type system is implemented -->
+            <span class="input-group-text" id="">$CAD</span>
+            <input type="number" min="10" step="any" class="form-control item" id="price" name="price" placeholder="Ticket Price" required>
           </div>
           <div class="mb-3 form-group">
             <label for="venueImage" class="form-label">Image<em class="required-txt">*</em></label>
