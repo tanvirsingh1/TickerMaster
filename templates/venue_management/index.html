@@ -1,9 +1,67 @@
 {% extends 'venue_management/base.html' %}
-
+{% load static %}
 {% block title %}Venues{% endblock %}
 
-{% block content %}
-  <div class="container">
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic&amp;display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+{% endblock %}
 
+{% block content %}
+  <div>
+    <header class="text-center text-white masthead" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url({% static 'images/concert.png' %}) no-repeat center center; background-size: cover;">
+      <div class="container">
+        <div class="row" style="padding-top: 150px; padding-bottom: 150px">
+          <div class="col-xl-9 mx-auto position-relative">
+            <h1 class="mb-5">When your tickets are easy to buy...<br>Customers will come!</h1>
+          </div>
+          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto position-relative">
+            <form>
+              <div class="row">
+                <div class="col-12 col-md12 col-xxl-12"><a class="btn btn-primary btn-lg" type="button" href="{% url 'venue_management:register' %}">Register Your Venue Today!</a></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="text-center features-icons" style="padding-top: 100px; padding-bottom: 100px">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+              <div class="d-flex features-icons-icon" style="padding-bottom: 10px"><svg xmlns="http://www.w3.org/2000/svg" width="75px" height="75px" fill="currentColor" viewBox="0 0 16 16" class="bi bi-coin m-auto text-primary" data-bss-hover-animate="pulse" style="font-size: 68px;">
+                <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9H5.5zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518l.087.02z"></path>
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
+                <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"></path>
+              </svg></div>
+              <h3>Drive Revenue</h3>
+              <p class="lead mb-0">A full revenue management solution</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+              <div class="d-flex features-icons-icon" style="padding-bottom: 10px"><svg xmlns="http://www.w3.org/2000/svg" width="75px" height="75px" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-plus m-auto text-primary" data-bss-hover-animate="pulse" style="font-size: 73px;">
+                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"></path>
+                <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"></path>
+              </svg></div>
+              <h3>Ticket Listing</h3>
+              <p class="lead mb-0">Concerts are listed for all to see!</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+              <div class="d-flex features-icons-icon" style="padding-bottom: 10px"><i class="icon-check m-auto text-primary" style="font-size: 75px" data-bss-hover-animate="pulse"></i></div>
+              <h3>Easy to Use</h3>
+              <p class="lead mb-0">Register a concert in minutes!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
+<script src="{% static 'js/bs-init.js' %}"></script>
 {% endblock %}

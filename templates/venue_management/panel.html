@@ -1,0 +1,36 @@
+{% extends 'venue_management/base.html' %}
+{% block title %}My Venues{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br />
+    <div>
+      <div class="btn-toolbar float-end">
+        <a class="btn btn-success" role="button"><i class="icon-plus" style="font-size: 14px"></i> New Venue</a>
+      </div>
+      <h1>My Venues</h1>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="col-2">Name</th>
+            <th scope="col" class="col-7">Description</th>
+            <th scope="col" class="col-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th class="col-3">Name here</th>
+          <td class="col-5">Description here</td>
+          <td class="col-2">Actions here</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

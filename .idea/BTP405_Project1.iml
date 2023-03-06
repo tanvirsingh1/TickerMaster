@@ -19,6 +19,8 @@
     <orderEntry type="jdk" jdkName="Python 3.11 (BTP405_Project1)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="simple-line-icons" level="application" />
+    <orderEntry type="library" name="animate.css" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
