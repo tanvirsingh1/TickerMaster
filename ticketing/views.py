@@ -9,11 +9,19 @@ from .models import Eventgoer
 
 def home_window(request):
     """
-    Main index page
-    :returns the main page
+    The main index page
+    :param request: (Django) object of the request's properties
+    :return: ticketing/home.html
     """
     return render(request, 'ticketing/home.html')
 
+def about_window(request):
+    """
+    The about us page
+    :param request: (Django) object of the request's properties
+    :return: ticketing/about.html
+    """
+    return render(request, 'ticketing/about.html')
 
 def login_window(request):
     """
