@@ -98,7 +98,7 @@ def support_ticket(request):
 
 
 # FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
-def purchase_ticket(request, concert_id):
+def buy(request, concert_id):
     """
     select a ticket --> login, registration required
     """

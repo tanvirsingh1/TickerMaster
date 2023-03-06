@@ -13,7 +13,7 @@
         {% endif %}
 
         {% if type == "select-tickets" %}
-        <form method="post" action="/purchase-ticket/" id="select-tickets">
+        <form method="post" action="/buy/" id="select-tickets">
           {% csrf_token %}
           <div class="progress">
             <div class="progress-bar bg-warning col-md-6" role="progressbar" style="width: 33%; color:black"
@@ -75,7 +75,7 @@
 
         </form>
         {% elif type == "make-payment" %}
-        <form method="put" action="/purchase-ticket/" id="make-payment">
+        <form method="put" action="/buy/" id="make-payment">
           {% csrf_token %}
           <div class="progress">
             <div class="progress-bar col-md-6" role="progressbar" style="width: 66%;" aria-valuenow="66"
