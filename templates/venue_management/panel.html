@@ -60,4 +60,11 @@
     </div>
   </div>
   {% include 'venue_management/add_venue_modal.html' %}
+  {% if redirect %}
+    <script>
+      window.setTimeout(function(){
+        window.location.href = "{% url 'venue_management:panel' %}";
+      }, 3000);
+    </script>
+  {% endif %}
 {% endblock %}

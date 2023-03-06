@@ -106,15 +106,18 @@ def delete_venue(request, venue_id):
                 # User has all permissions. Delete the venue.
                 venue.delete()
                 return render(request, 'venue_management/panel.html', {
-                    'success_message': "Successfully deleted the venue!"
+                    'success_message': "Successfully deleted the venue!",
+                    'redirect': True
                 })
             # The user isn't a manager of this venue
             return render(request, 'venue_management/panel.html', {
-                'error_message': "You are not a manager of this venue!"
+                'error_message': "You are not a manager of this venue!",
+                'redirect': True
             })
         # The venue doesn't exist
         return render(request, 'venue_management/panel.html', {
-            'error_message': "This venue does not exist!"
+            'error_message': "This venue does not exist!",
+            'redirect': True
         })
     # User not logged in
     return redirect('/venue/logout')
@@ -140,6 +143,7 @@ def add_venue(request):
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # General Venue Information
         name = request.POST['name']
+        description = request.POST['description']
         website = request.POST['website']
         image = request.FILES.get('venue_image')
         manager = request.user
@@ -153,7 +157,7 @@ def add_venue(request):
         # Form Models and save to DB
         venue_location = Location(street_num=street_num, street_name=street_name, city=city, province=province)
         venue_location.save()
-        venue = Venue(name=name, website=website, image=image, location=venue_location)
+        venue = Venue(name=name, description=description, website=website, image=image, location=venue_location)
         venue.save()
         venue.managers.add(manager)
         return redirect('/venue/panel/')
