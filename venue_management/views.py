@@ -3,7 +3,6 @@ views.py - Responsible for handling this application's views
 """
 
 # Imports
-from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout as lo
@@ -68,7 +67,6 @@ def register_manager_window(request):
             password = form.cleaned_data['password1']
             user = authenticate(request, email=email, password=password, model=VenueManager)
 
-            print(user)
             login(request, user)
             return redirect('/venue/panel')
     else:
@@ -149,17 +147,6 @@ def generate_promo_code(request):
         form = PromoCodeForm()
     return render(request, "venue_management/generate_promo_code.html", {"form": form})
 
-
-def all_concerts(request):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
-      html"""
-    concert_list = Concert.objects.all()
-    # arguments to call to your database, and how many arguments you want per page
-    p = Paginator( Concert.objects.all(),3)
-    page = request.GET.get('page')
-    concerts = p.get_page(page)
-
-    return render(request,'venue_management/concert.html', {'concerts':concert_list, 'conc':concerts})
 
 
 def add_concert(request):

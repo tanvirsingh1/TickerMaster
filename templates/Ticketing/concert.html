@@ -1,19 +1,16 @@
-{% extends 'venue_management/base.html' %}
+{% extends 'Ticketing/base.html' %}
 {% block title %}Venue All Concerts{% endblock %}
 
-{% block content %}
+{% block body %}
  {% load static %}
+ <br/> <br/><br/><br/>
   <link href="{% static 'css/venue.css' %}" rel="stylesheet">
 
    <div class="row">
   <div class="col-md-6">
-    <h1 style="font-family: 'Segoe UI Black'" >All Concerts</h1>
+    <h1 style="font-family: 'Segoe UI Black'; color: white " >All Concerts</h1>
   </div>
-  <div class="col-md-6  mt-2 text-end" >
-       <a href="{% url 'venue_management:add_concert' %}">
-   <button type="button" class="btn btn-success me-3">Add Concert</button>
-       </a>
-  </div>
+
 </div>
 
 
@@ -48,14 +45,14 @@
       <div class="accordion-body">
 <div class="container">
  <div class="row mb-3">
-  <div class="col-md-6">
+  <div class="col-md-5">
     <h5 class="fw-bold">Description</h5>
     <p>{{ concert.description }}</p>
   </div>
 
   <div class="col-md-5">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-5">
         <h5 class="fw-bold">Concert Time</h5>
         <p>{{ concert.concert_date }}</p>
       </div>
@@ -64,7 +61,7 @@
         <p>{{ concert.min_age }}</p>
       </div>
 
-      <div  class="col-md-4">
+      <div  class="col-md-3">
         <h5 class="fw-bold">Price</h5>
         <p>${{ concert.price }}</p>
       </div>
@@ -75,7 +72,7 @@
   </div>
   <div class="row">
     <div class="col-md-12 text-center">
-        <a href="{% url 'venue_management:buy' concert.id  %}">
+        <a href="{% url 'ticketing:buy' concert.id  %}">
       <button type="button" class="btn btn-primary" id="buy-tickets-btn">Buy Tickets</button>
       </a>
     </div>
@@ -88,7 +85,8 @@
 </div>
 
     {% endfor %}
-<nav aria-label="Page navigation example" style="bottom: 2px; margin-left: 40px;position: fixed;" >
+    <br/>
+<nav aria-label="Page navigation example" style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed;" >
   <ul class="pagination">
 
 

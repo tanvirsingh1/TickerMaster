@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 from .manager import UserManager
+
 User = get_user_model()
 
 
