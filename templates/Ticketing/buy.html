@@ -7,12 +7,7 @@
 <link href="{% static 'css/buy.css' %}" rel="stylesheet">
 {% endblock %}
 {% block body %}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+<br><br><br><br><br><br>
 <div class="container">
 
   {% if type == "select-tickets" %}
@@ -21,7 +16,7 @@
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Your Cart</span>
-          <span class="badge bg-primary rounded-pill" id="number-of-items">0</span>
+          <span class="badge bg-primary rounded-pill" id="number-of-tickets">0</span>
         </h4>
         <ul class="list-group mb-3" id="cart">
 
@@ -81,15 +76,15 @@
                             {% endif %}
                             <div class="card-body">
                               <h5 class="card-title">Seat {{i.name}}</h5>
-                              <input type="hidden" class ="seat_name" value="{{i.name}}">
+                              <input type="hidden" class="seat_name" value="{{i.name}}">
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
-                              <input type="hidden" class ="seat_price" value="{{i.price}}">
+                              <input type="hidden" class="seat_price" value="{{i.price}}">
                               <p class="card-text text-muted">{{i.description}}</p>
                               <div class="input-group col-sm-6" id="select-qnty">
                                 <button class="btn-sm btn-secondary qnty_bnt" type="button"
                                   onclick="decr_quantity()">-</button>
-                                <input type="number" name="quantity" class="form-control text-center quantity"
-                                  value="0" readonly>
+                                <input type="number" name="quantity" class="form-control text-center quantity" value="0"
+                                  readonly>
                                 <button class="btn-sm btn-secondary qnty_bnt" type="button"
                                   onclick="incr_quantity()">+</button>
                               </div>
@@ -137,7 +132,11 @@
 
               {% if user.is_reseller == True %}
               <p><small class="text-light"><i class="icon-check"></i> Reseller</small></p>
+              <input type="hidden" id="reseller" value="True">
+              {% else %}
+              <input type="hidden" id="reseller" value="False">
               {% endif %}
+
             </div>
           </div>
 
@@ -237,94 +236,129 @@
 
   let cart = [];
   let total = 0;
+  let num_of_tickets = 0;
+  let reseller = false;
 
+  if (document.getElementById('reseller').value == "True")
+    reseller = true;
+
+  //add ticket (seat)
   function incr_quantity() {
 
+    //data fetch
     let mainDIV = document.getElementsByClassName("active")[0];
     let quantity = parseInt(mainDIV.getElementsByClassName("quantity")[0].value);
-    mainDIV.getElementsByClassName("quantity")[0].value = ++quantity;
     let seat_name = mainDIV.getElementsByClassName('seat_name')[0].value;
     let seat_price = parseFloat(mainDIV.getElementsByClassName('seat_price')[0].value);
     let exists_in_cart = false;
-    //TODO add check if reseller or not
 
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name == seat_name) {
-        cart[i].quantity = quantity;
-        cart[i].price += seat_price;
-        exists_in_cart = true;
+    //max tickets for reseller is 10
+    if (num_of_tickets < 10 || reseller == true) {
 
-        let li = document.getElementById(seat_name);
-        li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name + " (" + cart[i].quantity + ")";
-        li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+      mainDIV.getElementsByClassName("quantity")[0].value = ++quantity;
 
-        break;
+      //if seat already exits in the cart - updates quantity and price
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].name == seat_name) {
+          cart[i].quantity = quantity;
+          cart[i].price += seat_price;
+          exists_in_cart = true;
+
+          let li = document.getElementById(seat_name);
+          li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name;
+          li.getElementsByTagName('small')[0].innerText = "Number of Tickets: " + cart[i].quantity;
+          li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+
+          break;
+        }
       }
-    }
+      //if seat doesn't exit in the cart - adds it
+      if (exists_in_cart == false) {
+        cart.push({ 'name': seat_name, 'quantity': quantity, 'price': seat_price });
+        let ul = document.getElementById('cart');
+        let li = document.createElement('li');
+        li.id = seat_name;
+        li.className = "list-group-item d-flex justify-content-between lh-sm"
+        let div = document.createElement('div');
+        let h6 = document.createElement('h6');
+        h6.className = "my-0";
+        h6.innerText = "Seat " + seat_name;
+        let small = document.createElement('small');
+        small.className = "text-muted";
+        small.innerHTML = "Number of Tickets: " + quantity;
+        div.appendChild(h6);
+        div.appendChild(small);
+        li.appendChild(div);
+        let span = document.createElement('span');
+        span.className = "text-muted";
+        span.innerText = "$" + seat_price;
+        li.appendChild(span);
+        ul.appendChild(li);
+      }
 
-    if (exists_in_cart == false) {
-      cart.push({ 'name': seat_name, 'quantity': quantity, 'price': seat_price });
-      document.getElementById('number-of-items').innerHTML = cart.length;
-      let ul = document.getElementById('cart');
-      let li = document.createElement('li');
-      li.id = seat_name;
-      li.className = "list-group-item d-flex justify-content-between lh-sm"
-      let div = document.createElement('div');
-      let h6 = document.createElement('h6');
-      h6.className = "my-0 text-muted";
-      h6.innerText = "Seat " + seat_name + "(" + quantity + ")";
-      div.appendChild(h6);
-      li.appendChild(div);
-      let span = document.createElement('span');
-      span.className = "text-muted";
-      span.innerText = "$" + seat_price;
-      li.appendChild(span);
-      ul.appendChild(li);
-    }
+      //updates the total of the whole purchase
+      total += seat_price;
+      document.getElementById('total').innerText = "Total: $" + total;
 
-    total += seat_price;
-    document.getElementById('total').innerText = "Total: $" + total;
+      //updates total number of tickets for this order
+      num_of_tickets++;
+      document.getElementById('number-of-tickets').innerHTML = num_of_tickets;
+    }
   }
 
+  //remove ticket (seat)
   function decr_quantity() {
 
+    //data fetch
     let mainDIV = document.getElementsByClassName("active")[0];
     let quantity = parseInt(mainDIV.getElementsByClassName("quantity")[0].value);
     let seat_name = mainDIV.getElementsByClassName('seat_name')[0].value;
     let seat_price = parseFloat(mainDIV.getElementsByClassName('seat_price')[0].value);
 
     if (quantity - 1 >= 0) {
+
+      //updates quantity on the tickets carousel
       mainDIV.getElementsByClassName("quantity")[0].value = --quantity;
 
       for (let i = 0; i < cart.length; i++) {
         if (cart[i].name == seat_name) {
-          if ( quantity > 0) {
+
+          //if the number of selected tickets more than 0 - updates the cart
+          if (quantity > 0) {
             cart[i].quantity = quantity;
             cart[i].price -= seat_price;
             let li = document.getElementById(seat_name);
-            li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name + " (" + cart[i].quantity + ")";
+            li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name;
+            li.getElementsByTagName('small')[0].innerText = "Number of Tickets: " + cart[i].quantity;
             li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
           }
+
+          //if the number of selected tickets is 0 - removes from the cart
           else {
             cart.splice(i, 1);
             let li = document.getElementById(seat_name);
             li.remove();
-            document.getElementById('number-of-items').innerHTML = cart.length;
           }
+
           break;
         }
       }
+
+      //updates the total of the whole purchase
       total -= seat_price;
       if (total > 0)
         document.getElementById('total').innerText = "Total: $" + total;
       else
         document.getElementById('total').innerText = "Total: $0.00";
 
+      //updates total number of tickets for this order
+      num_of_tickets--;
+      document.getElementById('number-of-tickets').innerHTML = num_of_tickets;
     }
-
-
   }
+
 </script>
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
   integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
