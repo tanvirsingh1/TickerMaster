@@ -58,15 +58,16 @@
             <thead>
             <tr>
               <th scope="col" class="col-2">Name</th>
-              <th scope="col" class="col-7">Description</th>
-              <th scope="col" class="col-2">Actions</th>
+              <th scope="col" class="col-6">Description</th>
+              <th scope="col" class="col-2">Date</th>
+              <th scope="col" class="col-3">Actions</th>
             </tr>
             </thead>
             <tbody>
             {% for concert in venue.concerts.all %}
               <tr>
-                <th class="col-3" id="{{ concert.id }}">{{ concert.name }}</th>
-                <td class="col-5">
+                <th class="col-2" id="{{ concert.id }}">{{ concert.name }}</th>
+                <td class="col-6">
                   {% if concert.description == None %}
                     <em class="grey">No Description</em>
                   {% else %}
@@ -74,6 +75,9 @@
                   {% endif %}
                 </td>
                 <td class="col-2">
+                  {{ concert.concert_date }}
+                </td>
+                <td class="col-3">
                   {# Action Buttons #}
                   <a type="button" href="{% url 'venue_management:manage_concert' concert.id %}" class="btn btn-outline-primary">View</a>
                   <a type="button" href="{% url 'venue_management:delete_concert' concert.id %}" class="btn btn-outline-danger">Delete</a>
