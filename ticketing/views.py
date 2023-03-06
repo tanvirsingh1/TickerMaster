@@ -134,14 +134,12 @@ def all_concerts(request,concert=None,error=None):
         concert2 = [concert]
         return render(request, 'Ticketing/concert.html', {'conc': concert2})
 
-    else:
-
-        concert_list = Concert.objects.all()
-        # arguments to call to your database, and how many arguments you want per page
-        p = Paginator( Concert.objects.all(),3)
-        page = request.GET.get('page')
-        concerts = p.get_page(page)
-        return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts,'error':error})
+    concert_list = Concert.objects.all()
+    # arguments to call to your database, and how many arguments you want per page
+    p = Paginator( Concert.objects.all(),3)
+    page = request.GET.get('page')
+    concerts = p.get_page(page)
+    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts,'error':error})
 
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""
@@ -159,13 +157,13 @@ def searched(request):
 
         if not search:
             return redirect("/concerts")
-        else:
-            try:
-                concert = Concert.objects.get(artist_name__iexact=search)
-                return all_concerts(request, concert)
-            except Concert.DoesNotExist:
-                error = f"No Concerts by {search}"
-                return all_concerts(request,None, error)
+
+        try:
+            concert = Concert.objects.get(artist_name__iexact=search)
+            return all_concerts(request, concert)
+        except Concert.DoesNotExist:
+            error = f"No Concerts by {search}"
+            return all_concerts(request,None, error)
 
     else:
-        return render(request, "/concerts")
+        return render(request, "/concerts")  # TODO: This bork. Fix it
