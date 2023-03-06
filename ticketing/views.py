@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
-from venue_management.models import Concert
+from venue_management.models import VenueManager, PromoCode, Venue, Location, Concert
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
@@ -19,7 +19,6 @@ def home_window(request):
     """
     return render(request, 'ticketing/home.html')
 
-
 def about_window(request):
     """
     The about us page
@@ -27,7 +26,6 @@ def about_window(request):
     :return: ticketing/about.html
     """
     return render(request, 'ticketing/about.html')
-
 
 def login_window(request):
     """
@@ -39,8 +37,7 @@ def login_window(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, email=email,
-                            password=password, model=Eventgoer)
+        user = authenticate(request, email=email, password=password, model=Eventgoer)
 
         if user is not None:
             login(request, user)
@@ -68,8 +65,7 @@ def register_window(request):
             form.save()
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(request, email=email,
-                                password=password, model=Eventgoer)
+            user = authenticate(request, email=email, password=password, model=Eventgoer)
             login(request, user)
             # needs to specify where the redirect page goes
             return redirect('/login')
@@ -82,7 +78,6 @@ def register_window(request):
 def support_ticket(request):
     """
     support ticket Window
-
     """
     if request.method == 'POST':
         form = SupportTicketForm(request.POST)
@@ -109,7 +104,7 @@ def buy(request, concert_id):
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
     print("dfsdfsdfs")
-    print()
+    print(concert.venues.first())
 
     # retrieve data from form
     if request.method == 'POST':
@@ -130,7 +125,6 @@ def buy(request, concert_id):
     # pass the current user object to the template context
     return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert, 'type': 'select-tickets'})
 
-
 def all_concerts(request,concert=None,error=None):
     """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
       html"""
@@ -141,10 +135,10 @@ def all_concerts(request,concert=None,error=None):
 
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
-    p = Paginator(Concert.objects.all(), 3)
+    p = Paginator( Concert.objects.all(),3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'Ticketing/concert.html', {'concerts': concert_list, 'conc': concerts})
+    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts,'error':error})
 
 def searched(request):
     """Search each concert based on the value, if value matches that concert shall be displayed, else nothing"""

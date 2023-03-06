@@ -138,11 +138,10 @@ class Concert(models.Model):
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)
     ))
-    price = models.FloatField(default=0,null=True,verbose_name="Price")
+    price = models.FloatField(default=0,null=True,verbose_name="Ticket Price")
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue
-    objects = models.Manager()
 
     def __str__(self):
         """
@@ -161,7 +160,7 @@ class SeatType(models.Model):
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=1_000_000)
     ))
-    price = models.FloatField(verbose_name="Ticket Price", default=0, null=True, validators=(
+    price = models.FloatField(verbose_name="Price", validators=(
         validators.MinValueValidator(limit_value=0),
         validators.MaxValueValidator(limit_value=100_000)
     ))
@@ -179,7 +178,7 @@ class Venue(models.Model):
     Describes a Venue
     """
     name = models.CharField(max_length=60, verbose_name="Name")
-    description = models.CharField(max_length=255, verbose_name="Description", default=None)
+    #description = models.CharField(max_length=255, verbose_name="Description", default=None)       #have error because of this
     image = models.ImageField(max_length=255, verbose_name="Image")
     website = models.URLField(max_length=255, verbose_name="Website", null=False)
     location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")

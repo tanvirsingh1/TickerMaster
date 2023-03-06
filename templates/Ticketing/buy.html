@@ -2,6 +2,8 @@
 {% block title %}Ticket Purchasing{% endblock %}
 {% load static %}
 {% block stylesheets %}
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
 <link href="{% static 'css/buy.css' %}" rel="stylesheet">
 {% endblock %}
 {% block body %}
@@ -75,90 +77,118 @@
 
         {% csrf_token %}
 
-        <!--CONCERT DETAILS (WILL BE UPDATED)-->
+        <!--CONCERT DETAILS-->
         <h4 class="mb-3">Concert Details</h4>
         <hr>
         <div class="row g-3">
           {% if concert.concert_image %}
-          <img src="{% static 'default.jpg' %}" style="object-fit: cover;" class="col-sm-6">
-          <!--<img src="{% static concert.concert_image %}" class="col-sm-6">-->
+          <img src="{% static concert.concert_image %}" class="col-sm-5">
           {% else %}
-          <img src="{% static 'default.jpg' %}" class="col-sm-6">
+          <img src="{% static 'default.jpg' %}" class="col-sm-5">
           {% endif %}
 
-          <div class="col-sm-6">
-            <h4>{{concert.name}} ({{concert.min_age}}+)</h4>
-            <p>{{concert.description}}</p>
-            <span><strong>Date: </strong>{{concert.concert_date}}</span><br>
-            <span><strong>Address: </strong>{{concert.venues.first.location}}</span>
+          <div class="col-sm-7">
+            <div>
 
-            <hr>
-            <h4 class="mb-3">Ticket Details</h4>
+              <h4 class="mb-3">Tickets</h4>
+              <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-interval="false"
+                style="margin: 0; padding: 0; height: max-content;            ">
+                <ol class="carousel-indicators">
+                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
 
 
+                  <div class="card" style="background-color: #212F42;" id="containter-qnty">
+                    <div class="row g-3">
+                      <div class="col-sm-2">
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                          data-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="sr-only"></span>
+                        </a>
+                      </div>
 
-            {% for i in concert.venues.first.seat_types.all %}
-            <div class="card" style="width: 18rem;">
-              <div class="card-body" >
-                <h5 class="card-title" value="">Seat</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                  card's content.</p>
-                <div class="input-group ">
-                  <button class="btn-sm btn-primary" type="button" onclick="decr_quantity()">-</button>
-                  <input type="number" style="background-color: grey; outline: none; color: white;"
-                    id="quantity" name="quantity" class="form-control text-center" style="padding:0" value="0" readonly>
-                  <button class="btn-sm btn-primary" type="button" onclick="incr_quantity()">+</button>
+                      <div class="col-sm-8">
+                        {% for i in concert.venues.first.seat_types.all %}
+                        {% if i == concert.venues.first.seat_types.first %}
+                        <div class="carousel-item active">
+                          {% else %}
+                          <div class="carousel-item">
+                            {% endif %}
+                            <div class="card-body">
+                              <h5 class="card-title">Seat {{i.name}}</h5>
+                              <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
+                              <p class="card-text text-muted">{{i.description}}</p>
+                              <div class="input-group col-sm-6" id="select-qnty">
+                                <button class="btn-sm btn-primary qnty_bnt" type="button"
+                                  onclick="decr_quantity()">-</button>
+                                <input type="number" id="quantity" name="quantity" class="form-control text-center"
+                                  value="0" readonly>
+                                <button class="btn-sm btn-primary qnty_bnt" type="button"
+                                  onclick="incr_quantity()">+</button>
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+
+                      <div class="col-sm-2">
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                          data-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="sr-only"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
-              </div>
-            </div>
-
-
-
-
-            <div class="row ">
-
-              <div class="input-group">
-                <span>Seat <strong>{{i.name}}</strong>: ${{i.price}}</span>
 
               </div>
+
+              <hr class="my-4">
+
+              <h4>{{concert.name}} ({{concert.min_age}}+)</h4>
+              <p class="card-text"><small class="text-light"><i class="icon-location-pin"></i>
+                  {{concert.venues.first.name }} - {{ concert.venues.first.location }}</small></p>
+              <p class="card-text"><strong><i class="icon-music-tone"></i> Artist:</strong> {{ concert.artist_name }}
+              </p>
+              <p class="card-text"><strong><i class="icon-calendar"></i> Date:</strong> {{ concert.concert_date }}</p>
+              <p class="card-text" style="border-left: 6px solid #5a5858; padding-left: 10px">{{ concert.description }}
+              </p>
             </div>
-            {% endfor %}
           </div>
+
+          <br><br>
+          <!--PERSONAL DETAILS (PROBABLY WILL BE UPDATED)-->
+
+          <h4 class="mb-3">Personal Details</h4>
+          <hr>
+          <div class="row g-3">
+            <div>
+              <h5>{{user.first_name}} {{user.last_name}}</h5>
+              <p><small class="text-light"><i class="icon-phone"></i> Contact: {{user.email}}</small></p>
+
+              {% if user.is_reseller == True %}
+              <p><small class="text-light"><i class="icon-check"></i> Reseller</small></p>
+              {% endif %}
+            </div>
+          </div>
+
+
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+
         </div>
-
-        <!--PERSONAL DETAILS (PROBABLY WILL BE UPDATED)-->
-        <h4 class="mb-3">Personal Details</h4>
-        <hr>
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <label for="first_name" class="form-label">First name</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}"
-              readonly>
-          </div>
-
-          <div class="col-sm-6">
-            <label for="last_name" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}"
-              readonly>
-          </div>
-
-          <div class="col-12">
-            <label for="email" class="form-label">Email</label>
-            <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}" readonly>
-          </div>
-        </div>
-
-
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
       </div>
-    </div>
   </form>
 
   {% elif type == "make-payment" %}
@@ -254,5 +284,11 @@
       document.getElementById("quantity").value = --quantity;
   }
 </script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 {% endblock body %}
