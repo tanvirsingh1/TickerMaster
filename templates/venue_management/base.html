@@ -34,6 +34,11 @@
         <li class="nav-item">
           <a class="nav-link" href="/about">About Us</a>
         </li>
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'venue_management:panel' %}">My Venues</a>
+          </li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav">
         {% if request.user.is_authenticated %}
