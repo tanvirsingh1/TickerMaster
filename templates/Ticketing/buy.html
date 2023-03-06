@@ -21,41 +21,10 @@
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Your Cart</span>
-          <span class="badge bg-primary rounded-pill">3</span>
+          <span class="badge bg-primary rounded-pill">0</span>
         </h4>
-        <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Product name</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$12</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Second product</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$8</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Third item</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
-              <h6 class="my-0">Promo code</h6>
-              <small>EXAMPLECODE</small>
-            </div>
-            <span class="text-success">−$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
-          </li>
+        <ul class="list-group mb-3 cart">
+          
         </ul>
 
         <form class="card p-2">
@@ -91,20 +60,13 @@
             <div>
 
               <h4 class="mb-3">Tickets</h4>
-              <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-interval="false"
-                style="margin: 0; padding: 0; height: max-content;            ">
-                <ol class="carousel-indicators">
-                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                </ol>
+              <div id="carousel" class="carousel slide carousel-fade" data-interval="false"
+                style="margin: 0; padding: 0; height: max-content;">
                 <div class="carousel-inner">
-
-
                   <div class="card" style="background-color: #212F42;" id="containter-qnty">
                     <div class="row g-3">
                       <div class="col-sm-2">
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                        <a class="carousel-control-prev" href="#carousel" role="button"
                           data-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="sr-only"></span>
@@ -123,11 +85,11 @@
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
                               <p class="card-text text-muted">{{i.description}}</p>
                               <div class="input-group col-sm-6" id="select-qnty">
-                                <button class="btn-sm btn-primary qnty_bnt" type="button"
+                                <button class="btn-sm btn-info qnty_bnt" type="button"
                                   onclick="decr_quantity()">-</button>
                                 <input type="number" id="quantity" name="quantity" class="form-control text-center"
                                   value="0" readonly>
-                                <button class="btn-sm btn-primary qnty_bnt" type="button"
+                                <button class="btn-sm btn-info qnty_bnt" type="button"
                                   onclick="incr_quantity()">+</button>
                               </div>
                             </div>
@@ -137,7 +99,7 @@
                       </div>
 
                       <div class="col-sm-2">
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                        <a class="carousel-control-next" href="#carousel" role="button"
                           data-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="sr-only"></span>
@@ -164,7 +126,7 @@
           </div>
 
           <br><br>
-          <!--PERSONAL DETAILS (PROBABLY WILL BE UPDATED)-->
+          <!--PERSONAL DETAILS-->
 
           <h4 class="mb-3">Personal Details</h4>
           <hr>
@@ -274,7 +236,7 @@
 <script>
 
   let quantity = 0;
-  function incr_quantity() {
+  function incr_quantity(name, price) {
     //TODO add check if reseller or not
     document.getElementById("quantity").value = ++quantity;
   }

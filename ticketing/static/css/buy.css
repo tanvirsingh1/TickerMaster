@@ -70,8 +70,6 @@
 #quantity {
     text-align: center;
     border: none;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
     margin: 0px;
     width: 20px;
     height: 40px;
@@ -84,6 +82,8 @@
 }
 
 .qnty_bnt {
+    border: none;
+    width: 40px;
     border-radius: 50%;
 }
 
@@ -95,4 +95,9 @@
 .carousel-fade .active.carousel-item-start,
 .carousel-fade .active.carousel-item-end {
     transition: opacity 0s 2.6s;
+}
+
+
+.cart * {
+    color: black;
 }
