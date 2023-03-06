@@ -134,7 +134,6 @@ class Concert(models.Model):
     name = models.CharField(max_length=60, default='')
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
-
     min_age = models.IntegerField(verbose_name="Minimum Age", null=True, validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)
@@ -161,6 +160,10 @@ class SeatType(models.Model):
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=1_000_000)
     ))
+    price = models.FloatField(verbose_name="Price", validators=(
+        validators.MinValueValidator(limit_value=0),
+        validators.MaxValueValidator(limit_value=100_000)
+    ))
     # venue - created by the ManyToMany field in Venue
 
     def __str__(self):
@@ -181,8 +184,8 @@ class Venue(models.Model):
     location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
 
     # ManyToManyField: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/
-    seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
-    concerts = models.ManyToManyField(Concert, verbose_name="Concerts")
+    seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types", related_name="venues")
+    concerts = models.ManyToManyField(Concert, verbose_name="Concerts", related_name="venues")
     managers = models.ManyToManyField(VenueManager, verbose_name="Managers", related_name="venues")
 
     def __str__(self):

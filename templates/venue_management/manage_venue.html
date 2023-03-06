@@ -1,0 +1,37 @@
+{% extends 'venue_management/base.html' %}
+{% block title %}Manage{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br />
+    <div>
+      <div class="btn-toolbar float-end">
+        <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+        &nbsp;
+        <a type="button" href="{% url 'venue_management:delete_venue' venue.id %}" class="btn btn-outline-danger">Delete</a>
+      </div>
+      <h1 class="text-light">{{ venue.name }}</h1>
+    </div>
+    {% if success_message %}
+      <div class="alert alert-success" role="alert">
+        {{ success_message }}
+      </div>
+    {% endif %}
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+
+    <h2 class="text-light">Description</h2>
+    <p class="text-light">{{ venue.description }}</p>
+
+    <h2 class="text-light">Location</h2>
+    <p class="text-light">{{ venue.location }}</p>
+
+  </div>
+  {% include 'venue_management/edit_venue_modal.html' %}
+{% endblock %}

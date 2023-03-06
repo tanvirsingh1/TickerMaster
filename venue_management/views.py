@@ -87,6 +87,40 @@ def logout(request):
     return redirect('/venue')
 
 @login_required(login_url='/venue/login')
+def manage_venue(request, venue_id):
+    """
+    Management page for the given venue
+    :param request: (Django) object of the request's properties
+    :param venue_id: the ID of the venue to manage
+    :return: venue management page
+    """
+    provinces = Location.Province.choices
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                return render(request, 'venue_management/manage_venue.html', {
+                    'venue': venue,
+                    'provinces': provinces
+                })
+
+        # User doesn't have permission or the venue doesn't exist.
+        return render(request, 'venue_management/panel.html', {
+            "venues": venues,
+            "error_message": "You do not have permission to manage this venue!"
+        })
+    return redirect('/venue/logout/')
+
+@login_required(login_url='/venue/login')
 def delete_venue(request, venue_id):
     """
     Deletes the specified venue
@@ -97,6 +131,10 @@ def delete_venue(request, venue_id):
 
     # Ensure the user has permission to do this
     if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
         # Check if the venue exists
         if Venue.objects.filter(pk=venue_id).exists():
             venue = Venue.objects.get(pk=venue_id)
@@ -107,16 +145,19 @@ def delete_venue(request, venue_id):
                 venue.delete()
                 return render(request, 'venue_management/panel.html', {
                     'success_message': "Successfully deleted the venue!",
+                    'venues': venues,
                     'redirect': True
                 })
             # The user isn't a manager of this venue
             return render(request, 'venue_management/panel.html', {
                 'error_message': "You are not a manager of this venue!",
+                'venues': venues,
                 'redirect': True
             })
         # The venue doesn't exist
         return render(request, 'venue_management/panel.html', {
             'error_message': "This venue does not exist!",
+            'venues': venues,
             'redirect': True
         })
     # User not logged in
@@ -163,6 +204,41 @@ def add_venue(request):
         return redirect('/venue/panel/')
 
     return render(request, 'venue_management/add_venue.html')
+
+@login_required(login_url='/venue/login')
+def edit_venue(request, venue_id):
+    """
+    Edits a venue in the database
+    :param request: (Django) object of the request's properties
+    :param venue_id: The venue ID to edit
+    :returns: redirect to appropriate page
+    """
+
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Edit the venue.
+
+                # General Venue Information
+                venue.name = request.POST['name']
+                venue.description = request.POST['description']
+                venue.website = request.POST['website']
+                venue.image = request.FILES.get('venue_image')
+                venue.save()
+
+                # Venue Location information
+                location = venue.location
+                location.street_num = request.POST['street_num']
+                location.street_name = request.POST['street_name']
+                location.city = request.POST['city']
+                location.province = Location.Province(request.POST['province'])
+                location.save()
+
+    return redirect(f'/venue/panel/{venue_id}/')
 
 # @login_required
 # @require_http_methods(["GET", "POST"])
