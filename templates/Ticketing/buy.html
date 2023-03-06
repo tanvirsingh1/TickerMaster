@@ -23,8 +23,8 @@
           <span class="text-primary">Your Cart</span>
           <span class="badge bg-primary rounded-pill">0</span>
         </h4>
-        <ul class="list-group mb-3 cart">
-          
+        <ul class="list-group mb-3" id="cart">
+
         </ul>
 
         <form class="card p-2">
@@ -34,7 +34,7 @@
           </div>
         </form>
         <br>
-        <h3 class="my-3 text-right">Total: $0.00</h3>
+        <h3 class="my-3 text-right" id="total">Total: $0.00</h3>
 
 
         <button class="w-100 btn btn-primary btn-lg" type="submit" form="select-tickets">Continue to checkout</button>
@@ -66,8 +66,7 @@
                   <div class="card" style="background-color: #212F42;" id="containter-qnty">
                     <div class="row g-3">
                       <div class="col-sm-2">
-                        <a class="carousel-control-prev" href="#carousel" role="button"
-                          data-slide="prev">
+                        <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="sr-only"></span>
                         </a>
@@ -82,14 +81,16 @@
                             {% endif %}
                             <div class="card-body">
                               <h5 class="card-title">Seat {{i.name}}</h5>
+                              <input type="hidden" id="seat_name" value="{{i.name}}">
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
+                              <input type="hidden" id="seat_price" value="{{i.price}}">
                               <p class="card-text text-muted">{{i.description}}</p>
                               <div class="input-group col-sm-6" id="select-qnty">
-                                <button class="btn-sm btn-info qnty_bnt" type="button"
+                                <button class="btn-sm btn-secondary qnty_bnt" type="button"
                                   onclick="decr_quantity()">-</button>
                                 <input type="number" id="quantity" name="quantity" class="form-control text-center"
                                   value="0" readonly>
-                                <button class="btn-sm btn-info qnty_bnt" type="button"
+                                <button class="btn-sm btn-secondary qnty_bnt" type="button"
                                   onclick="incr_quantity()">+</button>
                               </div>
                             </div>
@@ -99,8 +100,7 @@
                       </div>
 
                       <div class="col-sm-2">
-                        <a class="carousel-control-next" href="#carousel" role="button"
-                          data-slide="next">
+                        <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="sr-only"></span>
                         </a>
@@ -235,15 +235,90 @@
 
 <script>
 
-  let quantity = 0;
-  function incr_quantity(name, price) {
-    //TODO add check if reseller or not
+  let cart = [];
+  let total = 0;
+
+  function incr_quantity() {
+
+    let quantity = parseInt(document.getElementById('quantity').value);
     document.getElementById("quantity").value = ++quantity;
+    let seat_name = document.getElementById('seat_name').value;
+    let seat_price = parseFloat(document.getElementById('seat_price').value);
+    let exists_in_cart = false;
+    //TODO add check if reseller or not
+
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].name == seat_name) {
+        cart[i].quantity = quantity;
+        cart[i].price += seat_price;
+        exists_in_cart = true;
+
+        let li = document.getElementById(seat_name);
+        li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name + " (" + cart[i].quantity + ")";
+        li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+
+        break;
+      }
+    }
+
+    if (exists_in_cart == false) {
+      cart.push({ 'name': seat_name, 'quantity': quantity, 'price': seat_price });
+      let ul = document.getElementById('cart');
+      let li = document.createElement('li');
+      li.id = seat_name;
+      li.className = "list-group-item d-flex justify-content-between lh-sm"
+      let div = document.createElement('div');
+      let h6 = document.createElement('h6');
+      h6.className = "my-0 text-muted";
+      h6.innerText = "Seat " + seat_name + "(" + quantity + ")";
+      div.appendChild(h6);
+      li.appendChild(div);
+      let span = document.createElement('span');
+      span.className = "text-muted";
+      span.innerText = "$" + seat_price;
+      li.appendChild(span);
+      ul.appendChild(li);
+    }
+
+    total += seat_price;
+    document.getElementById('total').innerText = "Total: $" + total;
   }
 
-  function decr_quantity(qnt) {
-    if (quantity - 1 >= 0)
+  function decr_quantity() {
+
+    let quantity = parseInt(document.getElementById('quantity').value);
+    let seat_name = document.getElementById('seat_name').value;
+    let seat_price = parseFloat(document.getElementById('seat_price').value);
+
+    if (quantity - 1 >= 0) {
       document.getElementById("quantity").value = --quantity;
+
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].name == seat_name) {
+          if ( quantity > 0) {
+            cart[i].quantity = quantity;
+            cart[i].price -= seat_price;
+            let li = document.getElementById(seat_name);
+            li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name + " (" + cart[i].quantity + ")";
+            li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+          }
+          else {
+            cart.splice(i, 1);
+            let li = document.getElementById(seat_name);
+            li.remove();
+          }
+          break;
+        }
+      }
+      total -= seat_price;
+      if (total > 0)
+        document.getElementById('total').innerText = "Total: $" + total;
+      else
+        document.getElementById('total').innerText = "Total: $0.00";
+
+    }
+
+
   }
 </script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
