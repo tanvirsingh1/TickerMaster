@@ -108,6 +108,8 @@ def buy(request, concert_id):
 
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
+    print("dfsdfsdfs")
+    print()
 
     # retrieve data from form
     if request.method == 'POST':
@@ -120,7 +122,7 @@ def buy(request, concert_id):
             # promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
 
             return render(request, 'ticketing/buy.html', {'messages': error,
-                                                          'concert': concert,  'user': user, 'type': 'select-tickets'})
+                            'concert': concert, 'user': user, 'type': 'select-tickets'})
 
         return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'type': 'make-payment'})
 
