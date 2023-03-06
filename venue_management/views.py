@@ -271,25 +271,40 @@ def generate_promo_code(request):
     return render(request, "venue_management/generate_promo_code.html", {"form": form})
 
 
+@login_required(login_url='/venue/login/')
+def add_concert(request, venue_id):
+    """
+    This view is used for adding new concert to the html and using POST request that concert is added to the database
+   """
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
 
-def add_concert(request):
-    """This view is used for adding new concert to the html and using POST request that concert is added to the
-       database"""
-    if request.method == 'POST':
-        name = request.POST['name']
-        artist_name = request.POST['artist_name']
-        concert_date= request.POST['concert_date']
-        min_age= request.POST['min_age']
-        price = request.POST['price']
-        concert_image = request.FILES.get('concert_image')
-        description= request.POST['description']
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Add the concert.
 
-        new_concert = Concert(name= name, artist_name=artist_name,concert_date=concert_date,min_age=min_age,price=
-                              price,concert_image=concert_image,description=description)
-        new_concert.save()
-        return redirect('/venue/concerts/')
+                # Gather concert information
+                name = request.POST['name']
+                artist_name = request.POST['artist_name']
+                concert_date= request.POST['concert_date']
+                min_age= request.POST['min_age']
+                price = request.POST['price']
+                concert_image = request.FILES.get('concert_image')
+                description= request.POST['description']
 
-    return render(request, 'venue_management/Add_concert.html')
+                # Create and save the new concert
+                new_concert = Concert(name=name, artist_name=artist_name, concert_date=concert_date, min_age=min_age,
+                                      price=price, concert_image=concert_image, description=description)
+                new_concert.save()
+
+                # Add the concert to the venue.
+                venue.concerts.add(new_concert)
+                return redirect(f'/venue/panel/{venue_id}')
+
+    # Does not have permission to add here.
+    return redirect('/venue/panel/')
 
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""

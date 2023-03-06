@@ -1,0 +1,46 @@
+<div class="modal" id="addConcertModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add a Concert</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'venue_management:add_concert' venue.id %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3 row">
+            <div class="form-group col-sm-6">
+              <input type="text" class="form-control item" id="name" name="name" placeholder="Name">
+            </div>
+            <div class="form-group col-sm-6">
+              <input type="text" class="form-control item" id="artist-name" name="artist_name" placeholder="Artist Name">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <div class="form-group col-sm-6">
+              <input type="datetime-local" class="form-control item" id="concert-date" name="concert_date" placeholder="Concert Date" required>
+            </div>
+            <div class="form-group col-sm-6">
+              <input type="number" class="form-control item" id="min-age" name="min_age" placeholder="Minimum Age" min="1" max="100">
+            </div>
+          </div>
+          <div class="mb-3 form-group">
+            <input type="number" min="10" step="any" class="form-control item" id="price" name="price" placeholder="Price in CAD" required>
+          </div>
+          <div class="mb-3 form-group">
+            <label for="venueImage" class="form-label">Image<em class="required-txt">*</em></label>
+            <input type="file" class="form-control item" id="concert-image" name="concert_image" placeholder="Concert Image" required>
+            <div id="imageHelp" class="form-text"><em>Preferred image ratio: 16:9</em></div>
+          </div>
+          <div class="mb-3 form-group">
+            <textarea class="form-control item" id="description" name="description" placeholder="Description"></textarea>
+          </div>
+          <div class="float-end">
+            <button type="reset" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
