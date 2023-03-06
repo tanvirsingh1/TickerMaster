@@ -90,12 +90,18 @@ def panel(request):
     :param request: (Django) object of the request's properties
     :return: the venue manager's panel
     """
-    return render(request, 'venue_management/panel.html')
+    venues = request.user.venues.all()
+    provinces = Location.Province.choices
+
+    if len(venues) == 0:
+        venues = None
+
+    return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
     """Adds a new venue to the database"""
-    if request.method == 'POST':
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
         # General Venue Information
         name = request.POST['name']
         website = request.POST['website']
@@ -111,8 +117,9 @@ def add_venue(request):
         # Form Models and save to DB
         venue_location = Location(street_num=street_num, street_name=street_name, city=city, province=province)
         venue_location.save()
-        venue = Venue(name=name, website=website, image=image, managers=[manager], location=venue_location)
+        venue = Venue(name=name, website=website, image=image, location=venue_location)
         venue.save()
+        venue.managers.add(manager)
         return redirect('/venue/panel/')
 
     return render(request, 'venue_management/add_venue.html')
