@@ -4,21 +4,39 @@
 {% block body %}
  {% load static %}
  <br/> <br/><br/><br/>
+    {% if error %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Error: </strong>{{ error }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+    {% endif %}
   <link href="{% static 'css/venue.css' %}" rel="stylesheet">
 
-   <div class="row">
+<div class="row align-items-center">
   <div class="col-md-6">
-    <h1 style="font-family: 'Segoe UI Black'; color: white " >All Concerts</h1>
+    <h1 style="font-family: 'Segoe UI Black'; color: white;">All Concerts</h1>
   </div>
-
+  <div class="col-md-6">
+    <form class="d-flex" method="POST", action="{% url 'ticketing:searched' %}">
+        {% csrf_token %}
+      <input class="form-control me-2" name ="searched" type="search" placeholder="Search Your Favourite Artist!"
+             aria-label="Search" id="title" style="background-color: #ffffff; color: #000000">
+      <button class="btn btn-success me-2" type="submit" id="searchform" style="background-color: #28a745">
+          Search</button>
+      <button class="btn btn-danger" type="reset" id="clearForm" style="background-color: #dc3545">Clear</button>
+    </form>
+  </div>
+  </div>
 </div>
+
 
 
 {% for concert in conc %}
 <div class="accordion" id="accordionExample{{ forloop.counter }}">
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-      <button class= "accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="False" aria-controls="collapse{{ forloop.counter }} collapsed">
+      <button class= "accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse
+{{ forloop.counter }}" aria-expanded="False" aria-controls="collapse{{ forloop.counter }} collapsed">
  <div class="container">
   <div class="row align-items-center">
     <div class="col-md-2">
@@ -41,7 +59,8 @@
 
       </button>
     </h2>
-    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" >
+    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
+         aria-labelledby="heading{{ forloop.counter }}" >
       <div class="accordion-body">
 <div class="container">
  <div class="row mb-3">
@@ -85,7 +104,12 @@
 </div>
 
     {% endfor %}
+
+
+
+
     <br/>
+{% if conc|length > 1 %}
 <nav aria-label="Page navigation example" style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed;" >
   <ul class="pagination">
 
@@ -106,6 +130,7 @@
     {% endif %}
    </ul>
 </nav>
+    {% endif %}
     <br/>
 
 

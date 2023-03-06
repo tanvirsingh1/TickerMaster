@@ -18,6 +18,9 @@ def index(request):
     :param request: (Django) object of the request's properties
     :return:
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+
     return render(request, 'venue_management/index.html')
 
 
@@ -84,20 +87,104 @@ def logout(request):
     return redirect('/venue')
 
 @login_required(login_url='/venue/login')
+def manage_venue(request, venue_id):
+    """
+    Management page for the given venue
+    :param request: (Django) object of the request's properties
+    :param venue_id: the ID of the venue to manage
+    :return: venue management page
+    """
+    provinces = Location.Province.choices
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                return render(request, 'venue_management/manage_venue.html', {
+                    'venue': venue,
+                    'provinces': provinces
+                })
+
+        # User doesn't have permission or the venue doesn't exist.
+        return render(request, 'venue_management/panel.html', {
+            "venues": venues,
+            "error_message": "You do not have permission to manage this venue!"
+        })
+    return redirect('/venue/logout/')
+
+@login_required(login_url='/venue/login')
+def delete_venue(request, venue_id):
+    """
+    Deletes the specified venue
+    :param venue_id: the ID of the venue to delete
+    :param request: (Django) object of the request's properties
+    :return: refreshes the page or gives an error
+    """
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Delete the venue.
+                venue.delete()
+                return render(request, 'venue_management/panel.html', {
+                    'success_message': "Successfully deleted the venue!",
+                    'venues': venues,
+                    'redirect': True
+                })
+            # The user isn't a manager of this venue
+            return render(request, 'venue_management/panel.html', {
+                'error_message': "You are not a manager of this venue!",
+                'venues': venues,
+                'redirect': True
+            })
+        # The venue doesn't exist
+        return render(request, 'venue_management/panel.html', {
+            'error_message': "This venue does not exist!",
+            'venues': venues,
+            'redirect': True
+        })
+    # User not logged in
+    return redirect('/venue/logout')
+
+@login_required(login_url='/venue/login')
 def panel(request):
     """
     The home page for a signed in venue manager
     :param request: (Django) object of the request's properties
     :return: the venue manager's panel
     """
-    return render(request, 'venue_management/panel.html')
+    venues = request.user.venues.all()
+    provinces = Location.Province.choices
+
+    if len(venues) == 0:
+        venues = None
+
+    return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
     """Adds a new venue to the database"""
-    if request.method == 'POST':
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
         # General Venue Information
         name = request.POST['name']
+        description = request.POST['description']
         website = request.POST['website']
         image = request.FILES.get('venue_image')
         manager = request.user
@@ -111,11 +198,47 @@ def add_venue(request):
         # Form Models and save to DB
         venue_location = Location(street_num=street_num, street_name=street_name, city=city, province=province)
         venue_location.save()
-        venue = Venue(name=name, website=website, image=image, managers=[manager], location=venue_location)
+        venue = Venue(name=name, description=description, website=website, image=image, location=venue_location)
         venue.save()
+        venue.managers.add(manager)
         return redirect('/venue/panel/')
 
     return render(request, 'venue_management/add_venue.html')
+
+@login_required(login_url='/venue/login')
+def edit_venue(request, venue_id):
+    """
+    Edits a venue in the database
+    :param request: (Django) object of the request's properties
+    :param venue_id: The venue ID to edit
+    :returns: redirect to appropriate page
+    """
+
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Edit the venue.
+
+                # General Venue Information
+                venue.name = request.POST['name']
+                venue.description = request.POST['description']
+                venue.website = request.POST['website']
+                venue.image = request.FILES.get('venue_image')
+                venue.save()
+
+                # Venue Location information
+                location = venue.location
+                location.street_num = request.POST['street_num']
+                location.street_name = request.POST['street_name']
+                location.city = request.POST['city']
+                location.province = Location.Province(request.POST['province'])
+                location.save()
+
+    return redirect(f'/venue/panel/{venue_id}/')
 
 # @login_required
 # @require_http_methods(["GET", "POST"])
@@ -148,25 +271,150 @@ def generate_promo_code(request):
     return render(request, "venue_management/generate_promo_code.html", {"form": form})
 
 
+@login_required(login_url='/venue/login/')
+def add_concert(request, venue_id):
+    """
+    This view is used for adding new concert to the html and using POST request that concert is added to the database
+   """
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
 
-def add_concert(request):
-    """This view is used for adding new concert to the html and using POST request that concert is added to the
-       database"""
-    if request.method == 'POST':
-        name = request.POST['name']
-        artist_name = request.POST['artist_name']
-        concert_date= request.POST['concert_date']
-        min_age= request.POST['min_age']
-        price = request.POST['price']
-        concert_image = request.FILES.get('concert_image')
-        description= request.POST['description']
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Add the concert.
 
-        new_concert = Concert(name= name, artist_name=artist_name,concert_date=concert_date,min_age=min_age,price=
-                              price,concert_image=concert_image,description=description)
-        new_concert.save()
-        return redirect('/venue/concerts/')
+                # Gather concert information
+                name = request.POST['name']
+                artist_name = request.POST['artist_name']
+                concert_date= request.POST['concert_date']
+                min_age= request.POST['min_age']
+                price = request.POST['price']
+                concert_image = request.FILES.get('concert_image')
+                description= request.POST['description']
 
-    return render(request, 'venue_management/Add_concert.html')
+                # Create and save the new concert
+                new_concert = Concert(name=name, artist_name=artist_name, concert_date=concert_date, min_age=min_age,
+                                      price=price, concert_image=concert_image, description=description)
+                new_concert.save()
+
+                # Add the concert to the venue.
+                venue.concerts.add(new_concert)
+                return redirect(f'/venue/panel/{venue_id}')
+
+    # Does not have permission to add here.
+    return redirect('/venue/panel/')
+
+@login_required(login_url='/venue/login')
+def manage_concert(request, concert_id):
+    """
+    Management page for the given concert
+    :param request: (Django) object of the request's properties
+    :param concert_id: the ID of the concert to manage
+    :return: concert management page
+    """
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the concert exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the venue that manages the concert
+            if concert.venues.first().managers.contains(request.user):
+                return render(request, 'venue_management/manage_concert.html', {
+                    'concert': concert
+                })
+
+        # User doesn't have permission to the venue of this concert
+        return render(request, 'venue_management/panel.html', {
+            "venues": venues,
+            "error_message": "You do not have permission to manage this concert!"
+        })
+
+    # The user may not be logged in as a valid Venue Manager.
+    return redirect('/venue/logout/')
+
+@login_required(login_url='/venue/login')
+def edit_concert(request, concert_id):
+    """
+    Edits a concert in the database
+    :param request: (Django) object of the request's properties
+    :param concert_id: The concert ID to edit
+    :returns: redirect to appropriate page
+    """
+
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the concert exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the venue running the concert
+            if concert.venues.first().managers.contains(request.user):
+                # User has all permissions. Edit the concert.
+
+                # Gather concert information and save it to the concert
+                concert.name = request.POST['name']
+                concert.artist_name = request.POST['artist_name']
+                concert.concert_date= request.POST['concert_date']
+                concert.min_age= request.POST['min_age']
+                concert.price = request.POST['price']
+                concert.concert_image = request.FILES.get('concert_image')
+                concert.description= request.POST['description']
+                concert.save()
+
+                return redirect(f'/venue/panel/concert/{concert_id}/')
+
+    # Didn't successfully update (no perms)
+    return redirect('/venue/panel/')
+
+@login_required(login_url='/venue/login')
+def delete_concert(request, concert_id):
+    """
+    Deletes the specified concert
+    :param concert_id: the ID of the concert to delete
+    :param request: (Django) object of the request's properties
+    :return: refreshes the page or gives an error
+    """
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the concert
+            if concert.venues.first().managers.contains(request.user):
+                venue = concert.venues.first()
+                # User has all permissions. Delete the concert.
+                concert.delete()
+                return render(request, 'venue_management/manage_venue.html', {
+                    'success_message': "Successfully deleted the concert!",
+                    'venue': venue,
+                    'redirect': True
+                })
+            # The user isn't a manager of the venue that manages this concert
+            return render(request, 'venue_management/panel.html', {
+                'error_message': "You are not a manager of the venue that controls this concert!",
+                'venues': venues,
+                'redirect': True
+            })
+        # The concert doesn't exist
+        return render(request, 'venue_management/panel.html', {
+            'error_message': "This concert does not exist!",
+            'venues': venues,
+            'redirect': True
+        })
+    # User not logged in
+    return redirect('/venue/logout')
 
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""

@@ -38,3 +38,7 @@ div.accordion-item {
   border-bottom: 1px solid #ccc;
   margin-bottom: 15px;
 }
+
+.required-txt {
+  color: red;
+}

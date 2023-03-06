@@ -1,0 +1,107 @@
+{% extends 'venue_management/base.html' %}
+{% block title %}Manage{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br />
+    {% if success_message %}
+      <div class="alert alert-success" role="alert">
+        {{ success_message }}
+      </div>
+    {% endif %}
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+
+    <div class="card text-bg-dark border-dark" style="max-width: 100%; max-height: 80%">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ venue.image.url }}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <div>
+              <div class="btn-toolbar float-end">
+                <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                &nbsp;
+                <a type="button" href="{% url 'venue_management:delete_venue' venue.id %}" class="btn btn-outline-danger">Delete</a>
+              </div>
+              <h1 class="text-light card-title">{{ venue.name }}</h1>
+            </div>
+            <p class="card-text"><small class="text-light"><i class="icon-location-pin"></i> {{ venue.location }}</small></p>
+            <p class="card-text">{{ venue.description }}</p>
+            <div class="card-footer">
+              <h3 class="card-title">Seating Types</h3>
+              <p class="card-text"></p>
+              <!-- TODO: Add seating types -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="container">
+        <div>
+          <div class="btn-toolbar float-end">
+            <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#addConcertModal"><i class="icon-plus" style="font-size: 14px"></i> Add a Concert</button>
+          </div>
+          <h2 class="text-light">Concerts</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-dark table-striped table-hover" aria-label="Venues Table">
+            <thead>
+            <tr>
+              <th scope="col" class="col-2">Name</th>
+              <th scope="col" class="col-6">Description</th>
+              <th scope="col" class="col-2">Date</th>
+              <th scope="col" class="col-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for concert in venue.concerts.all %}
+              <tr>
+                <th class="col-2" id="{{ concert.id }}">{{ concert.name }}</th>
+                <td class="col-6">
+                  {% if concert.description == None %}
+                    <em class="grey">No Description</em>
+                  {% else %}
+                    {{ concert.description }}
+                  {% endif %}
+                </td>
+                <td class="col-2">
+                  {{ concert.concert_date }}
+                </td>
+                <td class="col-3">
+                  {# Action Buttons #}
+                  <a type="button" href="{% url 'venue_management:manage_concert' concert.id %}" class="btn btn-outline-primary">View</a>
+                  <a type="button" href="{% url 'venue_management:delete_concert' concert.id %}" class="btn btn-outline-danger">Delete</a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+          {% if not venue.concerts.all %}
+            <div class="alert alert-dark" role="alert">
+              {{ venue.name }} has no concerts yet! Add one to see it here.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if redirect %}
+    <script>
+      window.setTimeout(function(){
+        window.location.href = "{% url 'venue_management:manage_venue' venue.id %}";
+      }, 3000);
+    </script>
+  {% endif %}
+  {% include 'venue_management/edit_venue_modal.html' %}
+  {% include 'venue_management/add_concert_modal.html' %}
+{% endblock %}
