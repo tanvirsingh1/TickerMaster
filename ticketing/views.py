@@ -101,28 +101,48 @@ def buy(request, concert_id):
     if not request.user.is_authenticated:
         return redirect('/login')
 
+    # get info about this request - info about user and concert
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
-    print("dfsdfsdfs")
-    print(concert.venues.first())
 
-    # retrieve data from form
     if request.method == 'POST':
-
+        # retrieve data from form
         quantity = int(request.POST.get('quantity'))
-        print(quantity)
-        if quantity == 0:
+
+        #forming the customer's order
+        order = []
+        number_of_tickets = 0
+        for i, quantity in enumerate(request.POST.getlist('quantity')):
+
+            #order info
+            quantity = int(quantity)
+            number_of_tickets += quantity
+            seat_name = concert.venues.first().seat_types.filter(id=(i+1)).first().name
+            seat_price = concert.venues.first().seat_types.filter(id=(i+1)).first().price
+            seats_available = concert.venues.first().seat_types.filter(id=(i+1)).first().quantity
+            
+            #in case user selected more tickets than available
+            if seats_available < quantity:
+                error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " + seat_name + " available."
+                return render(request, 'ticketing/buy.html', {'messages': error,
+                            'concert': concert, 'user': user, 'type': 'select-tickets'})
+            
+            #adding booked seat (and number to order)
+            else:
+                booked_seats = {'name': seat_name, 'price': seat_price, 'quantity': quantity}
+                order.append(booked_seats)
+
+        #in case user didn't select any tickets
+        if number_of_tickets == 0:
             error = "Please, select your ticket(s)."
-
-            # promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
-
             return render(request, 'ticketing/buy.html', {'messages': error,
                             'concert': concert, 'user': user, 'type': 'select-tickets'})
-
+        
+        #in case everything is okay, the user is ready to pay
         return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'type': 'make-payment'})
 
-    print("User is making a payment")
-    # pass the current user object to the template context
+
+    # pass the user select tickets
     return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert, 'type': 'select-tickets'})
 
 
