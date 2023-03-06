@@ -19,6 +19,7 @@ def home_window(request):
     """
     return render(request, 'ticketing/home.html')
 
+
 def about_window(request):
     """
     The about us page
@@ -26,6 +27,7 @@ def about_window(request):
     :return: ticketing/about.html
     """
     return render(request, 'ticketing/about.html')
+
 
 def login_window(request):
     """
@@ -93,19 +95,19 @@ def support_ticket(request):
     return render(request, 'ticketing/support_ticket.html', {'form': form})
 
 
-#FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
+# FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
 def purchase_ticket(request):
     """
     select a ticket --> login, registration required
     """
-    #check if the user is logged in
+    # check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
 
     user = request.user
-    #concert = request.concert
+    # concert = request.concert
 
-    #retrieve data from form
+    # retrieve data from form
     if request.method == 'POST':
 
         quantity = int(request.POST.get('quantity'))
@@ -113,20 +115,21 @@ def purchase_ticket(request):
         if quantity == 0:
             error = "Please, select your ticket(s)."
 
-            #promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
+            # promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
 
             return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user,
-                                                                       'type' : 'select-tickets'})
-            #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
+                                                                       'type': 'select-tickets'})
+            # return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
             # 'user': user, 'concert': concert})
-        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
+        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type': 'make-payment'})
 
     print("User is making a payment")
     # pass the current user object to the template context
-    #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
-    return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})
+    # return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
+    return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type': 'select-tickets'})
 
-def all_concerts(request,concert=None,error=None):
+
+def all_concerts(request, concert=None, error=None):
     """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
       html"""
     if concert:
@@ -136,10 +139,11 @@ def all_concerts(request,concert=None,error=None):
 
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
-    p = Paginator( Concert.objects.all(),3)
+    p = Paginator(Concert.objects.all(), 3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts,'error':error})
+    return render(request, 'Ticketing/concert.html', {'concerts': concert_list, 'conc': concerts, 'error': error})
+
 
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""
@@ -148,6 +152,7 @@ def buy(request, concert_id):
     # Pass the concert data to the template
     context = {'concert': concert}
     return render(request, 'Ticketing/buy.html', context)
+
 
 def searched(request):
     """Search each concert based on the value, if value matches that concert shall be displayed, else nothing"""
@@ -163,7 +168,7 @@ def searched(request):
             return all_concerts(request, concert)
         except Concert.DoesNotExist:
             error = f"No Concerts by {search}"
-            return all_concerts(request,None, error)
+            return all_concerts(request, None, error)
 
     else:
         return render(request, "/concerts")
