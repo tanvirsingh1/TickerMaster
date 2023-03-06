@@ -12,6 +12,7 @@ urlpatterns = [
     path('login/', views.login_manager_window, name="login"),
     path('register/', views.register_manager_window, name="register"),
     path('add_venue/', views.add_venue, name="add_venue"),
+    path('delete_venue/<int:venue_id>/', views.delete_venue, name="delete_venue"),
     path('panel/', views.panel, name="panel"),
     path('logout/', views.logout, name="logout"),
     path('generate-promo-code/', views.generate_promo_code, name='generate_promo_code'),

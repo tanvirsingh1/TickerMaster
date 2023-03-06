@@ -87,6 +87,39 @@ def logout(request):
     return redirect('/venue')
 
 @login_required(login_url='/venue/login')
+def delete_venue(request, venue_id):
+    """
+    Deletes the specified venue
+    :param venue_id: the ID of the venue to delete
+    :param request: (Django) object of the request's properties
+    :return: refreshes the page or gives an error
+    """
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Delete the venue.
+                venue.delete()
+                return render(request, 'venue_management/panel.html', {
+                    'success_message': "Successfully deleted the venue!"
+                })
+            # The user isn't a manager of this venue
+            return render(request, 'venue_management/panel.html', {
+                'error_message': "You are not a manager of this venue!"
+            })
+        # The venue doesn't exist
+        return render(request, 'venue_management/panel.html', {
+            'error_message': "This venue does not exist!"
+        })
+    # User not logged in
+    return redirect('/venue/logout')
+
+@login_required(login_url='/venue/login')
 def panel(request):
     """
     The home page for a signed in venue manager
