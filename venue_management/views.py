@@ -159,7 +159,7 @@ def all_concerts(request):
     page = request.GET.get('page')
     concerts = p.get_page(page)
 
-    return render(request,'venue_management/concert.html',{'concerts':concert_list, 'conc':concerts})
+    return render(request,'venue_management/concert.html', {'concerts':concert_list, 'conc':concerts})
 
 
 def add_concert(request):
