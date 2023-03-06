@@ -9,9 +9,9 @@
     <br />
     <div>
       <div class="btn-toolbar float-end">
-        <a class="btn btn-success" role="button"><i class="icon-plus" style="font-size: 14px"></i> New Venue</a>
+        <button class="btn btn-success" role="button" data-bs-toggle="modal" data-bs-target="#myModal"><i class="icon-plus" style="font-size: 14px"></i> New Venue</button>
       </div>
-      <h1>My Venues</h1>
+      <h1 class="text-light">My Venues</h1>
     </div>
 
     <div class="table-responsive">
@@ -24,13 +24,31 @@
           </tr>
         </thead>
         <tbody>
-        <tr>
-          <th class="col-3">Name here</th>
-          <td class="col-5">Description here</td>
-          <td class="col-2">Actions here</td>
-        </tr>
+        {% for venue in venues %}
+          <tr>
+            <th class="col-3">{{ venue.name }}</th>
+            <td class="col-5">
+              {% if venue.description == None %}
+                <em class="grey">No Description</em>
+              {% else %}
+                {{ venue.description }}
+              {% endif %}
+            </td>
+            <td class="col-2">
+              {# Action Buttons #}
+              <a type="button" href="" class="btn btn-outline-primary">View</a>
+              <a type="button" href="" class="btn btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
         </tbody>
       </table>
+      {% if venues == None %}
+        <div class="alert alert-dark" role="alert">
+          You have no venues yet! Register one to see it here.
+        </div>
+      {% endif %}
     </div>
   </div>
+  {% include 'venue_management/add_venue_modal.html' %}
 {% endblock %}
