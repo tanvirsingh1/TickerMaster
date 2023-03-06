@@ -1,10 +1,9 @@
 """
 forms.py - Responsible for defining forms for the Ticketing application
 """
-
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Eventgoer, SupportTicket
+from django import forms
+from .models import Eventgoer, SupportTicket, Ticket
 
 
 class RegisterForm(UserCreationForm):
@@ -46,3 +45,8 @@ class SupportTicketForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'message': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+class CompareTicketsForm(forms.Form):
+    """ form for comparing tickets  """
+    ticket_1 = forms.ModelChoiceField(queryset=Ticket.objects.all())
+    ticket_2 = forms.ModelChoiceField(queryset=Ticket.objects.all())

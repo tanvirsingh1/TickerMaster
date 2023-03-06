@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
 from venue_management.models import Concert
-from .forms import RegisterForm, SupportTicketForm
+from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm
 from .models import Eventgoer
 
 
@@ -167,3 +167,21 @@ def searched(request):
 
     else:
         return render(request, "/concerts")
+
+def compare_tickets_view(request):
+    """ compare tikcet view """
+    form = CompareTicketsForm(request.POST or None)
+
+    if form.is_valid():
+        ticket_1 = form.cleaned_data['ticket_1']
+        ticket_2 = form.cleaned_data['ticket_2']
+        context = {
+            'ticket_1': ticket_1,
+            'ticket_2': ticket_2,
+        }
+    else:
+        context = {
+            'form': form,
+        }
+
+    return render(request, 'Ticketing/compare_tickets.html', context)
