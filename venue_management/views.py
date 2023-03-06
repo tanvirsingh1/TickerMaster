@@ -18,6 +18,9 @@ def index(request):
     :param request: (Django) object of the request's properties
     :return:
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+
     return render(request, 'venue_management/index.html')
 
 
