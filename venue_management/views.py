@@ -3,7 +3,6 @@ views.py - Responsible for handling this application's views
 """
 
 # Imports
-from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout as lo
@@ -150,17 +149,6 @@ def generate_promo_code(request):
     return render(request, "venue_management/generate_promo_code.html", {"form": form})
 
 
-def all_concerts(request):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
-      html"""
-    concert_list = Concert.objects.all()
-    # arguments to call to your database, and how many arguments you want per page
-    p = Paginator( Concert.objects.all(),3)
-    page = request.GET.get('page')
-    concerts = p.get_page(page)
-
-    return render(request,'venue_management/concert.html',{'concerts':concert_list, 'conc':concerts})
-
 
 def add_concert(request):
     """This view is used for adding new concert to the html and using POST request that concert is added to the
@@ -187,4 +175,4 @@ def buy(request, concert_id):
     concert = Concert.objects.get(pk=concert_id)
     # Pass the concert data to the template
     context = {'concert': concert}
-    return render(request, 'venue_management/buy.html', context)
+    return render(request, 'venue_management/../templates/Ticketing/buy.html', context)

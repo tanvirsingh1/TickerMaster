@@ -2,11 +2,12 @@
 views.py - Responsible for handling this application's views
 """
 
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
-
+from venue_management.models import Concert
 def home_window(request):
     """
     The main index page
@@ -121,3 +122,21 @@ def purchase_ticket(request):
     # pass the current user object to the template context
     #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
     return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})
+
+def all_concerts(request):
+    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
+      html"""
+    concert_list = Concert.objects.all()
+    # arguments to call to your database, and how many arguments you want per page
+    p = Paginator( Concert.objects.all(),3)
+    page = request.GET.get('page')
+    concerts = p.get_page(page)
+    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts})
+
+def buy(request, concert_id):
+    """Buy concept based on the selected concert"""
+    # Retrieve the selected concert using the concert_id parameter
+    concert = Concert.objects.get(pk=concert_id)
+    # Pass the concert data to the template
+    context = {'concert': concert}
+    return render(request, 'Ticketing/buy.html', context)
