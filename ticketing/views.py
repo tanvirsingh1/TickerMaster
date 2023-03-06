@@ -3,11 +3,12 @@ views.py - Responsible for handling this application's views
 """
 
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
 from venue_management.models import Concert
-from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm
+from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm, NotificationForm
 from .models import Eventgoer
 
 
@@ -190,3 +191,29 @@ def compare_tickets_view(request):
         }
 
     return render(request, 'Ticketing/compare_tickets.html', context)
+
+def notifications(request):
+    """ view for user notification """
+    if request.method == 'POST':
+        form = NotificationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            notify_new = form.cleaned_data['notify_new']
+            notify_cancelled = form.cleaned_data['notify_cancelled']
+
+            # send email notifications based on form data
+            subject = 'Event Notification Settings'
+            message = f'You will receive notifications for new events: {notify_new}\n'
+            message += f'You will receive notifications for cancelled events: {notify_cancelled}'
+            from_email = 'noreply@example.com'
+            recipient_list = [email]
+            send_mail(subject, message, from_email, recipient_list)
+
+            # display confirmation message
+            context = {'message': 'Notification settings saved!'}
+            return render(request, 'ticketing/notifications.html', context)
+    else:
+        form = NotificationForm()
+
+    context = {'form': form}
+    return render(request, 'ticketing/notifications.html', context)
