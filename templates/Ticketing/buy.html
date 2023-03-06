@@ -20,7 +20,7 @@
 
   <!--STEP 1 OF CHECKOUT - SELECT TICKETS-->
   {% if type == "select-tickets" %}
-  <form method="post" action="{% url 'ticketing:buy' concert.id  %}" id="select-tickets">
+  <form method="POST" action="{% url 'ticketing:buy' concert.id  %}" id="select-tickets">
     {% csrf_token %}
     <div class="row g-5">
 
@@ -39,7 +39,7 @@
           </div>
         </form>
         <br>
-        <h3 class="my-3 text-right" id="total">Total: $0.00</h3>
+        <h3 class="my-3" id="total">Total: $0.00</h3>
 
         <button class="w-100 btn btn-primary btn-lg" type="submit" form="select-tickets">Continue to checkout</button>
       </div>
@@ -154,59 +154,65 @@
 
   <!--STEP 2 OF CHECKOUT - PAY FOR SELECTED TICKETS-->
   {% elif type == "make-payment" %}
-  <form method="put" action="{% url 'ticketing:buy' concert.id  %}" id="make-payment">
-    {% csrf_token %}
-    <div class="progress">
-      <div class="progress-bar col-md-6" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0"
-        aria-valuemax="100">50%</div>
-    </div>
+  <div class="col-md-6 offset-md-3">
+    <form method="PUT" action="{% url 'ticketing:buy' concert.id  %}" id="make-payment">
+      {% csrf_token %}
 
-    <div class="my-5">
-      <h5 class="my-3">Total: ${{price}}</h5>
-      <hr>
-
-      <div class="row mt-3">
-        <div class="col-md-8">
-          <div class="form-group">
-            <label for="card_number">Credit Card Number</label>
-            <input type="text" id="card_number" name="card_number" class="form-control" maxlength="16">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="cvv">CVV</label>
-            <input type="number" id="cvv" name="cvv" class="form-control" maxlength="4">
-          </div>
-        </div>
+      <!--Progress Bar-->
+      <div class="progress">
+        <div class="progress-bar col-md-6" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0"
+          aria-valuemax="100">50%</div>
       </div>
 
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <label for="expiration_month">Expiration Date</label>
-          <div class="form-group">
-            <input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"
-              maxlength="2">
+      <div class="my-5">
+        <h3 class="my-3">Total: ${{total}}</h3>
+        <hr>
+
+        <div class="row mt-3">
+          <div class="col-md-8">
+            <div class="form-group">
+              <label for="card_number">Credit Card Number</label>
+              <input type="text" id="card_number" name="card_number" class="form-control" maxlength="16">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input type="number" id="cvv" name="cvv" class="form-control" maxlength="4">
+            </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"
-              maxlength="4">
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="expiration_month">Expiration Date</label>
+            <div class="form-group">
+              <input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"
+                maxlength="2">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <br>
+              <input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"
+                maxlength="4">
+            </div>
           </div>
         </div>
+
+
+        <div class="form-group">
+          <br>
+          <label for="card_number">Cardholder Name</label>
+          <input type="text" id="card_number" name="card_number" class="form-control" placeholder="example: John Doe">
+        </div>
+
       </div>
 
+      <button class="w-100 btn btn-primary btn-lg" type="submit" form="make-payment">Pay</button>
 
-      <div class="form-group">
-        <label for="card_number">Cardholder Name</label>
-        <input type="text" id="card_number" name="card_number" class="form-control" placeholder="example: John Doe">
-      </div>
-
-    </div>
-
-    <button type="submit" class="btn btn-dark w-100" form="make-payment">Pay</button>
-
-  </form>
+    </form>
+  </div>
 
   <!--STEP 3 OF CHECKOUT - GET A SUCCESS MESSAGE AND CONFIRMATION-->
   {% elif type == "success" %}

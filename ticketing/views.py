@@ -112,6 +112,7 @@ def buy(request, concert_id):
         #forming the customer's order
         order = []
         number_of_tickets = 0
+        total = 0
         for i, quantity in enumerate(request.POST.getlist('quantity')):
 
             #order info
@@ -120,6 +121,7 @@ def buy(request, concert_id):
             seat_name = concert.venues.first().seat_types.filter(id=(i+1)).first().name
             seat_price = concert.venues.first().seat_types.filter(id=(i+1)).first().price
             seats_available = concert.venues.first().seat_types.filter(id=(i+1)).first().quantity
+            total += seat_price * quantity
             
             #in case user selected more tickets than available
             if seats_available < quantity:
@@ -139,7 +141,10 @@ def buy(request, concert_id):
                             'concert': concert, 'user': user, 'type': 'select-tickets'})
         
         #in case everything is okay, the user is ready to pay
-        return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'type': 'make-payment'})
+        return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'total': total, 'type': 'make-payment'})
+
+    elif request.method == 'PUT':
+        print("hello")
 
 
     # pass the user select tickets
