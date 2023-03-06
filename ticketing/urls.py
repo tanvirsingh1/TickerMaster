@@ -17,5 +17,6 @@ urlpatterns = [
     path('concerts/', views.all_concerts, name="list-concerts"),
     path('buy/<int:concert_id>/', views.buy, name='buy'),
     path('search/', views.searched, name='searched'),
-    path('compare-tickets/', views.compare_tickets_view, name='compare_tickets')
+    path('compare-tickets/', views.compare_tickets_view, name='compare_tickets'),
+    path('notifications/', views.notifications, name='notifications')
 ]

@@ -50,3 +50,9 @@ class CompareTicketsForm(forms.Form):
     """ form for comparing tickets  """
     ticket_1 = forms.ModelChoiceField(queryset=Ticket.objects.all())
     ticket_2 = forms.ModelChoiceField(queryset=Ticket.objects.all())
+
+class NotificationForm(forms.Form):
+    """ form for user notifications """
+    email = forms.EmailField()
+    notify_new = forms.BooleanField(required=False)
+ 
