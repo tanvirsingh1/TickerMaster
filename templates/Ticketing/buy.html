@@ -1,6 +1,13 @@
 {% extends 'ticketing/base.html' %}
-
+{% block title %}Ticket Purchasing{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link href="{% static 'css/buy.css' %}" rel="stylesheet">
+{% endblock %}
 {% block body %}
+<br>
+<br>
+<br>
 <div class="container">
   <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -169,3 +176,4 @@
   }
 </script>
 {% endblock body %}
+

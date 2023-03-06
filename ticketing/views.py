@@ -126,7 +126,7 @@ def buy(request, concert_id):
 
     print("User is making a payment")
     # pass the current user object to the template context
-    return render(request, f'Ticketing_manager/buy.html/{concert.id}', {'user': user, 'concert': concert, 'type': 'select-tickets'})
+    return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert, 'type': 'select-tickets'})
 
 
 def all_concerts(request):
