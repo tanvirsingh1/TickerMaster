@@ -5,9 +5,12 @@ views.py - Responsible for handling this application's views
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+
+from venue_management.models import Concert
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
-from venue_management.models import Concert
+
+
 def home_window(request):
     """
     The main index page
