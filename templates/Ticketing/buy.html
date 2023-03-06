@@ -10,17 +10,19 @@
 <br><br><br><br><br><br>
 <div class="container">
 
+  <!--STEP 1 OF CHECKOUT - SELECT TICKETS-->
   {% if type == "select-tickets" %}
   <form method="post" action="{% url 'ticketing:buy' concert.id  %}" id="select-tickets">
+    {% csrf_token %}
     <div class="row g-5">
+
+      <!--Cart-->
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Your Cart</span>
           <span class="badge bg-primary rounded-pill" id="number-of-tickets">0</span>
         </h4>
-        <ul class="list-group mb-3" id="cart">
-
-        </ul>
+        <ul class="list-group mb-3" id="cart"></ul>
 
         <form class="card p-2">
           <div class="input-group">
@@ -31,29 +33,27 @@
         <br>
         <h3 class="my-3 text-right" id="total">Total: $0.00</h3>
 
-
         <button class="w-100 btn btn-primary btn-lg" type="submit" form="select-tickets">Continue to checkout</button>
       </div>
 
-
-
       <div class="col-md-7 col-lg-8">
-
-        {% csrf_token %}
-
         <!--CONCERT DETAILS-->
         <h4 class="mb-3">Concert Details</h4>
         <hr>
         <div class="row g-3">
+
+          <!--Concert Image-->
           {% if concert.concert_image %}
           <img src="{% static concert.concert_image %}" class="col-sm-5">
           {% else %}
           <img src="{% static 'default.jpg' %}" class="col-sm-5">
           {% endif %}
 
+
           <div class="col-sm-7">
             <div>
 
+              <!--Ticket Selection-->
               <h4 class="mb-3">Tickets</h4>
               <div id="carousel" class="carousel slide carousel-fade" data-interval="false"
                 style="margin: 0; padding: 0; height: max-content;">
@@ -66,7 +66,6 @@
                           <span class="sr-only"></span>
                         </a>
                       </div>
-
                       <div class="col-sm-8">
                         {% for i in concert.venues.first.seat_types.all %}
                         {% if i == concert.venues.first.seat_types.first %}
@@ -93,7 +92,6 @@
                           {% endfor %}
                         </div>
                       </div>
-
                       <div class="col-sm-2">
                         <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
@@ -104,11 +102,11 @@
                   </div>
 
                 </div>
-
               </div>
 
               <hr class="my-4">
 
+              <!--Concert Information-->
               <h4>{{concert.name}} ({{concert.min_age}}+)</h4>
               <p class="card-text"><small class="text-light"><i class="icon-location-pin"></i>
                   {{concert.venues.first.name }} - {{ concert.venues.first.location }}</small></p>
@@ -117,41 +115,36 @@
               <p class="card-text"><strong><i class="icon-calendar"></i> Date:</strong> {{ concert.concert_date }}</p>
               <p class="card-text" style="border-left: 6px solid #5a5858; padding-left: 10px">{{ concert.description }}
               </p>
+
             </div>
           </div>
 
           <br><br>
-          <!--PERSONAL DETAILS-->
 
+          <!--EVENTGOER'S DETAILS-->
           <h4 class="mb-3">Personal Details</h4>
           <hr>
           <div class="row g-3">
             <div>
               <h5>{{user.first_name}} {{user.last_name}}</h5>
               <p><small class="text-light"><i class="icon-phone"></i> Contact: {{user.email}}</small></p>
-
               {% if user.is_reseller == True %}
               <p><small class="text-light"><i class="icon-check"></i> Reseller</small></p>
               <input type="hidden" id="reseller" value="True">
               {% else %}
               <input type="hidden" id="reseller" value="False">
               {% endif %}
-
             </div>
           </div>
 
-
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
+          <br><br><br><br><br><br>
 
         </div>
       </div>
+    </div>
   </form>
 
+  <!--STEP 2 OF CHECKOUT - PAY FOR SELECTED TICKETS-->
   {% elif type == "make-payment" %}
   <form method="put" action="{% url 'ticketing:buy' concert.id  %}" id="make-payment">
     {% csrf_token %}
@@ -206,6 +199,8 @@
     <button type="submit" class="btn btn-dark w-100" form="make-payment">Pay</button>
 
   </form>
+
+  <!--STEP 3 OF CHECKOUT - GET A SUCCESS MESSAGE AND CONFIRMATION-->
   {% elif type == "success" %}
   <div class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
