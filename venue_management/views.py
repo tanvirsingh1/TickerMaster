@@ -306,6 +306,83 @@ def add_concert(request, venue_id):
     # Does not have permission to add here.
     return redirect('/venue/panel/')
 
+@login_required(login_url='/venue/login')
+def manage_concert(request, concert_id):
+    """
+    Management page for the given concert
+    :param request: (Django) object of the request's properties
+    :param concert_id: the ID of the concert to manage
+    :return: concert management page
+    """
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the concert exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the venue that manages the concert
+            if concert.venues.first().managers.contains(request.user):
+                return render(request, 'venue_management/manage_concert.html', {
+                    'concert': concert
+                })
+
+        # User doesn't have permission to the venue of this concert
+        return render(request, 'venue_management/panel.html', {
+            "venues": venues,
+            "error_message": "You do not have permission to manage this concert!"
+        })
+
+    # The user may not be logged in as a valid Venue Manager.
+    return redirect('/venue/logout/')
+
+@login_required(login_url='/venue/login')
+def delete_concert(request, concert_id):
+    """
+    Deletes the specified concert
+    :param concert_id: the ID of the concert to delete
+    :param request: (Django) object of the request's properties
+    :return: refreshes the page or gives an error
+    """
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the concert
+            if concert.venues.first().managers.contains(request.user):
+                venue = concert.venues.first()
+                # User has all permissions. Delete the concert.
+                concert.delete()
+                return render(request, 'venue_management/manage_venue.html', {
+                    'success_message': "Successfully deleted the concert!",
+                    'venue': venue,
+                    'redirect': True
+                })
+            # The user isn't a manager of the venue that manages this concert
+            return render(request, 'venue_management/panel.html', {
+                'error_message': "You are not a manager of the venue that controls this concert!",
+                'venues': venues,
+                'redirect': True
+            })
+        # The concert doesn't exist
+        return render(request, 'venue_management/panel.html', {
+            'error_message': "This concert does not exist!",
+            'venues': venues,
+            'redirect': True
+        })
+    # User not logged in
+    return redirect('/venue/logout')
+
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""
     # Retrieve the selected concert using the concert_id parameter

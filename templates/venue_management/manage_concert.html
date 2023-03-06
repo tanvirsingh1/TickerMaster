@@ -91,13 +91,6 @@
       </div>
     </div>
   </div>
-  {% if redirect %}
-    <script>
-      window.setTimeout(function(){
-        window.location.href = "{% url 'venue_management:manage_venue' venue.id %}";
-      }, 3000);
-    </script>
-  {% endif %}
   {% include 'venue_management/edit_venue_modal.html' %}
   {% include 'venue_management/add_concert_modal.html' %}
 {% endblock %}
