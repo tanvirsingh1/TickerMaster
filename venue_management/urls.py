@@ -20,5 +20,6 @@ urlpatterns = [
     path('panel/concert/<int:concert_id>/', views.manage_concert, name='manage_concert'),
     path('logout/', views.logout, name="logout"),
     path('generate-promo-code/', views.generate_promo_code, name='generate_promo_code'),
-    path('add_concert/<int:venue_id>/', views.add_concert, name='add_concert')
+    path('add_concert/<int:venue_id>/', views.add_concert, name='add_concert'),
+    path('edit_concert/<int:concert_id>/', views.edit_concert, name="edit_concert")
 ]

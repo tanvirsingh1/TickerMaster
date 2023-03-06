@@ -340,6 +340,39 @@ def manage_concert(request, concert_id):
     return redirect('/venue/logout/')
 
 @login_required(login_url='/venue/login')
+def edit_concert(request, concert_id):
+    """
+    Edits a concert in the database
+    :param request: (Django) object of the request's properties
+    :param concert_id: The concert ID to edit
+    :returns: redirect to appropriate page
+    """
+
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the concert exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the venue running the concert
+            if concert.venues.first().managers.contains(request.user):
+                # User has all permissions. Edit the concert.
+
+                # Gather concert information and save it to the concert
+                concert.name = request.POST['name']
+                concert.artist_name = request.POST['artist_name']
+                concert.concert_date= request.POST['concert_date']
+                concert.min_age= request.POST['min_age']
+                concert.price = request.POST['price']
+                concert.concert_image = request.FILES.get('concert_image')
+                concert.description= request.POST['description']
+                concert.save()
+
+                return redirect(f'/venue/panel/concert/{concert_id}/')
+
+    # Didn't successfully update (no perms)
+    return redirect('/venue/panel/')
+
+@login_required(login_url='/venue/login')
 def delete_concert(request, concert_id):
     """
     Deletes the specified concert
