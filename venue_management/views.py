@@ -67,7 +67,6 @@ def register_manager_window(request):
             password = form.cleaned_data['password1']
             user = authenticate(request, email=email, password=password, model=VenueManager)
 
-            print(user)
             login(request, user)
             return redirect('/venue/panel')
     else:
@@ -175,4 +174,4 @@ def buy(request, concert_id):
     concert = Concert.objects.get(pk=concert_id)
     # Pass the concert data to the template
     context = {'concert': concert}
-    return render(request, 'venue_management/../templates/Ticketing/buy.html', context)
+    return render(request, 'venue_management/buy.html', context)
