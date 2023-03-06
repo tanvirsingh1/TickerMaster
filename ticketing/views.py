@@ -125,6 +125,7 @@ def buy(request, concert_id):
     # pass the current user object to the template context
     return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert, 'type': 'select-tickets'})
 
+
 def all_concerts(request,concert=None,error=None):
     """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
       html"""
