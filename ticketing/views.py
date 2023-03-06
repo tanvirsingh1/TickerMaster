@@ -166,4 +166,4 @@ def searched(request):
             return all_concerts(request,None, error)
 
     else:
-        return render(request, "/concerts")  # TODO: This bork. Fix it
+        return render(request, "/concerts")
