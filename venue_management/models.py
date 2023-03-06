@@ -136,6 +136,7 @@ class Concert(models.Model):
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue
+    objects = models.Manager()
 
     def __str__(self):
         """

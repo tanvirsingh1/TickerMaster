@@ -4,6 +4,7 @@ views.py - Responsible for handling this application's views
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from venue_management.models import Concert
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
@@ -90,7 +91,7 @@ def support_ticket(request):
 
 
 #FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
-def purchase_ticket(request):
+def purchase_ticket(request, concert_id):
     """
     select a ticket --> login, registration required
     """
@@ -99,7 +100,7 @@ def purchase_ticket(request):
         return redirect('/login')
 
     user = request.user
-    #concert = request.concert
+    concert = Concert.objects.get(pk=concert_id)
 
     #retrieve data from form
     if request.method == 'POST':
@@ -111,13 +112,11 @@ def purchase_ticket(request):
 
             #promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
 
-            return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user,
-                                                                       'type' : 'select-tickets'})
-            #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
-            # 'user': user, 'concert': concert})
-        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'make-payment'})
+            return render(request, 'ticketing/buy.html', {'messages': error, \
+                'concert': concert,  'user': user, 'type' : 'select-tickets'})
+
+        return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'type' : 'make-payment'})
 
     print("User is making a payment")
     # pass the current user object to the template context
-    #return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
-    return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type' : 'select-tickets'})
+    return render(request, f'Ticketing_manager/buy.html/{concert.id}', {'user': user, 'concert': concert, 'type' : 'select-tickets'})
