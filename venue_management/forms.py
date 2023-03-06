@@ -30,7 +30,7 @@ class RegisterForm(UserCreationForm):
         Defines the form's metadata
         """
         model = VenueManager
-        fields = ['first_name', 'last_name', 'password1', 'password2', 'email']
+        fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
 
 class PromoCodeForm(forms.Form):
     """
