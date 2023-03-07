@@ -109,9 +109,9 @@ class Order(models.Model):
     Describes an Order for the purchase
     """
 
-    purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE, \
+    purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
                                   verbose_name="Purchaser")
-    tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="order")
+    tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
 
   #payment info
     card_number = models.CharField(max_length=16, verbose_name="Credit Card Number", null=False)

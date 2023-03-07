@@ -42,18 +42,16 @@
         <h4 class="mb-3">Concert Details</h4>
         <hr>
         <div class="row g-3">
-
           <!--Concert Image-->
-          {% if concert.concert_image %}
-          <img src="{% static concert.concert_image %}" class="col-sm-5">
-          {% else %}
-          <img src="{% static 'default.jpg' %}" class="col-sm-5">
-          {% endif %}
-
-
-          <div class="col-sm-7">
+          <div class="col-sm-5 d-flex" style="max-height: 50vh; overflow: hidden;">
+            {% if concert.concert_image %}
+              <img src="{% static concert.concert_image.url %}" class="w-auto h-100" style="object-fit: contain; object-position: center;">
+            {% else %}
+              <img src="{% static 'default.jpg' %}" class="w-auto h-100" style="object-fit: contain; object-position: center;">
+            {% endif %}
+          </div>
+          <div class="col col-sm-7">
             <div>
-
               <!--Ticket Selection-->
               <h4 class="mb-3">Tickets</h4>
               <div id="carousel" class="carousel slide carousel-fade" data-interval="false"
@@ -75,7 +73,7 @@
                           <div class="carousel-item">
                             {% endif %}
                             <div class="card-body">
-                              <h5 class="card-title">Seat {{i.name}}</h5>
+                              <h5 class="card-title">{{i.name}}</h5>
                               <input type="hidden" class="seat_name" value="{{i.name}}">
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
                               <input type="hidden" class="seat_price" value="{{i.price}}">

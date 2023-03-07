@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, PromoCodeForm
 from .models import VenueManager, PromoCode, Venue, Location, Concert, SeatType, SeatRestriction
 
+
 def index(request):
     """
     The default index view for the Venue Management panel.
@@ -38,7 +39,7 @@ def login_manager_window(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, email=email , password=password, model=VenueManager)
+        user = authenticate(request, email=email, password=password, model=VenueManager)
 
         if user is not None:
             login(request, user)
@@ -76,6 +77,7 @@ def register_manager_window(request):
         form = RegisterForm()
     return render(request, 'venue_management/register.html', {'form': form})
 
+
 @login_required(login_url='/venue/login')
 def logout(request):
     """
@@ -85,6 +87,50 @@ def logout(request):
     """
     lo(request)
     return redirect('/venue')
+
+
+@login_required(login_url='/venue/login')
+def account(request):
+    """
+    Serves the Venue Manager's account details page and accepts updated form data.
+    :param request: (Django) object of the request's properties
+    :return: account details page
+    """
+    # Ensure the user is a venue manager
+    if isinstance(request.user, VenueManager):
+        # Check for a form submission
+        if request.method == 'POST':
+            # Process update form submission
+            try:
+                # Grab passwords from the form
+                current_password = request.POST['password']
+                if authenticate(request, email=request.user.email, password=current_password, model=VenueManager):
+                    request.user.first_name = request.POST['first_name']
+                    request.user.last_name = request.POST['last_name']
+                    if 'new_password' in request.POST.keys() and request.POST['new_password'] is not None \
+                            and request.POST['new_password'] != "":
+                        # Set the new password, if provided in the form
+                        request.user.set_password(request.POST['new_password'])
+
+                    # Save the user's account
+                    request.user.save()
+                    # User account information updated
+                    return render(request, 'venue_management/account.html', {
+                        "success_message": "Successfully updated account data!"
+                    })
+                # Provided password was incorrect
+                return render(request, 'venue_management/account.html', {
+                    "error_message": "The password you gave was incorrect. Please try again."
+                })
+            except (NameError, KeyError):
+                # Invalid information received
+                return render(request, 'venue_management/account.html', {
+                    "error_message": "Failed to update account data! Invalid form contents received."
+                })
+        # Serve account page
+        return render(request, 'venue_management/account.html')
+
+    return redirect('/venue/logout/')
 
 @login_required(login_url='/venue/login')
 def manage_venue(request, venue_id):
@@ -119,6 +165,7 @@ def manage_venue(request, venue_id):
             "error_message": "You do not have permission to manage this venue!"
         })
     return redirect('/venue/logout/')
+
 
 @login_required(login_url='/venue/login')
 def delete_venue(request, venue_id):
@@ -163,6 +210,7 @@ def delete_venue(request, venue_id):
     # User not logged in
     return redirect('/venue/logout')
 
+
 @login_required(login_url='/venue/login')
 def panel(request):
     """
@@ -180,6 +228,7 @@ def panel(request):
         return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
 
     return redirect('/venue/logout/')
+
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
@@ -207,6 +256,7 @@ def add_venue(request):
         return redirect('/venue/panel/')
 
     return render(request, 'venue_management/add_venue.html')
+
 
 @login_required(login_url='/venue/login')
 def edit_venue(request, venue_id):
@@ -242,6 +292,7 @@ def edit_venue(request, venue_id):
                 location.save()
 
     return redirect(f'/venue/panel/{venue_id}/')
+
 
 # @login_required
 # @require_http_methods(["GET", "POST"])
@@ -291,14 +342,14 @@ def add_concert(request, venue_id):
                 # Gather concert information
                 name = request.POST['name']
                 artist_name = request.POST['artist_name']
-                concert_date= request.POST['concert_date']
-                min_age= request.POST['min_age']
+                concert_date = request.POST['concert_date']
+                min_age = request.POST['min_age']
                 concert_image = request.FILES.get('concert_image')
-                description= request.POST['description']
+                description = request.POST['description']
 
                 # Create and save the new concert
                 new_concert = Concert(name=name, artist_name=artist_name, concert_date=concert_date, min_age=min_age,
-                                        concert_image=concert_image, description=description)
+                                      concert_image=concert_image, description=description)
                 new_concert.save()
 
                 # Add the concert to the venue.
@@ -307,6 +358,7 @@ def add_concert(request, venue_id):
 
     # Does not have permission to add here.
     return redirect('/venue/panel/')
+
 
 @login_required(login_url='/venue/login')
 def manage_concert(request, concert_id):
@@ -341,6 +393,7 @@ def manage_concert(request, concert_id):
     # The user may not be logged in as a valid Venue Manager.
     return redirect('/venue/logout/')
 
+
 @login_required(login_url='/venue/login')
 def edit_concert(request, concert_id):
     """
@@ -362,16 +415,17 @@ def edit_concert(request, concert_id):
                 # Gather concert information and save it to the concert
                 concert.name = request.POST['name']
                 concert.artist_name = request.POST['artist_name']
-                concert.concert_date= request.POST['concert_date']
-                concert.min_age= request.POST['min_age']
+                concert.concert_date = request.POST['concert_date']
+                concert.min_age = request.POST['min_age']
                 concert.concert_image = request.FILES.get('concert_image')
-                concert.description= request.POST['description']
+                concert.description = request.POST['description']
                 concert.save()
 
                 return redirect(f'/venue/panel/concert/{concert_id}/')
 
     # Didn't successfully update (no perms)
     return redirect('/venue/panel/')
+
 
 @login_required(login_url='/venue/login')
 def delete_concert(request, concert_id):
@@ -440,7 +494,6 @@ def add_seat(request, venue_id):
                 quantity = request.POST['quantity']
                 price = request.POST['price']
 
-
                 # Create and save the new seat type
                 new_seat = SeatType(name=name, quantity=quantity, price=price)
                 new_seat.save()
@@ -451,6 +504,7 @@ def add_seat(request, venue_id):
 
     # Does not have permission to add here.
     return redirect('/venue/panel/')
+
 
 @login_required(login_url='/venue/login')
 def edit_seat(request, seat_id):
@@ -481,6 +535,7 @@ def edit_seat(request, seat_id):
 
     # Didn't successfully update (no perms)
     return redirect('/venue/panel/')
+
 
 @login_required(login_url='/venue/login')
 def delete_seat(request, seat_id):
@@ -553,16 +608,12 @@ def set_restrictions(request, concert_id):
                     # Get the values from the POST and add to db
                     available = int(request.POST[f'{seat_entry.id}-available'])
 
-
                     restriction = SeatRestriction(seat_type=seat_entry, concert=concert, available=available)
                     restriction.save()
                 # Redirect the user
                 return redirect(f"/venue/panel/concert/{concert_id}")
 
     return redirect('/venue/logout/')
-
-
-
 
 
 def buy(request, concert_id):
