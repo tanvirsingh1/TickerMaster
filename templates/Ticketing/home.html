@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8"/>
     <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
@@ -7,22 +8,13 @@
     <link href="./main.css" rel="stylesheet"/>
     <title>TicketSprint</title>
 
-    <link
-            crossorigin="anonymous"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-            rel="stylesheet"
-    />
-    <script
-            crossorigin="anonymous"
-            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
-            src="https://code.jquery.com/jquery-3.6.3.js"
-    ></script>
-    <script
-            crossorigin="anonymous"
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet"/>
+    <script crossorigin="anonymous" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+            src="https://code.jquery.com/jquery-3.6.3.js"></script>
+    <script crossorigin="anonymous"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     {% load static %}
     <link href="{% static 'css/home.css' %}" rel="stylesheet">
@@ -30,44 +22,30 @@
 </head>
 
 <body style="background-color: #101827;">
-<nav
-        class="navbar navbar-expand-lg navbar-dark fixed-top"
-        style="
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="
         background-color: #1f2937;
         height: 9vh;
-      "
->
+      ">
     <div class="container-fluid">
-        <button
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-                class="navbar-toggler"
-                data-bs-target="#navbarNav"
-                data-bs-toggle="collapse"
-                type="button"
-        >
+        <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-               <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
+                <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
                 <li><a class="nav-item nav-link" href="/about">About</a></li>
             </ul>
         </div>
-        <a
-                class="navbar-brand"
-                href="/"
-                style="color: #8eccff; font-family: sans-serif; letter-spacing: 2px"
-        ><h1><b>TicketSprint</b></h1>
+        <a class="navbar-brand" href="/" style="color: #8eccff; font-family: sans-serif; letter-spacing: 2px">
+            <h1><b>TicketSprint</b></h1>
         </a>
         <div class="justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                           id="navbarDropdownLogin"
-                           role="button">
+                           id="navbarDropdownLogin" role="button">
                             <i class="bi bi-person"></i> Login
                         </a>
                         <ul aria-labelledby="navbarDropdownLogin" class="dropdown-menu dropdown-menu-end">
@@ -78,8 +56,7 @@
 
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                           id="navbarDropdownRegister"
-                           role="button">
+                           id="navbarDropdownRegister" role="button">
                             <i class="bi bi-person"></i> Register
                         </a>
                         <ul aria-labelledby="navbarDropdownRegister" class="dropdown-menu dropdown-menu-end">
@@ -92,96 +69,55 @@
             </ul>
         </div>
     </div>
-</nav><br/><br/>
-
-{% if concerts %}
-
-<div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false">
+</nav>
+<br/><br/>
+<div class="carousel slide" data-bs-touch="false" id="carouselExampleControlsNoTouching" style="height: 100vh;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;">
     <div class="carousel-inner">
-        <div class="carousel-item active">
+    {% for concert in concerts %}
+        <div class="carousel-item{% if forloop.first %} active{% endif %}">
+            <img alt="concertpic" class="d-block w-100" src="{{ concert.concert_image.url }}"
+                 style="filter: brightness(50%);
+                 object-fit: fit;
+                height: 100%;
+                width: 100%;">
+            <div class="carousel-caption" style="
+                position: absolute;
+                top: 46%;
+                left: 70%;
+                transform: translate(-50%, -50%);">
+                <h3>{{ concert.name }}</h3><br/>
+                 <p>{{ concert.venues.first.seat_types.first.name }}: ${{ concert.venues.first.seat_types.first.price }}<br />
+                    <br />{{ concert.concert_date|date:"F j, Y • h:i A" }}
+                         Location: {{concert.venues.first.location}}
+                        <br/><br/>Hurry up and book your tickets!
+                    </p>
+                    <a href="{% url 'ticketing:buy' concert.id  %}">
+                        <button class="button-81">Buy Tickets</button>
+                    </a>
+            </div>
 
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.0.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.0.name }}</h3>
-                <p>General Admission: ${{ seatype.0.price }}<br/>
-                 <p>{{ concerts.0.concert_date|date:"F j, Y • h:i A" }}<br/>
-                {{venue.0.location}}
-                    <br/><br/>Hurry up and book your tickets!
-
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.0.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
         </div>
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.1.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.1.name }}</h3>
-                <p>General Admission: ${{ seatype.1.price }}<br/>
-                 {{ concerts.1.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 {{venue.1.location}}<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.1.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.2.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.2.name }}</h3>
-                <p>General Admission: ${{ seatype.2.price }}<br/>
-                 {{ concerts.2.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 {{venue.2.location}}<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.2.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.3.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.3.name }}</h3>
-                <p>General Admission: ${{ seatype.3.price }}<br/>
-                 {{ concerts.3.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 {{venue.3.location}}<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.3.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.4.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.4.name }}</h3>
-                <p>General Admission: ${{ seatype.4.price }}<br/>
-                 {{ concerts.4.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 {{venue.4.location}}<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.4.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{{ concerts.5.concert_image.url }}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>{{ concerts.5.name }}</h3>
-                <p>General Admission: ${{ seatype.5.price }}<br/>
-                 {{ concerts.5.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 {{venue.5.location}}<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="{% url 'ticketing:buy' concerts.5.id  %}"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
+    {% endfor %}
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
-{% endif %}
+
 
 <footer class="bg-dark text-light text-center"
         style="background: linear-gradient(to right, #2c3e50, #1a2639); height:4vh; color: white;">
     <p> 2023 All Rights Reserved.</p>
 </footer>
 </body>
+
 </html>
