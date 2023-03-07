@@ -11,10 +11,8 @@ from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-#from utils import emails #didn't do pull request yet
-
-from venue_management.models import Concert, SeatType
-from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm, NotificationForm
+from venue_management.models import Concert, SeatType, Venue
+from .forms import RegisterForm, SupportTicketForm, NotificationForm, CompareTicketsForm
 from .models import Eventgoer, Ticket, Order
 
 
@@ -25,8 +23,10 @@ def home_window(request):
     :return: ticketing/home.html
     """
     concerts = Concert.objects.all()
+    seat_type = SeatType.objects.all()
+    venue = Venue.objects.all()
 
-    return render(request, 'ticketing/home.html', {'concerts': concerts})
+    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, 'venue' : venue})
 
 
 def about_window(request):
@@ -229,9 +229,9 @@ def pay(request):
             'booked_seats': booked_seats, 'concert_id': concert_id})
 
 
-def all_concerts(request,concert=None,error=None):
-    """All concerts models retrieves all the concerts from the database
-    and using paginator the data is passed to the html"""
+def all_concerts(request, concert=None, error=None):
+    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
+      html"""
     if concert:
         print(concert)
         concert2 = [concert]
@@ -247,7 +247,7 @@ def all_concerts(request,concert=None,error=None):
 
 
 def searched(request):
-    """Search each concert based on the value, if value matches that concert 
+    """Search each concert based on the value, if value matches that concert
     shall be displayed, else nothing"""
     if request.method == "POST":
         print("Post request")
