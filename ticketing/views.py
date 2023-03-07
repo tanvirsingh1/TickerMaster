@@ -7,8 +7,8 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 
-from venue_management.models import Concert
-from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm, NotificationForm
+from venue_management.models import Concert, SeatType, Venue
+from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
 
@@ -19,8 +19,9 @@ def home_window(request):
     :return: ticketing/home.html
     """
     concerts = Concert.objects.all()
-
-    return render(request, 'ticketing/home.html', {'concerts': concerts})
+    seatype = SeatType.objects.all()
+    venue = Venue.objects.all()
+    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seatype, 'venue' : venue})
 
 
 def about_window(request):

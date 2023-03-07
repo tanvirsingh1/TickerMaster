@@ -103,9 +103,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.0.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.0.name }}</h3>
-
+                <p>General Admission: ${{ seatype.0.price }}<br/>
                  <p>{{ concerts.0.concert_date|date:"F j, Y • h:i A" }}<br/>
-                    Scotiabank Arena, Toronto, ON
+                {{venue.0.location}}
                     <br/><br/>Hurry up and book your tickets!
 
                 </p><br/>
@@ -116,8 +116,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.1.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.1.name }}</h3>
-                <p>{{ concerts.1.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                <p>General Admission: ${{ seatype.1.price }}<br/>
+                 {{ concerts.1.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 {{venue.1.location}}<br/><br/>Hurry up and book your tickets!
                 </p><br/>
                 <a href="{% url 'ticketing:buy' concerts.1.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
@@ -126,8 +127,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.2.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.2.name }}</h3>
-                <p>{{ concerts.2.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                <p>General Admission: ${{ seatype.2.price }}<br/>
+                 {{ concerts.2.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 {{venue.2.location}}<br/><br/>Hurry up and book your tickets!
                 </p><br/>
                 <a href="{% url 'ticketing:buy' concerts.2.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
@@ -136,8 +138,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.3.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.3.name }}</h3>
-                <p>{{ concerts.3.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                <p>General Admission: ${{ seatype.3.price }}<br/>
+                 {{ concerts.3.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 {{venue.3.location}}<br/><br/>Hurry up and book your tickets!
                 </p><br/>
                 <a href="{% url 'ticketing:buy' concerts.3.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
@@ -146,8 +149,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.4.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.4.name }}</h3>
-                <p>{{ concerts.4.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                <p>General Admission: ${{ seatype.4.price }}<br/>
+                 {{ concerts.4.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 {{venue.4.location}}<br/><br/>Hurry up and book your tickets!
                 </p><br/>
                 <a href="{% url 'ticketing:buy' concerts.4.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
@@ -156,9 +160,9 @@
             <img alt="concertpic" class="d-block w-100" src="{{ concerts.5.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
                 <h3>{{ concerts.5.name }}</h3>
-                <p>General Admission: ${{concerts.5.price}}<br/>
+                <p>General Admission: ${{ seatype.5.price }}<br/>
                  {{ concerts.5.concert_date|date:"F j, Y • h:i A" }}<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                 {{venue.5.location}}<br/><br/>Hurry up and book your tickets!
                 </p><br/>
                 <a href="{% url 'ticketing:buy' concerts.5.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
