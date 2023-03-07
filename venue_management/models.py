@@ -178,7 +178,8 @@ class Venue(models.Model):
     Describes a Venue
     """
     name = models.CharField(max_length=60, verbose_name="Name")
-    #description = models.CharField(max_length=255, verbose_name="Description", default=None)       #have error because of this
+    #have error because of this
+    #description = models.CharField(max_length=255, verbose_name="Description", default=None)
     image = models.ImageField(max_length=255, verbose_name="Image")
     website = models.URLField(max_length=255, verbose_name="Website", null=False)
     location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")

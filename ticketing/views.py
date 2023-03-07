@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+import ast
 #from utils import emails #didn't do pull request yet
 
 from venue_management.models import Concert, SeatType
@@ -187,12 +188,12 @@ def pay(request):
         else:
 
             # Create and save the new order
-            order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, exp_month = exp_month, \
+            order = Order(purchaser = user, card_number = card_number, cvv = cvv, exp_month = exp_month, \
                           exp_year = exp_year, holder_name = holder_name, total = total)
             order.save()
 
             #update ticket's number in the database
-            booked_seats = eval(booked_seats)
+            booked_seats = ast.literal_eval(booked_seats)
             for database_seats in concert.venues.first().seat_types.all():
                 for ordered_seats in booked_seats:
                     if database_seats.id == ordered_seats['id']:
@@ -202,7 +203,7 @@ def pay(request):
             #create ticket in the database for each purchased ticket
             for ordered_seats in booked_seats:
                 seattype = SeatType.objects.get(pk=ordered_seats['id'])
-                for i in range(ordered_seats['quantity']):
+                for _ in range(ordered_seats['quantity']):
                     ticket = Ticket(seat_type=seattype, concert=concert)
                     ticket.save()
                     order.tickets.add(ticket)
