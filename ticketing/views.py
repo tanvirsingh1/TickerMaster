@@ -163,14 +163,20 @@ def pay(request):
 
     if request.method == 'POST':
         # retrieve data from form
-        card_number = int(request.POST.get('card_number'))
+        card_number = request.POST.get('card_number')
         cvv = request.POST.get('cvv')
         exp_month = request.POST.get('expiration_month')
         exp_year = request.POST.get('expiration_year')
         holder_name = request.POST.get('holder_name')
 
+        #in case user selected more tickets than available
+        if not card_number.isdigit() or not cvv.isdigit():
+            error = "The provided information is invalid."
+            return render(request, 'ticketing/payment.html', {'messages': error})
+            
         #in case everything is okay, the user has successfully purchased tickets
-        return render(request, 'ticketing/purchase-success.html')
+        else:
+            return render(request, 'ticketing/purchase-success.html')
 
     # pass the user make a payment
     return render(request, 'ticketing/payment.html/', {'total': total})
