@@ -8,10 +8,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+#from utils import emails #didn't do pull request yet
 
-from venue_management.models import Concert, Order
+from venue_management.models import Concert, SeatType
 from .forms import RegisterForm, SupportTicketForm
-from .models import Eventgoer
+from .models import Eventgoer, Ticket, Order
 
 
 def home_window(request):
@@ -134,7 +135,7 @@ def buy(request, concert_id):
             
             #adding booked seat (and number to order)
             else:
-                seat = {'name': seat_name, 'price': seat_price, 'quantity': quantity}
+                seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
                 booked_seats.append(seat)
 
         #in case user didn't select any tickets
@@ -182,11 +183,31 @@ def pay(request):
             
         #in case everything is okay, the user has successfully purchased tickets
         else:
+
+            # Create and save the new order
+            order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, exp_month = exp_month, \
+                          exp_year = exp_year, holder_name = holder_name, total = total)
+            order.save()
+
             #update ticket's number in the database
-            for i in concert.venues.first().seat_types.all():
-                print(i)
-            
-            
+            booked_seats = eval(booked_seats)
+            for database_seats in concert.venues.first().seat_types.all():
+                for ordered_seats in booked_seats:
+                    if database_seats.id == ordered_seats['id']:
+                        database_seats.quantity -= ordered_seats['quantity']
+                        database_seats.save()
+
+            for ordered_seats in booked_seats:
+                seattype = SeatType.objects.get(pk=ordered_seats['id'])
+                for i in range(ordered_seats['quantity']):
+                    ticket = Ticket(seat_type=seattype, concert=concert)
+                    ticket.save()
+                    order.tickets.add(ticket)
+
+            #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
+            #htmlMessageTextVar = ""
+            #emails.send_email(recipient=user.email, subject="Your Tickets", message=plainTextMessageVar, html_message=htmlMessageTextVar)
+
             return render(request, 'ticketing/purchase-success.html')
 
     # pass the user make a payment
