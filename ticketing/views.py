@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from venue_management.models import Concert
+from venue_management.models import Concert, Order
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
@@ -113,7 +113,7 @@ def buy(request, concert_id):
         quantity = request.POST.get('quantity')
 
         #forming the customer's order
-        order = []
+        booked_seats = []
         number_of_tickets = 0
         total = 0
         for i, quantity in enumerate(request.POST.getlist('quantity')):
@@ -134,8 +134,8 @@ def buy(request, concert_id):
             
             #adding booked seat (and number to order)
             else:
-                booked_seats = {'name': seat_name, 'price': seat_price, 'quantity': quantity}
-                order.append(booked_seats)
+                seat = {'name': seat_name, 'price': seat_price, 'quantity': quantity}
+                booked_seats.append(seat)
 
         #in case user didn't select any tickets
         if number_of_tickets == 0:
@@ -144,7 +144,7 @@ def buy(request, concert_id):
                             'concert': concert, 'user': user})
         
         #in case everything is okay, the user is ready to pay
-        url = reverse('ticketing:pay') + '?' + urlencode({'total': total})
+        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
         return HttpResponseRedirect(url)
 
     # pass the user select tickets
@@ -157,11 +157,17 @@ def pay(request):
     # check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
-    
-    total = request.GET.get('total')
-    
+
 
     if request.method == 'POST':
+
+        #extracting past data
+        total = request.POST.get('total')
+        booked_seats = request.POST.get('booked_seats')
+        concert_id = request.POST.get('concert_id')
+        concert = Concert.objects.get(pk=concert_id)
+        user = request.user
+
         # retrieve data from form
         card_number = request.POST.get('card_number')
         cvv = request.POST.get('cvv')
@@ -172,14 +178,22 @@ def pay(request):
         #in case user selected more tickets than available
         if not card_number.isdigit() or not cvv.isdigit():
             error = "The provided information is invalid."
-            return render(request, 'ticketing/payment.html', {'messages': error})
+            return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
             
         #in case everything is okay, the user has successfully purchased tickets
         else:
+            #update ticket's number in the database
+            for i in concert.venues.first().seat_types.all():
+                print(i)
+            
+            
             return render(request, 'ticketing/purchase-success.html')
 
     # pass the user make a payment
-    return render(request, 'ticketing/payment.html/', {'total': total})
+    total = request.GET.get('total')
+    booked_seats = request.GET.get('booked_seats')
+    concert_id = request.GET.get('concert_id')
+    return render(request, 'ticketing/payment.html/', {'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
 
 
 def all_concerts(request,concert=None,error=None):
