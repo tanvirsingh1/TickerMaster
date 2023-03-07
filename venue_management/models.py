@@ -183,7 +183,8 @@ class SeatRestriction(models.Model):
         validators.MaxValueValidator(limit_value=100)
     ))
     seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, verbose_name="Seat Type")
-    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert", related_name="restrictions")
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert",
+                                related_name="restrictions")
 
     def get_available_seats(self):
         """

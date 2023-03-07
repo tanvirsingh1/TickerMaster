@@ -57,6 +57,7 @@
                             <th class="col-6" id="{{ seat_type.id }}">{{ seat_type.name }}</th>
                             <td class="col-2">
                               {{ seat_type.quantity }} x
+                              <!-- TODO: Get number to display properly -->
                               <input type="number" aria-labelledby="seatAvail" min="0" max="100" step="1" name="{{ seat_type.id }}-available"
                                      {% if seat_type in concert.restrictions.values %}
                                       {% for restriction in concert.restrictions.all %}
