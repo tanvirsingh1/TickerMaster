@@ -35,8 +35,9 @@
 <div class="accordion" id="accordionExample{{ forloop.counter }}">
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-      <button class= "accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse
-{{ forloop.counter }}" aria-expanded="False" aria-controls="collapse{{ forloop.counter }} collapsed">
+     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
+        aria-controls="collapse{{ forloop.counter }}">
  <div class="container">
   <div class="row align-items-center">
     <div class="col-md-2">
@@ -81,8 +82,22 @@
       </div>
 
       <div  class="col-md-3">
-        <h5 class="fw-bold">Price</h5>
-        <p>${{ concert.price }}</p>
+           <table style="border-collapse: collapse;" >
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for seat_type in concert.venues.first.seat_types.all %}
+    <tr>
+      <td>{{ seat_type.name}}</td>
+      <td>{{ seat_type.price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
       </div>
 
     </div>

@@ -1,0 +1,35 @@
+<!-- templates/Ticketing/compare_tickets.html -->
+{% extends 'ticketing/base.html' %}
+
+{% block content %}
+  <h1>Compare Ticket Prices</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Compare Tickets</button>
+  </form>
+  {% if ticket_1 and ticket_2 %}
+    <h2>Comparison Results:</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Price</th>
+          <th>Availability</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ ticket_1.event }}</td>
+          <td>{{ ticket_1.price }}</td>
+          <td>{{ ticket_1.availability }}</td>
+        </tr>
+        <tr>
+          <td>{{ ticket_2.event }}</td>
+          <td>{{ ticket_2.price }}</td>
+          <td>{{ ticket_2.availability }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

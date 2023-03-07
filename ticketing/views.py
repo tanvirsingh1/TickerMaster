@@ -5,6 +5,7 @@ views.py - Responsible for handling this application's views
 from urllib.parse import urlencode
 import ast
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
@@ -13,7 +14,7 @@ from django.http import HttpResponseRedirect
 #from utils import emails #didn't do pull request yet
 
 from venue_management.models import Concert, SeatType
-from .forms import RegisterForm, SupportTicketForm
+from .forms import RegisterForm, SupportTicketForm, CompareTicketsForm, NotificationForm
 from .models import Eventgoer, Ticket, Order
 
 
@@ -25,6 +26,7 @@ def home_window(request):
     """
     return render(request, 'ticketing/home.html')
 
+
 def about_window(request):
     """
     The about us page
@@ -32,6 +34,7 @@ def about_window(request):
     :return: ticketing/about.html
     """
     return render(request, 'ticketing/about.html')
+
 
 def login_window(request):
     """
@@ -103,6 +106,7 @@ def buy(request, concert_id):
     """
     select a ticket --> login, registration required
     """
+    # check if the user is logged in
     # check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
@@ -230,11 +234,12 @@ def all_concerts(request,concert=None,error=None):
 
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
-    p = Paginator( Concert.objects.all(),3)
+    p = Paginator(Concert.objects.all(), 3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
     return render(request, 'Ticketing/concert.html', {'concerts':concert_list, \
                                         'conc':concerts,'error':error})
+
 
 def searched(request):
     """Search each concert based on the value, if value matches that concert 
@@ -251,7 +256,51 @@ def searched(request):
             return all_concerts(request, concert)
         except Concert.DoesNotExist:
             error = f"No Concerts by {search}"
-            return all_concerts(request,None, error)
+            return all_concerts(request, None, error)
 
     else:
         return render(request, "/concerts")
+
+def compare_tickets_view(request):
+    """ compare tikcet view """
+    form = CompareTicketsForm(request.POST or None)
+
+    if form.is_valid():
+        ticket_1 = form.cleaned_data['ticket_1']
+        ticket_2 = form.cleaned_data['ticket_2']
+        context = {
+            'ticket_1': ticket_1,
+            'ticket_2': ticket_2,
+        }
+    else:
+        context = {
+            'form': form,
+        }
+
+    return render(request, 'Ticketing/compare_tickets.html', context)
+
+def notifications(request):
+    """ view for user notification """
+    if request.method == 'POST':
+        form = NotificationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            notify_new = form.cleaned_data['notify_new']
+            notify_cancelled = form.cleaned_data['notify_cancelled']
+
+            # send email notifications based on form data
+            subject = 'Event Notification Settings'
+            message = f'You will receive notifications for new events: {notify_new}\n'
+            message += f'You will receive notifications for cancelled events: {notify_cancelled}'
+            from_email = 'noreply@example.com'
+            recipient_list = [email]
+            send_mail(subject, message, from_email, recipient_list)
+
+            # display confirmation message
+            context = {'message': 'Notification settings saved!'}
+            return render(request, 'ticketing/notifications.html', context)
+    else:
+        form = NotificationForm()
+
+    context = {'form': form}
+    return render(request, 'ticketing/notifications.html', context)
