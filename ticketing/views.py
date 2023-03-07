@@ -2,11 +2,14 @@
 views.py - Responsible for handling this application's views
 """
 
+from urllib.parse import urlencode
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
-from venue_management.models import VenueManager, PromoCode, Venue, Location, Concert
+from venue_management.models import Concert
 from .forms import RegisterForm, SupportTicketForm
 from .models import Eventgoer
 
@@ -107,7 +110,7 @@ def buy(request, concert_id):
 
     if request.method == 'POST':
         # retrieve data from form
-        quantity = int(request.POST.get('quantity'))
+        quantity = request.POST.get('quantity')
 
         #forming the customer's order
         order = []
@@ -141,7 +144,8 @@ def buy(request, concert_id):
                             'concert': concert, 'user': user})
         
         #in case everything is okay, the user is ready to pay
-        return redirect('/payment')
+        url = reverse('ticketing:pay') + '?' + urlencode({'total': total})
+        return HttpResponseRedirect(url)
 
     # pass the user select tickets
     return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert})
@@ -153,6 +157,9 @@ def pay(request):
     # check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
+    
+    total = request.GET.get('total')
+    
 
     if request.method == 'POST':
         # retrieve data from form
@@ -166,7 +173,7 @@ def pay(request):
         return render(request, 'ticketing/purchase-success.html')
 
     # pass the user make a payment
-    return render(request, 'ticketing/payment.html/')
+    return render(request, 'ticketing/payment.html/', {'total': total})
 
 
 def all_concerts(request,concert=None,error=None):
