@@ -93,76 +93,74 @@
         </div>
     </div>
 </nav><br/><br/>
+
+{% if concerts %}
+
 <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'zayn.jpg' %}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>Mind Of Mine</h3>
-                <p>General Admission: $133.87<br/>
-                 Sat • April 8 • 7:00 PM<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
 
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'justin.jpg' %}" style="filter: brightness(50%)">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.0.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
-                <h3>Purpose Tour</h3>
-                <p>General Admission: $233.87<br/>
-                 Sat • April 15 • 7:00 PM<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
+                <h3>{{ concerts.0.name }}</h3>
 
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'lana.jpg' %}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>Born To Die</h3>
-                <p>General Admission: $133.87<br/>
-                 Sat • April 22 • 7:00 PM<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a><br/>
-            </div>
-        </div>
+                 <p>{{ concerts.0.concert_date|date:"F j, Y • h:i A" }}<br/>
+                    Scotiabank Arena, Toronto, ON
+                    <br/><br/>Hurry up and book your tickets!
 
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'harry.jpg' %}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>Harry's House</h3>
-                <p>General Admission: $133.87<br/>
-                 Sat • April 29 • 7:00 PM<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
                 </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a>
-            </div>
-        </div>
-
-        <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'taylor.jpg' %}" style="filter: brightness(50%)">
-            <div class="carousel-caption">
-                <h3>Midnights</h3>
-                <p>General Admission: $163.87<br/>
-                 Sat • May 6 • 7:00 PM<br/>
-                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
-                </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a>
+                <a href="{% url 'ticketing:buy' concerts.0.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
         </div>
         <div class="carousel-item">
-            <img alt="concertpic" class="d-block w-100" src="{% static 'travis.jpg' %}" style="filter: brightness(50%)">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.1.concert_image.url }}" style="filter: brightness(50%)">
             <div class="carousel-caption">
-                <h3>ASTROWORLD</h3>
-                <p>General Admission: $163.87<br/>
-                 Sat • May 13 • 7:00 PM<br/>
+                <h3>{{ concerts.1.name }}</h3>
+                <p>{{ concerts.1.concert_date|date:"F j, Y • h:i A" }}<br/>
                  Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
                 </p><br/>
-                <a href="/concert_window"><button class="button-81">Buy Tickets</button></a>
+                <a href="{% url 'ticketing:buy' concerts.1.id  %}"><button class="button-81">Buy Tickets</button></a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.2.concert_image.url }}" style="filter: brightness(50%)">
+            <div class="carousel-caption">
+                <h3>{{ concerts.2.name }}</h3>
+                <p>{{ concerts.2.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                </p><br/>
+                <a href="{% url 'ticketing:buy' concerts.2.id  %}"><button class="button-81">Buy Tickets</button></a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.3.concert_image.url }}" style="filter: brightness(50%)">
+            <div class="carousel-caption">
+                <h3>{{ concerts.3.name }}</h3>
+                <p>{{ concerts.3.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                </p><br/>
+                <a href="{% url 'ticketing:buy' concerts.3.id  %}"><button class="button-81">Buy Tickets</button></a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.4.concert_image.url }}" style="filter: brightness(50%)">
+            <div class="carousel-caption">
+                <h3>{{ concerts.4.name }}</h3>
+                <p>{{ concerts.4.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                </p><br/>
+                <a href="{% url 'ticketing:buy' concerts.4.id  %}"><button class="button-81">Buy Tickets</button></a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img alt="concertpic" class="d-block w-100" src="{{ concerts.5.concert_image.url }}" style="filter: brightness(50%)">
+            <div class="carousel-caption">
+                <h3>{{ concerts.5.name }}</h3>
+                <p>General Admission: ${{concerts.5.price}}<br/>
+                 {{ concerts.5.concert_date|date:"F j, Y • h:i A" }}<br/>
+                 Scotiabank Arena, Toronto, ON<br/><br/>Hurry up and book your tickets!
+                </p><br/>
+                <a href="{% url 'ticketing:buy' concerts.5.id  %}"><button class="button-81">Buy Tickets</button></a>
             </div>
         </div>
     </div>
@@ -175,6 +173,8 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+{% endif %}
+
 <footer class="bg-dark text-light text-center"
         style="background: linear-gradient(to right, #2c3e50, #1a2639); height:4vh; color: white;">
     <p> 2023 All Rights Reserved.</p>

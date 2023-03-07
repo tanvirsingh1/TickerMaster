@@ -18,7 +18,9 @@ def home_window(request):
     :param request: (Django) object of the request's properties
     :return: ticketing/home.html
     """
-    return render(request, 'ticketing/home.html')
+    concerts = Concert.objects.all()
+
+    return render(request, 'ticketing/home.html', {'concerts': concerts})
 
 
 def about_window(request):
