@@ -1,3 +1,4 @@
+
 .navbar-brand{
   position: absolute;
   left: 50%;
@@ -31,44 +32,9 @@ footer {
 }
 
 
-.carousel {
-  height: 100vh;
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
-.carousel-inner {
-  height: 100%;
-}
-
-.carousel-item img {
-  object-fit: cover;
-  height: 100%;
-  width: 100%;
-}
-
-.carousel-caption {
-  position: absolute;
-  top: 48%;
-  transform: translateY(-50%);
-  width: 120%;
-  padding: 1px;
-  color: #ffffff;
-}
-
-.carousel-caption h3 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
 
 
-.carousel-caption p {
-  font-size: 1rem;
-  margin-bottom: 0;
-}
+
 
 .button-81 {
   background-color: #fff;
