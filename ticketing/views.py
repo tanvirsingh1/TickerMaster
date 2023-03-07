@@ -7,9 +7,11 @@ import ast
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout as lo
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from utils import emails
 
 #from utils import emails #didn't do pull request yet
 
@@ -84,6 +86,16 @@ def register_window(request):
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})
 
+
+@login_required(login_url='/login')
+def logout(request):
+    """
+    Logs the current user out
+    :param request: (Django) object of the request's properties
+    :return: redirects home
+    """
+    lo(request)
+    return redirect('/')
 
 # support ticket view for storing customer complaints
 def support_ticket(request):
