@@ -1,0 +1,61 @@
+{% extends 'venue_management/base.html' %}
+{% block title %}Account{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <br />
+    {% if success_message %}
+      <div class="alert alert-success" role="alert">
+        {{ success_message }}
+      </div>
+    {% endif %}
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+    <div class="card text-bg-dark">
+      <h1 class="text-light card-header">My Account</h1>
+      <div class="card-body">
+        <form action="{% url 'venue_management:account' %}" method="post" aria-description="Account Details Form">
+          {% csrf_token %}
+          <div class="mb-3 row">
+            <div class="form-group col-sm-6">
+              <label for="firstName" class="form-label text-light">First Name<em class="required-txt">*</em></label>
+              <input type="text" class="form-control" id="firstName" name="first_name" maxlength=30 required
+                     value="{{ request.user.first_name }}">
+            </div>
+            <div class="form-group col-sm-6">
+              <label for="lastName" class="form-label text-light">Last Name<em class="required-txt">*</em></label>
+              <input type="text" class="form-control" id="lastName" name="last_name" maxlength=30 required
+                     value="{{ request.user.last_name }}">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <div class="form-group col-sm-6">
+              <label for="email" class="form-label text-light">Email Address<em class="required-txt">*</em></label>
+              <input id="email" type="email" class="form-control" readonly disabled value="{{ request.user.email }}">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <div class="form-group col-sm-6">
+              <label for="currPassword" class="form-label text-light">Current Password<em class="required-txt">*</em></label>
+              <input id="currPassword" type="password" class="form-control" name="password">
+            </div>
+            <div class="form-group col-sm-6">
+              <label for="newPassword" class="form-label text-light">New Password</label>
+              <input id="newPassword" type="password" class="form-control" name="new_password">
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-info float-end">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
