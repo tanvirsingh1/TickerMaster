@@ -127,10 +127,11 @@ def buy(request, concert_id):
             seat_price = concert.venues.first().seat_types.filter(id=i+1).first().price
             seats_available = concert.venues.first().seat_types.filter(id=i+1).first().quantity
             total += seat_price * quantity
-           
+
             #in case user selected more tickets than available
-            if seats_available < quantity:
-                error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " + seat_name + " available."
+            if seats_available - quantity < 0:
+                error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " \
+                    + seat_name + " available."
                 return render(request, 'ticketing/buy.html', {'messages': error,
                             'concert': concert, 'user': user})
 
@@ -146,8 +147,8 @@ def buy(request, concert_id):
                             'concert': concert, 'user': user})
 
         #in case everything is okay, the user is ready to pay
-        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, 'booked_seats': booked_seats, \
-                                                          'concert_id': concert_id})
+        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, \
+                    'booked_seats': booked_seats, 'concert_id': concert_id})
         return HttpResponseRedirect(url)
 
     # pass the user select tickets
@@ -182,14 +183,14 @@ def pay(request):
         if not card_number.isdigit() or not cvv.isdigit():
             error = "The provided information is invalid."
             return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, \
-                                                'booked_seats': booked_seats, 'concert_id': concert_id})
-          
+                                    'booked_seats': booked_seats, 'concert_id': concert_id})
+
         #in case everything is okay, the user has successfully purchased tickets
         else:
 
             # Create and save the new order
-            order = Order(purchaser = user, card_number = card_number, cvv = cvv, exp_month = exp_month, \
-                          exp_year = exp_year, holder_name = holder_name, total = total)
+            order = Order(purchaser = user, card_number = card_number, cvv = cvv, \
+            exp_month = exp_month, exp_year = exp_year, holder_name = holder_name, total = total)
             order.save()
 
             #update ticket's number in the database
@@ -210,8 +211,8 @@ def pay(request):
 
             #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
             #htmlMessageTextVar = ""
-            #emails.send_email(recipient=user.email, subject="Your Tickets", message=plainTextMessageVar, \
-            # html_message=htmlMessageTextVar)
+            #emails.send_email(recipient=user.email, subject="Your Tickets", \
+            # message=plainTextMessageVar, html_message=htmlMessageTextVar)
 
             return render(request, 'ticketing/purchase-success.html')
 
@@ -219,12 +220,13 @@ def pay(request):
     total = request.GET.get('total')
     booked_seats = request.GET.get('booked_seats')
     concert_id = request.GET.get('concert_id')
-    return render(request, 'ticketing/payment.html/', {'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
+    return render(request, 'ticketing/payment.html/', {'total': total, \
+            'booked_seats': booked_seats, 'concert_id': concert_id})
 
 
 def all_concerts(request,concert=None,error=None):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
-      html"""
+    """All concerts models retrieves all the concerts from the database
+    and using paginator the data is passed to the html"""
     if concert:
         print(concert)
         concert2 = [concert]
@@ -235,10 +237,12 @@ def all_concerts(request,concert=None,error=None):
     p = Paginator( Concert.objects.all(),3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, 'conc':concerts,'error':error})
+    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, \
+                                        'conc':concerts,'error':error})
 
 def searched(request):
-    """Search each concert based on the value, if value matches that concert shall be displayed, else nothing"""
+    """Search each concert based on the value, if value matches that concert 
+    shall be displayed, else nothing"""
     if request.method == "POST":
         print("Post request")
         search = request.POST["searched"]
