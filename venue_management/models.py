@@ -138,7 +138,6 @@ class Concert(models.Model):
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)
     ))
-    price = models.FloatField(default=0,null=True,verbose_name="Ticket Price")
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue

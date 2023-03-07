@@ -290,13 +290,12 @@ def add_concert(request, venue_id):
                 artist_name = request.POST['artist_name']
                 concert_date= request.POST['concert_date']
                 min_age= request.POST['min_age']
-                price = request.POST['price']
                 concert_image = request.FILES.get('concert_image')
                 description= request.POST['description']
 
                 # Create and save the new concert
                 new_concert = Concert(name=name, artist_name=artist_name, concert_date=concert_date, min_age=min_age,
-                                      price=price, concert_image=concert_image, description=description)
+                                        concert_image=concert_image, description=description)
                 new_concert.save()
 
                 # Add the concert to the venue.
@@ -362,7 +361,6 @@ def edit_concert(request, concert_id):
                 concert.artist_name = request.POST['artist_name']
                 concert.concert_date= request.POST['concert_date']
                 concert.min_age= request.POST['min_age']
-                concert.price = request.POST['price']
                 concert.concert_image = request.FILES.get('concert_image')
                 concert.description= request.POST['description']
                 concert.save()
