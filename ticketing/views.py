@@ -211,7 +211,7 @@ def pay(request):
         # message=plainTextMessageVar, html_message=htmlMessageTextVar)
 
         return render(request, 'ticketing/purchase-success.html')
-    
+
     # pass the user make a payment
     total = request.GET.get('total')
     booked_seats = request.GET.get('booked_seats')
