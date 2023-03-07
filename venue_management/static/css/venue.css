@@ -42,3 +42,7 @@ div.accordion-item {
 .required-txt {
   color: red;
 }
+td, th {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
