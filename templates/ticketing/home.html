@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>TicketSprint</title>
+    <link href="./main.css" rel="stylesheet" />
+    <title>Home | TicketSprint</title>
 
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet" />
@@ -20,18 +21,18 @@
 </head>
 
 <body style="background-color: #101827;">
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="
-        background-color: #1f2937;
-        height: 9vh;
-      ">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #1f2937; height: 9vh;">
         <div class="container-fluid">
             <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
                 class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                     <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
+
+                    &nbsp;
                     <li><a class="nav-item nav-link" href="/about">About</a></li>
                 </ul>
             </div>
@@ -39,66 +40,74 @@
                 <h1><b>TicketSprint</b></h1>
             </a>
             <div class="justify-content-end" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        {% if request.user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ request.user }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/account">My Account</a>
+                                <a class="dropdown-item" href="/tickets">My Orders</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'ticketing:logout' %}">Logout</a>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item dropdown">
+                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
                                 id="navbarDropdownLogin" role="button">
                                 <i class="bi bi-person"></i> Login
                             </a>
                             <ul aria-labelledby="navbarDropdownLogin" class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/login">Login</a></li>
-                                <li><a class="dropdown-item" href="/venue/login">Manager Login</a></li>
+                                <li><a class="dropdown-item" href="{% url 'ticketing:login' %}">Login</a></li>
+                                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Login</a>
+                                </li>
                             </ul>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                            <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
                                 id="navbarDropdownRegister" role="button">
                                 <i class="bi bi-person"></i> Register
                             </a>
                             <ul aria-labelledby="navbarDropdownRegister" class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/register">Register</a></li>
-                                <li><a class="dropdown-item" href="/venue/register">Manager Register</a></li>
+                                <li><a class="dropdown-item" href="{% url 'ticketing:register' %}">Register</a></li>
+                                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager
+                                        Register</a></li>
                             </ul>
                         </li>
+                        {% endif %}
 
-                    </div>
-                </ul>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
     <br /><br />
-
-
-    <div class="carousel slide" data-bs-touch="false" id="carouselExampleControlsNoTouching"
-        style="height: 100vh; display: flex;  flex-wrap: nowrap; overflow-x: scroll; -webkit-overflow-scrolling: touch;">
+    <div class="carousel slide" data-bs-touch="false" id="carouselExampleControlsNoTouching" style="height: 100vh;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;">
         <div class="carousel-inner">
-
-            <!--Error Notification-->
-            {% if url %}
-            <script>
-                window.history.pushState(null, null, "{{ url }}");
-            </script>
-            <br /><br />
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Error: </strong>
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endif %}
-
-
-
             {% for concert in concerts %}
             <div class="carousel-item{% if forloop.first %} active{% endif %}">
-                <img alt="concertpic" class="d-block w-100" src="{{ concert.concert_image.url }}"
-                    style="filter: brightness(50%); object-fit: fit; height: 100%; width: 100%;">
-                <div class="carousel-caption"
-                    style="position: absolute; top: 46%; left: 70%; transform: translate(-50%, -50%);">
+                <img alt="concertpic" class="d-block w-100" src="{{ concert.concert_image.url }}" style="filter: brightness(50%);
+                 object-fit: fit;
+                height: 100%;
+                width: 100%;">
+                <div class="carousel-caption" style="
+                position: absolute;
+                top: 46%;
+                left: 70%;
+                transform: translate(-50%, -50%);">
                     <h3>{{ concert.name }}</h3><br />
-                    <p>{{ concert.venues.first.seat_types.first.name }}:
-                        ${{concert.venues.first.seat_types.first.price}}<br />
+                    <p>{{ concert.venues.first.seat_types.first.name }}: ${{ concert.venues.first.seat_types.first.price
+                        }}<br />
                         <br />{{ concert.concert_date|date:"F j, Y • h:i A" }}
                         Location: {{concert.venues.first.location}}
                         <br /><br />Hurry up and book your tickets!
