@@ -129,14 +129,12 @@ def buy(request, concert_id):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-        concerts = Concert.objects.all()
-        seat_type = SeatType.objects.all()
-        venue = Venue.objects.all()
 
         error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
             can buy Tickets."
-        return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, \
-                                        'venue' : venue, 'message': error, 'url': '/'})
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
+                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
+                'message': error, 'url': '/'})
 
     if request.method == 'POST':
         # retrieve data from form
