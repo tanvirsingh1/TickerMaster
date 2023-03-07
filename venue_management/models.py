@@ -219,25 +219,19 @@ class PromoCode(models.Model):
         :return: discount
         """
         return self.discount
+    
+
+class Ticket(models.Model):
+    """
+    Infromation about tickets.
+    """
+
+    
 
 class Order(models.Model):
     """
     Infromation about the purchased ticket order.
     """
-
-    #enventgoer info
-    first_name = models.CharField(max_length=30, verbose_name='First Name', null=False)
-    last_name = models.CharField(max_length=30, verbose_name='Last Name', null=False)
-    email = models.EmailField(max_length=40, unique=True, verbose_name='Email', null=False)
-
-    #concert info
-    concert_name = models.CharField(max_length=60, default='', null=False)
-    artist_name = models.CharField(max_length=100)
-    concert_date = models.DateTimeField()
-
-    #venue info
-    venue_name = models.CharField(max_length=60, verbose_name="Name", null=False)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
 
     #tickets(seats) purchased
     seat_type = models.CharField(max_length=60, verbose_name="Seat Type", null=False)
