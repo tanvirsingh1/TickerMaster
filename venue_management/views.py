@@ -170,13 +170,16 @@ def panel(request):
     :param request: (Django) object of the request's properties
     :return: the venue manager's panel
     """
-    venues = request.user.venues.all()
-    provinces = Location.Province.choices
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        provinces = Location.Province.choices
 
-    if len(venues) == 0:
-        venues = None
+        if len(venues) == 0:
+            venues = None
 
-    return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
+        return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
+
+    return redirect('/venue/logout/')
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
