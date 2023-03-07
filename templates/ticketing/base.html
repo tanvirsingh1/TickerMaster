@@ -47,6 +47,7 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="/account">My Account</a>
+                <a class="dropdown-item" href="/tickets">My Orders</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'ticketing:logout' %}">Logout</a>
               </div>
@@ -59,7 +60,7 @@
               </a>
               <ul aria-labelledby="navbarDropdownLogin" class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{% url 'ticketing:login' %}">Login</a></li>
-                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Venue Login</a></li>
+                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Login</a></li>
               </ul>
             </li>
 
@@ -70,7 +71,7 @@
               </a>
               <ul aria-labelledby="navbarDropdownRegister" class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{% url 'ticketing:register' %}">Register</a></li>
-                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Venue Register</a></li>
+                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Register</a></li>
               </ul>
             </li>
             {% endif %}
