@@ -1,0 +1,286 @@
+{% extends 'ticketing/base.html' %}
+{% block title %}Ticket Purchasing{% endblock %}
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+<link href="{% static 'css/buy.css' %}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<br><br><br><br><br><br>
+<div class="container">
+
+  <!--Error Notification-->
+  {% if messages %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ messages }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <!--STEP 1 OF CHECKOUT - SELECT TICKETS-->
+  <form method="POST" action="{% url 'ticketing:buy' concert.id  %}" id="select-tickets">
+    {% csrf_token %}
+    <div class="row g-5">
+
+      <!--Cart-->
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Your Cart</span>
+          <span class="badge bg-primary rounded-pill" id="number-of-tickets">0</span>
+        </h4>
+        <ul class="list-group mb-3" id="cart"></ul>
+        
+        <br>
+        <h3 class="my-3" id="total">Total: $0.00</h3>
+
+        <button class="w-100 btn btn-primary btn-lg" type="submit" form="select-tickets">Continue to checkout</button>
+      </div>
+
+      <div class="col-md-7 col-lg-8">
+        <!--CONCERT DETAILS-->
+        <h4 class="mb-3">Concert Details</h4>
+        <hr>
+        <div class="row g-3">
+
+          <!--Concert Image-->
+          {% if concert.concert_image %}
+          <img src="{% static concert.concert_image %}" class="col-sm-5">
+          {% else %}
+          <img src="{% static 'default.jpg' %}" class="col-sm-5">
+          {% endif %}
+
+
+          <div class="col-sm-7">
+            <div>
+
+              <!--Ticket Selection-->
+              <h4 class="mb-3">Tickets</h4>
+              <div id="carousel" class="carousel slide carousel-fade" data-interval="false"
+                style="margin: 0; padding: 0; height: max-content;">
+                <div class="carousel-inner">
+                  <div class="card" style="background-color: #212F42;" id="containter-qnty">
+                    <div class="row g-3">
+                      <div class="col-sm-2">
+                        <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="sr-only"></span>
+                        </a>
+                      </div>
+                      <div class="col-sm-8">
+                        {% for i in concert.venues.first.seat_types.all %}
+                        {% if i == concert.venues.first.seat_types.first %}
+                        <div class="carousel-item active">
+                          {% else %}
+                          <div class="carousel-item">
+                            {% endif %}
+                            <div class="card-body">
+                              <h5 class="card-title">Seat {{i.name}}</h5>
+                              <input type="hidden" class="seat_name" value="{{i.name}}">
+                              <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
+                              <input type="hidden" class="seat_price" value="{{i.price}}">
+                              <br>
+                              <div class="input-group col-sm-6" id="select-qnty">
+                                <button class="btn-sm btn-secondary qnty_bnt" type="button"
+                                  onclick="decr_quantity()">-</button>
+                                <input type="number" name="quantity" class="form-control text-center quantity" value="0"
+                                  readonly>
+                                <button class="btn-sm btn-secondary qnty_bnt" type="button"
+                                  onclick="incr_quantity()">+</button>
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <div class="col-sm-2">
+                        <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="sr-only"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <!--Concert Information-->
+              <h4>{{concert.name}} ({{concert.min_age}}+)</h4>
+              <p class="card-text"><small class="text-light"><i class="icon-location-pin"></i>
+                  {{concert.venues.first.name }} - {{ concert.venues.first.location }}</small></p>
+              <p class="card-text"><strong><i class="icon-music-tone"></i> Artist:</strong> {{ concert.artist_name }}
+              </p>
+              <p class="card-text"><strong><i class="icon-calendar"></i> Date:</strong> {{ concert.concert_date }}</p>
+              <p class="card-text" style="border-left: 6px solid #5a5858; padding-left: 10px">{{ concert.description }}
+              </p>
+
+            </div>
+          </div>
+
+          <br><br>
+
+          <!--EVENTGOER'S DETAILS-->
+          <h4 class="mb-3">Personal Details</h4>
+          <hr>
+          <div class="row g-3">
+            <div>
+              <h5>{{user.first_name}} {{user.last_name}}</h5>
+              <p><small class="text-light"><i class="icon-phone"></i> Contact: {{user.email}}</small></p>
+              {% if user.is_reseller == True %}
+              <p><small class="text-light"><i class="icon-check"></i> Reseller</small></p>
+              <input type="hidden" id="reseller" value="True">
+              {% else %}
+              <input type="hidden" id="reseller" value="False">
+              {% endif %}
+            </div>
+          </div>
+
+          <br><br><br><br><br><br>
+
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+
+<script>
+
+  let cart = [];
+  let total = 0;
+  let num_of_tickets = 0;
+  let reseller = false;
+
+  if (document.getElementById('reseller').value == "True")
+    reseller = true;
+
+  //add ticket (seat)
+  function incr_quantity() {
+
+    //data fetch
+    let mainDIV = document.getElementsByClassName("active")[0];
+    let quantity = parseInt(mainDIV.getElementsByClassName("quantity")[0].value);
+    let seat_name = mainDIV.getElementsByClassName('seat_name')[0].value;
+    let seat_price = parseFloat(mainDIV.getElementsByClassName('seat_price')[0].value);
+    let exists_in_cart = false;
+
+    //max tickets for reseller is 10
+    if (num_of_tickets < 10 || reseller == true) {
+
+      mainDIV.getElementsByClassName("quantity")[0].value = ++quantity;
+
+      //if seat already exits in the cart - updates quantity and price
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].name == seat_name) {
+          cart[i].quantity = quantity;
+          cart[i].price += seat_price;
+          exists_in_cart = true;
+
+          let li = document.getElementById(seat_name);
+          li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name;
+          li.getElementsByTagName('small')[0].innerText = "Number of Tickets: " + cart[i].quantity;
+          li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+
+          break;
+        }
+      }
+      //if seat doesn't exit in the cart - adds it
+      if (exists_in_cart == false) {
+        cart.push({ 'name': seat_name, 'quantity': quantity, 'price': seat_price });
+        let ul = document.getElementById('cart');
+        let li = document.createElement('li');
+        li.id = seat_name;
+        li.className = "list-group-item d-flex justify-content-between lh-sm"
+        let div = document.createElement('div');
+        let h6 = document.createElement('h6');
+        h6.className = "my-0";
+        h6.innerText = "Seat " + seat_name;
+        let small = document.createElement('small');
+        small.className = "text-muted";
+        small.innerHTML = "Number of Tickets: " + quantity;
+        div.appendChild(h6);
+        div.appendChild(small);
+        li.appendChild(div);
+        let span = document.createElement('span');
+        span.className = "text-muted";
+        span.innerText = "$" + seat_price;
+        li.appendChild(span);
+        ul.appendChild(li);
+      }
+
+      //updates the total of the whole purchase
+      total += seat_price;
+      document.getElementById('total').innerText = "Total: $" + total;
+
+      //updates total number of tickets for this order
+      num_of_tickets++;
+      document.getElementById('number-of-tickets').innerHTML = num_of_tickets;
+    }
+  }
+
+  //remove ticket (seat)
+  function decr_quantity() {
+
+    //data fetch
+    let mainDIV = document.getElementsByClassName("active")[0];
+    let quantity = parseInt(mainDIV.getElementsByClassName("quantity")[0].value);
+    let seat_name = mainDIV.getElementsByClassName('seat_name')[0].value;
+    let seat_price = parseFloat(mainDIV.getElementsByClassName('seat_price')[0].value);
+
+    if (quantity - 1 >= 0) {
+
+      //updates quantity on the tickets carousel
+      mainDIV.getElementsByClassName("quantity")[0].value = --quantity;
+
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].name == seat_name) {
+
+          //if the number of selected tickets more than 0 - updates the cart
+          if (quantity > 0) {
+            cart[i].quantity = quantity;
+            cart[i].price -= seat_price;
+            let li = document.getElementById(seat_name);
+            li.getElementsByTagName('h6')[0].innerText = "Seat " + cart[i].name;
+            li.getElementsByTagName('small')[0].innerText = "Number of Tickets: " + cart[i].quantity;
+            li.getElementsByTagName('span')[0].innerText = "$" + cart[i].price;
+          }
+
+          //if the number of selected tickets is 0 - removes from the cart
+          else {
+            cart.splice(i, 1);
+            let li = document.getElementById(seat_name);
+            li.remove();
+          }
+
+          break;
+        }
+      }
+
+      //updates the total of the whole purchase
+      total -= seat_price;
+      if (total > 0)
+        document.getElementById('total').innerText = "Total: $" + total;
+      else
+        document.getElementById('total').innerText = "Total: $0.00";
+
+      //updates total number of tickets for this order
+      num_of_tickets--;
+      document.getElementById('number-of-tickets').innerHTML = num_of_tickets;
+    }
+  }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+{% endblock body %}

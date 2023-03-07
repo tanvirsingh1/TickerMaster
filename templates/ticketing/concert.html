@@ -1,4 +1,4 @@
-{% extends 'Ticketing/base.html' %}
+{% extends 'ticketing/base.html' %}
 {% block title %}Venue All Concerts{% endblock %}
 
 {% block body %}
@@ -82,8 +82,22 @@
       </div>
 
       <div  class="col-md-3">
-        <h5 class="fw-bold">Price</h5>
-        <p>${{ concert.price }}</p>
+           <table style="border-collapse: collapse;" >
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for seat_type in concert.venues.first.seat_types.all %}
+    <tr>
+      <td>{{ seat_type.name}}</td>
+      <td>{{ seat_type.price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
       </div>
 
     </div>

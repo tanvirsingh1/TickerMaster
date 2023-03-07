@@ -2,14 +2,18 @@
 views.py - Responsible for handling this application's views
 """
 
+from urllib.parse import urlencode
+import ast
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from venue_management.models import Concert, SeatType, Venue
-from .forms import RegisterForm, SupportTicketForm
-from .models import Eventgoer
+from .forms import RegisterForm, SupportTicketForm, NotificationForm, CompareTicketsForm
+from .models import Eventgoer, Ticket, Order
 
 
 def home_window(request):
@@ -19,9 +23,10 @@ def home_window(request):
     :return: ticketing/home.html
     """
     concerts = Concert.objects.all()
-    seatype = SeatType.objects.all()
+    seat_type = SeatType.objects.all()
     venue = Venue.objects.all()
-    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seatype, 'venue' : venue})
+
+    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, 'venue' : venue})
 
 
 def about_window(request):
@@ -84,7 +89,6 @@ def register_window(request):
 def support_ticket(request):
     """
     support ticket Window
-
     """
     if request.method == 'POST':
         form = SupportTicketForm(request.POST)
@@ -100,37 +104,129 @@ def support_ticket(request):
 
 
 # FOR CHECKOUT PAGE (SELECT AND BUY TICKETS)
-def purchase_ticket(request):
+def buy(request, concert_id):
     """
     select a ticket --> login, registration required
+    """
+
+    # get info about this request - info about user and concert
+    user = request.user
+    concert = Concert.objects.get(pk=concert_id)
+
+    # check if the user is logged in
+    if not user.is_authenticated:
+        return redirect('/login')
+
+    if not isinstance(user, Eventgoer):
+        return redirect('/')
+
+    if request.method == 'POST':
+        # retrieve data from form
+        quantity = request.POST.get('quantity')
+
+        #forming the customer's order
+        booked_seats = []
+        number_of_tickets = 0
+        total = 0
+        for i, quantity in enumerate(request.POST.getlist('quantity')):
+
+            #order info
+            quantity = int(quantity)
+            number_of_tickets += quantity
+            seat_name = concert.venues.first().seat_types.filter(id=i+1).first().name
+            seat_price = concert.venues.first().seat_types.filter(id=i+1).first().price
+            seats_available = concert.venues.first().seat_types.filter(id=i+1).first().quantity
+            total += seat_price * quantity
+
+            #in case user selected more tickets than available
+            if seats_available - quantity < 0:
+                error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " \
+                    + seat_name + " available."
+                return render(request, 'ticketing/buy.html', {'messages': error,
+                            'concert': concert, 'user': user})
+
+            #adding booked seat (and number to order)
+            seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
+            booked_seats.append(seat)
+
+        #in case user didn't select any tickets
+        if number_of_tickets == 0:
+            error = "Please, select your ticket(s)."
+            return render(request, 'ticketing/buy.html', {'messages': error,
+                            'concert': concert, 'user': user})
+
+        #in case everything is okay, the user is ready to pay
+        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, \
+                    'booked_seats': booked_seats, 'concert_id': concert_id})
+        return HttpResponseRedirect(url)
+
+    # pass the user select tickets
+    return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert})
+
+def pay(request):
+    """
+    paying for selected tickets --> user must be logged in
     """
     # check if the user is logged in
     if not request.user.is_authenticated:
         return redirect('/login')
 
-    user = request.user
-    # concert = request.concert
 
-    # retrieve data from form
     if request.method == 'POST':
 
-        quantity = int(request.POST.get('quantity'))
-        print(quantity)
-        if quantity == 0:
-            error = "Please, select your ticket(s)."
+        #extracting past data
+        total = request.POST.get('total')
+        booked_seats = request.POST.get('booked_seats')
+        concert_id = request.POST.get('concert_id')
+        concert = Concert.objects.get(pk=concert_id)
 
-            # promo_code = PromoCode.objects.get(code=request.POST.get('promo'))
+        # retrieve data from form for a check
+        card_number = request.POST.get('card_number')
+        cvv = request.POST.get('cvv')
 
-            return render(request, 'ticketing/purchase_ticket.html', {'messages': error, 'user': user,
-                                                                       'type': 'select-tickets'})
-            # return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'messages': error, \
-            # 'user': user, 'concert': concert})
-        return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type': 'make-payment'})
+        #in case user selected more tickets than available
+        if not card_number.isdigit() or not cvv.isdigit():
+            error = "The provided information is invalid."
+            return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, \
+                                    'booked_seats': booked_seats, 'concert_id': concert_id})
 
-    print("User is making a payment")
-    # pass the current user object to the template context
-    # return render(request, f'Ticketing_manager/purchase_ticket.html/{concert.id}', {'user': user, 'concert': concert})
-    return render(request, 'ticketing/purchase_ticket.html', {'user': user, 'type': 'select-tickets'})
+        #in case everything is okay, the user has successfully purchased tickets
+        # Create and save the new order
+        order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
+        exp_month = request.POST.get('expiration_month'), \
+            exp_year = request.POST.get('expiration_year'), \
+            holder_name = request.POST.get('holder_name'), total = total)
+        order.save()
+
+        #update ticket's number in the database
+        booked_seats = ast.literal_eval(booked_seats)
+        for database_seats in concert.venues.first().seat_types.all():
+            for ordered_seats in booked_seats:
+                if database_seats.id == ordered_seats['id']:
+                    database_seats.quantity -= ordered_seats['quantity']
+                    database_seats.save()
+
+        #create ticket in the database for each purchased ticket
+        for ordered_seats in booked_seats:
+            seattype = SeatType.objects.get(pk=ordered_seats['id'])
+            for _ in range(ordered_seats['quantity']):
+                ticket = Ticket(seat_type=seattype, concert=concert)
+                ticket.save()
+                order.tickets.add(ticket)
+
+        #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
+        #htmlMessageTextVar = ""
+        #emails.send_email(recipient=user.email, subject="Your Tickets", \
+        # message=plainTextMessageVar, html_message=htmlMessageTextVar)
+
+        return render(request, 'ticketing/purchase-success.html')
+
+    # pass the user make a payment
+    total = request.GET.get('total')
+    booked_seats = request.GET.get('booked_seats')
+    concert_id = request.GET.get('concert_id')
+    return render(request, 'ticketing/payment.html/', {'total': total, \
+            'booked_seats': booked_seats, 'concert_id': concert_id})
 
 
 def all_concerts(request, concert=None, error=None):
@@ -139,27 +235,20 @@ def all_concerts(request, concert=None, error=None):
     if concert:
         print(concert)
         concert2 = [concert]
-        return render(request, 'Ticketing/concert.html', {'conc': concert2})
+        return render(request, 'ticketing/concert.html', {'conc': concert2})
 
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
     p = Paginator(Concert.objects.all(), 3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'Ticketing/concert.html', {'concerts': concert_list, 'conc': concerts, 'error': error})
-
-
-def buy(request, concert_id):
-    """Buy concept based on the selected concert"""
-    # Retrieve the selected concert using the concert_id parameter
-    concert = Concert.objects.get(pk=concert_id)
-    # Pass the concert data to the template
-    context = {'concert': concert}
-    return render(request, 'Ticketing/buy.html', context)
+    return render(request, 'ticketing/concert.html', {'concerts':concert_list, \
+                                        'conc':concerts,'error':error})
 
 
 def searched(request):
-    """Search each concert based on the value, if value matches that concert shall be displayed, else nothing"""
+    """Search each concert based on the value, if value matches that concert
+    shall be displayed, else nothing"""
     if request.method == "POST":
         print("Post request")
         search = request.POST["searched"]
@@ -193,7 +282,7 @@ def compare_tickets_view(request):
             'form': form,
         }
 
-    return render(request, 'Ticketing/compare_tickets.html', context)
+    return render(request, 'ticketing/compare_tickets.html', context)
 
 def notifications(request):
     """ view for user notification """

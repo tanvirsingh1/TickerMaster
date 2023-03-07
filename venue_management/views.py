@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterForm, PromoCodeForm
-from .models import VenueManager, PromoCode, Venue, Location, Concert, SeatType
+from .models import VenueManager, PromoCode, Venue, Location, Concert, SeatType, SeatRestriction
 
 def index(request):
     """
@@ -170,13 +170,16 @@ def panel(request):
     :param request: (Django) object of the request's properties
     :return: the venue manager's panel
     """
-    venues = request.user.venues.all()
-    provinces = Location.Province.choices
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        provinces = Location.Province.choices
 
-    if len(venues) == 0:
-        venues = None
+        if len(venues) == 0:
+            venues = None
 
-    return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
+        return render(request, 'venue_management/panel.html', {'venues': venues, 'provinces': provinces})
+
+    return redirect('/venue/logout/')
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
@@ -522,6 +525,44 @@ def delete_seat(request, seat_id):
         })
     # User not logged in
     return redirect('/venue/logout')
+
+
+def set_restrictions(request, concert_id):
+    """
+    Sets the restrictions for the given concert
+    :param request: (Django) object of the request's properties
+    :param concert_id: the ID of the concert to
+    :return:
+    """
+    # Ensure the user has permission to do this
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the concert exists
+        if Concert.objects.filter(pk=concert_id).exists():
+            concert = Concert.objects.get(pk=concert_id)
+
+            # Check if the user is a manager of the venue containing the concert
+            if concert.venues.first().managers.contains(request.user):
+                venue = concert.venues.first()
+
+                # Loop over all expected returns
+                for seat_entry in venue.seat_types.all():
+                    # Get the values from the POST and add to db
+                    available = int(request.POST[f'{seat_entry.id}-available'])
+
+
+                    restriction = SeatRestriction(seat_type=seat_entry, concert=concert, available=available)
+                    restriction.save()
+                # Redirect the user
+                return redirect(f"/venue/panel/concert/{concert_id}")
+
+    return redirect('/venue/logout/')
+
+
+
 
 
 def buy(request, concert_id):
