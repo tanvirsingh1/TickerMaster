@@ -38,7 +38,7 @@
             <div class="card-footer">
               <div>
                 <div class="btn-toolbar float-end">
-                  <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#addConcertModal"><i class="icon-plus" style="font-size: 14px"></i> New Seat Type</button>
+                  <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#addSeatModal"><i class="icon-plus" style="font-size: 14px"></i> New Seat Type</button>
                 </div>
                 <h3 class="card-title">Seating Types</h3>
               </div>
@@ -46,38 +46,34 @@
                 <table class="table table-dark table-striped table-hover" aria-label="Venue Seating Types Table">
                   <thead>
                   <tr>
-                    <th scope="col" class="col-2">Name</th>
-                    <th scope="col" class="col-6">Description</th>
+                    <th scope="col" class="col-5">Name</th>
+                    <th scope="col" class="col-2">Quantity</th>
                     <th scope="col" class="col-2">Price</th>
-                    <th scope="col" class="col-3">Actions</th>
+                    <th scope="col" class="col-4">Actions</th>
                   </tr>
                   </thead>
                   <tbody>
                   {% for seat_type in venue.seat_types.all %}
                     <tr>
-                      <th class="col-2" id="{{ seat_type.id }}">{{ seat_type.name }}</th>
-                      <td class="col-6">
-                        {% if seat_type.description == None %}
-                          <em class="grey">No Description</em>
-                        {% else %}
-                          {{ seat_type.description }}
-                        {% endif %}
+                      <th class="col-5" id="{{ seat_type.id }}">{{ seat_type.name }}</th>
+                      <td class="col-2">
+                          {{ seat_type.quantity }}
                       </td>
                       <td class="col-2">
-                        {{ seat_type.price }}
+                        ${{ seat_type.price }}
                       </td>
-                      <td class="col-3">
+                      <td class="col-4">
                         {# Action Buttons #}
-                        <a type="button" href="{% url 'venue_management:manage_concert' seat_type.id %}" class="btn btn-outline-primary">View</a>
-                        <a type="button" href="{% url 'venue_management:delete_concert' seat_type.id %}" class="btn btn-outline-danger">Delete</a>
+                        <button type="button" role="button" data-bs-toggle="modal" data-bs-target="#{{ seat_type.id }}-editSeatModal" class="btn btn-outline-primary">Edit</button>
+                        <a type="button" href="{% url 'venue_management:delete_seat' seat_type.id %}" class="btn btn-outline-danger">Delete</a>
                       </td>
                     </tr>
                   {% endfor %}
                   </tbody>
                 </table>
-                {% if not venue.concerts.all %}
+                {% if not venue.seat_types.all %}
                   <div class="alert alert-dark" role="alert">
-                    {{ venue.name }} has no concerts yet! Add one to see it here.
+                    {{ venue.name }} has no seat types yet! Add one to see it here.
                   </div>
                 {% endif %}
               </div>
@@ -146,4 +142,8 @@
   {% endif %}
   {% include 'venue_management/edit_venue_modal.html' %}
   {% include 'venue_management/add_concert_modal.html' %}
+  {% include 'venue_management/add_seat_modal.html' %}
+  {% for seat_type in venue.seat_types.all %}
+    {% include 'venue_management/edit_seat_modal.html' %}
+  {% endfor %}
 {% endblock %}

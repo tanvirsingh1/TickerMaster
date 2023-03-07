@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterForm, PromoCodeForm
-from .models import VenueManager, PromoCode, Venue, Location, Concert
+from .models import VenueManager, PromoCode, Venue, Location, Concert, SeatType
 
 def index(request):
     """
@@ -415,6 +415,116 @@ def delete_concert(request, concert_id):
         })
     # User not logged in
     return redirect('/venue/logout')
+
+
+@login_required(login_url='/venue/login/')
+def add_seat(request, venue_id):
+    """
+    Adds a seat type to the venue in the database
+    :param request: (Django) object of the request's properties
+    :param venue_id: The ID of the venue to add it to
+    :returns: redirect to appropriate page
+    """
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the venue exists
+        if Venue.objects.filter(pk=venue_id).exists():
+            venue = Venue.objects.get(pk=venue_id)
+
+            # Check if the user is a manager of the venue
+            if venue.managers.contains(request.user):
+                # User has all permissions. Add the concert.
+
+                # Gather seat type information
+                name = request.POST['name']
+                quantity = request.POST['quantity']
+                price = request.POST['price']
+
+
+                # Create and save the new seat type
+                new_seat = SeatType(name=name, quantity=quantity, price=price)
+                new_seat.save()
+
+                # Add the seat type to the venue.
+                venue.seat_types.add(new_seat)
+                return redirect(f'/venue/panel/{venue_id}')
+
+    # Does not have permission to add here.
+    return redirect('/venue/panel/')
+
+@login_required(login_url='/venue/login')
+def edit_seat(request, seat_id):
+    """
+    Edits a seat type in the database
+    :param request: (Django) object of the request's properties
+    :param seat_id: The seat type ID to edit
+    :returns: redirect to appropriate page
+    """
+
+    if request.method == 'POST' and isinstance(request.user, VenueManager):
+        # Check if the seat type exists
+        if SeatType.objects.filter(pk=seat_id).exists():
+            seat_type = SeatType.objects.get(pk=seat_id)
+            venue = seat_type.venues.first()
+
+            # Check if the user is a manager of the venue
+            if seat_type.venues.first().managers.contains(request.user):
+                # User has all permissions. Edit the concert.
+
+                # Gather concert information and save it to the concert
+                seat_type.name = request.POST['name']
+                seat_type.quantity = request.POST['quantity']
+                seat_type.price = request.POST['price']
+                seat_type.save()
+
+                return redirect(f'/venue/panel/{venue.id}/')
+
+    # Didn't successfully update (no perms)
+    return redirect('/venue/panel/')
+
+@login_required(login_url='/venue/login')
+def delete_seat(request, seat_id):
+    """
+    Deletes the specified seat type
+    :param seat_id: the ID of the seat type to delete
+    :param request: (Django) object of the request's properties
+    :return: refreshes the page or gives an error
+    """
+
+    # Ensure the user has permission to do this
+    if isinstance(request.user, VenueManager):
+        venues = request.user.venues.all()
+        if len(venues) == 0:
+            venues = None
+
+        # Check if the venue exists
+        if SeatType.objects.filter(pk=seat_id).exists():
+            seat_type = SeatType.objects.get(pk=seat_id)
+
+            # Check if the user is a manager of the seat type
+            if seat_type.venues.first().managers.contains(request.user):
+                venue = seat_type.venues.first()
+                # User has all permissions. Delete the seat type.
+                seat_type.delete()
+                return render(request, 'venue_management/manage_venue.html', {
+                    'success_message': "Successfully deleted the seat type!",
+                    'venue': venue,
+                    'redirect': True
+                })
+            # The user isn't a manager of the venue that manages this seat type
+            return render(request, 'venue_management/panel.html', {
+                'error_message': "You are not a manager of the venue that controls this!",
+                'venues': venues,
+                'redirect': True
+            })
+        # The seat type doesn't exist
+        return render(request, 'venue_management/panel.html', {
+            'error_message': "This seat type does not exist!",
+            'venues': venues,
+            'redirect': True
+        })
+    # User not logged in
+    return redirect('/venue/logout')
+
 
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""

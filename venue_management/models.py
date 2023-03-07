@@ -155,7 +155,6 @@ class SeatType(models.Model):
     Holds the name and quantity of a particular seat type.
     """
     name = models.CharField(max_length=60, verbose_name="Seat Type")
-    description = models.CharField(max_length=255, verbose_name="Seat Description")
     quantity = models.IntegerField(verbose_name="Number of Seats", validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=1_000_000)
