@@ -171,12 +171,9 @@ def pay(request):
         concert_id = request.POST.get('concert_id')
         concert = Concert.objects.get(pk=concert_id)
 
-        # retrieve data from form
+        # retrieve data from form for a check
         card_number = request.POST.get('card_number')
         cvv = request.POST.get('cvv')
-        exp_month = request.POST.get('expiration_month')
-        exp_year = request.POST.get('expiration_year')
-        holder_name = request.POST.get('holder_name')
 
         #in case user selected more tickets than available
         if not card_number.isdigit() or not cvv.isdigit():
@@ -185,36 +182,36 @@ def pay(request):
                                     'booked_seats': booked_seats, 'concert_id': concert_id})
 
         #in case everything is okay, the user has successfully purchased tickets
-        else:
+        # Create and save the new order
+        order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
+        exp_month = request.POST.get('expiration_month'), \
+            exp_year = request.POST.get('expiration_year'), \
+            holder_name = request.POST.get('holder_name'), total = total)
+        order.save()
 
-            # Create and save the new order
-            order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
-            exp_month = exp_month, exp_year = exp_year, holder_name = holder_name, total = total)
-            order.save()
-
-            #update ticket's number in the database
-            booked_seats = ast.literal_eval(booked_seats)
-            for database_seats in concert.venues.first().seat_types.all():
-                for ordered_seats in booked_seats:
-                    if database_seats.id == ordered_seats['id']:
-                        database_seats.quantity -= ordered_seats['quantity']
-                        database_seats.save()
-
-            #create ticket in the database for each purchased ticket
+        #update ticket's number in the database
+        booked_seats = ast.literal_eval(booked_seats)
+        for database_seats in concert.venues.first().seat_types.all():
             for ordered_seats in booked_seats:
-                seattype = SeatType.objects.get(pk=ordered_seats['id'])
-                for _ in range(ordered_seats['quantity']):
-                    ticket = Ticket(seat_type=seattype, concert=concert)
-                    ticket.save()
-                    order.tickets.add(ticket)
+                if database_seats.id == ordered_seats['id']:
+                    database_seats.quantity -= ordered_seats['quantity']
+                    database_seats.save()
 
-            #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
-            #htmlMessageTextVar = ""
-            #emails.send_email(recipient=user.email, subject="Your Tickets", \
-            # message=plainTextMessageVar, html_message=htmlMessageTextVar)
+        #create ticket in the database for each purchased ticket
+        for ordered_seats in booked_seats:
+            seattype = SeatType.objects.get(pk=ordered_seats['id'])
+            for _ in range(ordered_seats['quantity']):
+                ticket = Ticket(seat_type=seattype, concert=concert)
+                ticket.save()
+                order.tickets.add(ticket)
 
-            return render(request, 'ticketing/purchase-success.html')
+        #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
+        #htmlMessageTextVar = ""
+        #emails.send_email(recipient=user.email, subject="Your Tickets", \
+        # message=plainTextMessageVar, html_message=htmlMessageTextVar)
 
+        return render(request, 'ticketing/purchase-success.html')
+    
     # pass the user make a payment
     total = request.GET.get('total')
     booked_seats = request.GET.get('booked_seats')
