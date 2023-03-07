@@ -68,6 +68,13 @@ class VenueManager(AbstractBaseUser):
         """
         return self.is_superuser
 
+    def __str__(self):
+        """
+        Gets the name and email of the venue manager
+        :return: name and email of the venue manager
+        """
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
     class DoesNotExist(Exception):
         """
         Bypasses the DoesNotExist exception for the venue manager account
@@ -82,19 +89,19 @@ class Location(models.Model):
         """
         A list of valid provinces
         """
-        ONTARIO = 'ON', "Ontario"
-        QUEBEC = 'QC', "Quebec"
-        NOVA_SCOTIA = 'NS', "Nova Scotia"
-        NEW_BRUNSWICK = 'NB', "New Brunswick"
-        MANITOBA = 'MB', "Manitoba"
-        BRITISH_COLUMBIA = 'BC', "British Columbia"
-        PEI = 'PE', "Prince Edward Island"
-        SASKATCHEWAN = 'SK', "Saskatchewan"
         ALBERTA = 'AB', "Alberta"
+        BRITISH_COLUMBIA = 'BC', "British Columbia"
+        MANITOBA = 'MB', "Manitoba"
+        NEW_BRUNSWICK = 'NB', "New Brunswick"
         NEWFOUNDLAND = 'NL', "Newfoundland and Labrador"
         NORTHWEST_TERRITORIES = 'NT', "Northwest Territories"
-        YUKON_TERRITORIES = 'YT', "Yukon Territories"
+        NOVA_SCOTIA = 'NS', "Nova Scotia"
         NUNAVUT = 'NU', "Nunavut"
+        ONTARIO = 'ON', "Ontario"
+        PEI = 'PE', "Prince Edward Island"
+        QUEBEC = 'QC', "Quebec"
+        SASKATCHEWAN = 'SK', "Saskatchewan"
+        YUKON_TERRITORIES = 'YT', "Yukon Territories"
 
     # --- Member Values ---
     street_num = models.IntegerField(validators=(
@@ -127,12 +134,10 @@ class Concert(models.Model):
     name = models.CharField(max_length=60, default='')
     artist_name = models.CharField(max_length=100)
     concert_date = models.DateTimeField()
-
     min_age = models.IntegerField(verbose_name="Minimum Age", null=True, validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=100)
     ))
-    price = models.FloatField(default=0,null=True,verbose_name="Ticket Price")
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue
@@ -149,10 +154,13 @@ class SeatType(models.Model):
     Holds the name and quantity of a particular seat type.
     """
     name = models.CharField(max_length=60, verbose_name="Seat Type")
-    description = models.CharField(max_length=255, verbose_name="Seat Description")
     quantity = models.IntegerField(verbose_name="Number of Seats", validators=(
         validators.MinValueValidator(limit_value=1),
         validators.MaxValueValidator(limit_value=1_000_000)
+    ))
+    price = models.FloatField(verbose_name="Price", validators=(
+        validators.MinValueValidator(limit_value=0),
+        validators.MaxValueValidator(limit_value=100_000)
     ))
     # venue - created by the ManyToMany field in Venue
 
@@ -168,22 +176,21 @@ class Venue(models.Model):
     Describes a Venue
     """
     name = models.CharField(max_length=60, verbose_name="Name")
-    image = models.URLField(max_length=255, verbose_name="Image URL")
-    website = models.URLField(max_length=255, verbose_name="Website")
+    description = models.CharField(max_length=255, verbose_name="Description", default=None)
+    image = models.ImageField(max_length=255, verbose_name="Image")
+    website = models.URLField(max_length=255, verbose_name="Website", null=False)
     location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
 
     # ManyToManyField: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/
-    seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types")
-    concerts = models.ManyToManyField(Concert, verbose_name="Concerts")
-    managers = models.ManyToManyField(VenueManager, verbose_name="Managers")
+    seat_types = models.ManyToManyField(SeatType, verbose_name="Seat Types", related_name="venues")
+    concerts = models.ManyToManyField(Concert, verbose_name="Concerts", related_name="venues")
+    managers = models.ManyToManyField(VenueManager, verbose_name="Managers", related_name="venues")
 
     def __str__(self):
         """
         :return: the venue's name
         """
         return str(self.name)
-
-
 
 
 class PromoCode(models.Model):

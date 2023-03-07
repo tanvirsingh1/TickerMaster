@@ -3,7 +3,6 @@ models.py - Contains all data models for the application
 """
 
 from django.db import models
-from django.core import validators
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 from .manager import UserManager
@@ -92,3 +91,11 @@ class SupportTicket(models.Model):
         """
         return str(self.subject)
 
+class Ticket(models.Model):
+    """ Class ticket for comparing ticket prices """
+    event = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    availability = models.BooleanField(default=True)
+    objects = models.Manager()
+    def __str__(self):
+        return str(self.event)

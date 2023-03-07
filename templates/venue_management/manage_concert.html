@@ -1,0 +1,52 @@
+{% extends 'venue_management/base.html' %}
+{% block title %}Manage{% endblock %}
+{% load static %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br />
+    {% if success_message %}
+      <div class="alert alert-success" role="alert">
+        {{ success_message }}
+      </div>
+    {% endif %}
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
+
+    <div class="card text-bg-dark border-dark" style="max-width: 100%; max-height: 80%">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ concert.concert_image.url }}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <div>
+              <div class="btn-toolbar float-end">
+                <button class="btn btn-outline-success" role="button" data-bs-toggle="modal" data-bs-target="#editConcertModal">Edit</button>
+                &nbsp;
+                <a type="button" href="{% url 'venue_management:delete_concert' concert.id %}" class="btn btn-outline-danger">Delete</a>
+              </div>
+              <h1 class="text-light card-title">{{ concert.name }}</h1>
+            </div>
+            <p class="card-text"><small class="text-light"><i class="icon-location-pin"></i> {{ concert.venues.first.name }} - {{ concert.venues.first.location }}</small></p>
+            <p class="card-text"><strong><i class="icon-music-tone"></i> Artist:</strong> {{ concert.artist_name }}</p>
+            <p class="card-text"><strong><i class="icon-calendar"></i> Date:</strong> {{ concert.concert_date }}</p>
+            <p class="card-text"><strong><i class="icon-user"></i> Age:</strong> {{ concert.min_age }}+</p>
+            <p class="card-text" style="border-left: 6px solid #5a5858; padding-left: 10px">{{ concert.description }}</p>
+            <div class="card-footer">
+              <h3 class="card-title">Available Seats</h3>
+              <p class="card-text"></p>
+              <!-- TODO: Add seating type availability configuration -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'venue_management/edit_concert_modal.html' %}
+{% endblock %}

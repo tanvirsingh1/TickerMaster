@@ -9,13 +9,22 @@
     <br />
     <div>
       <div class="btn-toolbar float-end">
-        <a class="btn btn-success" role="button"><i class="icon-plus" style="font-size: 14px"></i> New Venue</a>
+        <button class="btn btn-success" role="button" data-bs-toggle="modal" data-bs-target="#myModal"><i class="icon-plus" style="font-size: 14px"></i> New Venue</button>
       </div>
-      <h1>My Venues</h1>
+      <h1 class="text-light">My Venues</h1>
     </div>
-
+    {% if success_message %}
+      <div class="alert alert-success" role="alert">
+        {{ success_message }}
+      </div>
+    {% endif %}
+    {% if error_message %}
+      <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}
     <div class="table-responsive">
-      <table class="table table-dark table-striped table-hover">
+      <table class="table table-dark table-striped table-hover" aria-label="Venues Table">
         <thead>
           <tr>
             <th scope="col" class="col-2">Name</th>
@@ -24,13 +33,38 @@
           </tr>
         </thead>
         <tbody>
-        <tr>
-          <th class="col-3">Name here</th>
-          <td class="col-5">Description here</td>
-          <td class="col-2">Actions here</td>
-        </tr>
+        {% for venue in venues %}
+          <tr>
+            <th class="col-3" id="{{ venue.id }}">{{ venue.name }}</th>
+            <td class="col-5">
+              {% if venue.description == None %}
+                <em class="grey">No Description</em>
+              {% else %}
+                {{ venue.description }}
+              {% endif %}
+            </td>
+            <td class="col-2">
+              {# Action Buttons #}
+              <a type="button" href="{% url 'venue_management:manage_venue' venue.id %}" class="btn btn-outline-primary">View</a>
+              <a type="button" href="{% url 'venue_management:delete_venue' venue.id %}" class="btn btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
         </tbody>
       </table>
+      {% if venues == None %}
+        <div class="alert alert-dark" role="alert">
+          You have no venues yet! Register one to see it here.
+        </div>
+      {% endif %}
     </div>
   </div>
+  {% include 'venue_management/add_venue_modal.html' %}
+  {% if redirect %}
+    <script>
+      window.setTimeout(function(){
+        window.location.href = "{% url 'venue_management:panel' %}";
+      }, 3000);
+    </script>
+  {% endif %}
 {% endblock %}
