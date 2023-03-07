@@ -5,9 +5,10 @@ models.py - Contains all data models for the application
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
-from .manager import UserManager
 from django.core import validators
+
 from venue_management.models import Concert, SeatType
+from .manager import UserManager
 
 User = get_user_model()
 
@@ -94,11 +95,12 @@ class SupportTicket(models.Model):
         return str(self.subject)
 
 class Ticket(models.Model):
-  """
-  Describes a ticket that is purchased for a concert
-  """
-  seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, verbose_name="Seat Type")
-  concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert")
+    """
+    Describes a ticket that is purchased for a concert
+    """
+    seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, \
+                                  verbose_name="Seat Type")
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert")
 
 
 
@@ -107,16 +109,17 @@ class Order(models.Model):
     Describes an Order for the purchase
     """
 
-    purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE, verbose_name="Purchaser")
+    purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE, \
+                                  verbose_name="Purchaser")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="order")
-  
+
   #payment info
     card_number = models.CharField(max_length=16, verbose_name="Credit Card Number", null=False)
     cvv = models.CharField(max_length=4, verbose_name="CVV", null=False)
     exp_month = models.CharField(max_length=2, verbose_name="Exipration month", null=False)
     exp_year = models.CharField(max_length=4, verbose_name="Exipration year", null=False)
     holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
-  
+
   #order info
     total = models.FloatField(verbose_name="Price", validators=(
         validators.MinValueValidator(limit_value=0),
