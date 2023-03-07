@@ -3,12 +3,13 @@ views.py - Responsible for handling this application's views
 """
 
 from urllib.parse import urlencode
+import ast
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-import ast
+
 #from utils import emails #didn't do pull request yet
 
 from venue_management.models import Concert, SeatType
@@ -136,9 +137,8 @@ def buy(request, concert_id):
                             'concert': concert, 'user': user})
 
             #adding booked seat (and number to order)
-            else:
-                seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
-                booked_seats.append(seat)
+            seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
+            booked_seats.append(seat)
 
         #in case user didn't select any tickets
         if number_of_tickets == 0:
@@ -170,7 +170,6 @@ def pay(request):
         booked_seats = request.POST.get('booked_seats')
         concert_id = request.POST.get('concert_id')
         concert = Concert.objects.get(pk=concert_id)
-        user = request.user
 
         # retrieve data from form
         card_number = request.POST.get('card_number')
@@ -189,7 +188,7 @@ def pay(request):
         else:
 
             # Create and save the new order
-            order = Order(purchaser = user, card_number = card_number, cvv = cvv, \
+            order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
             exp_month = exp_month, exp_year = exp_year, holder_name = holder_name, total = total)
             order.save()
 
