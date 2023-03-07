@@ -43,11 +43,11 @@
         <hr>
         <div class="row g-3">
           <!--Concert Image-->
-          <div class="col-sm-5" style="max-height: 100vh; overflow: hidden;">
+          <div class="col-sm-5 d-flex" style="max-height: 50vh; overflow: hidden;">
             {% if concert.concert_image %}
-              <img src="{% static concert.concert_image.url %}" class="w-auto h-75">
+              <img src="{% static concert.concert_image.url %}" class="w-auto h-100" style="object-fit: contain; object-position: center;">
             {% else %}
-              <img src="{% static 'default.jpg' %}" class="w-auto h-75">
+              <img src="{% static 'default.jpg' %}" class="w-auto h-100" style="object-fit: contain; object-position: center;">
             {% endif %}
           </div>
           <div class="col col-sm-7">
