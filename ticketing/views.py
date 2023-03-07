@@ -197,6 +197,7 @@ def pay(request):
                         database_seats.quantity -= ordered_seats['quantity']
                         database_seats.save()
 
+            #create ticket in the database for each purchased ticket
             for ordered_seats in booked_seats:
                 seattype = SeatType.objects.get(pk=ordered_seats['id'])
                 for i in range(ordered_seats['quantity']):
