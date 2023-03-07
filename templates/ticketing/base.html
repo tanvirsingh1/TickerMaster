@@ -26,10 +26,14 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
+          {% if not request.user.is_eventgoer %}
+          <li><a class="nav-link" href="{% url 'venue_management:index' %}">Manager Site</a></li>
+          {% endif %}
+
           <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
 
           &nbsp;
-          <li><a class="nav-item nav-link" href="/about">About</a></li>
+          <li><a class="nav-item nav-link" href="/about">About Us</a></li>
         </ul>
       </div>
       <a class="navbar-brand" href="/" style="color: #8eccff; font-family: sans-serif; letter-spacing: 2px">
@@ -46,8 +50,12 @@
                 {{ request.user }}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/account">My Account</a>
+                {% if request.user.is_eventgoer %}
                 <a class="dropdown-item" href="/tickets">My Orders</a>
+                {% else %}
+                <a class="dropdown-item" href="{% url 'venue_management:panel' %}">Venue Panel</a>
+                {% endif %}
+                <a class="dropdown-item" href="/account">My Account</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'ticketing:logout' %}">Logout</a>
               </div>
