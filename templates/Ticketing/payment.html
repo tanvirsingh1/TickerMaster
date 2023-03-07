@@ -19,8 +19,13 @@
         </div>
         {% endif %}
 
-        <form method="POST" action="{% url 'ticketing:pay' %}" id="make-payment">
+        <form method="POST" action="{% url 'ticketing:pay'  %}" id="make-payment">
             {% csrf_token %}
+
+            <!--Storage of the order values-->
+            <input type="hidden" name="total" value="{{total}}">
+            <input type="hidden" name="booked_seats" value="{{booked_seats}}">
+            <input type="hidden" name="concert_id" value="{{concert_id}}">
 
             <!--Progress Bar-->
             <div class="progress">

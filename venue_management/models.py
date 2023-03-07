@@ -219,3 +219,48 @@ class PromoCode(models.Model):
         :return: discount
         """
         return self.discount
+
+class Order(models.Model):
+    """
+    Infromation about the purchased ticket order.
+    """
+
+    #enventgoer info
+    first_name = models.CharField(max_length=30, verbose_name='First Name', null=False)
+    last_name = models.CharField(max_length=30, verbose_name='Last Name', null=False)
+    email = models.EmailField(max_length=40, unique=True, verbose_name='Email', null=False)
+
+    #concert info
+    concert_name = models.CharField(max_length=60, default='', null=False)
+    artist_name = models.CharField(max_length=100)
+    concert_date = models.DateTimeField()
+
+    #venue info
+    venue_name = models.CharField(max_length=60, verbose_name="Name", null=False)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT, verbose_name="Location")
+
+    #tickets(seats) purchased
+    seat_type = models.CharField(max_length=60, verbose_name="Seat Type", null=False)
+    quantity = models.IntegerField(verbose_name="Number of Seats", validators=(
+        validators.MinValueValidator(limit_value=1),
+        validators.MaxValueValidator(limit_value=1_000_000)
+    ), null=False)
+
+    #payment info
+    card_number = models.CharField(max_length=16, verbose_name="Credit Card Number", null=False)
+    cvv = models.CharField(max_length=4, verbose_name="CVV", null=False)
+    exp_month = models.CharField(max_length=2, verbose_name="Exipration month", null=False)
+    exp_year = models.CharField(max_length=4, verbose_name="Exipration year", null=False)
+    holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
+
+    #order info
+    total = models.FloatField(verbose_name="Price", validators=(
+        validators.MinValueValidator(limit_value=0),
+        validators.MaxValueValidator(limit_value=100_000)
+    ), null=False)
+
+    def __str__(self):
+        """
+        :return: the order's total
+        """
+        return str(self.total)
