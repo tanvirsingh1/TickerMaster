@@ -127,7 +127,7 @@ def buy(request, concert_id):
             if seats_available < quantity:
                 error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " + seat_name + " available."
                 return render(request, 'ticketing/buy.html', {'messages': error,
-                            'concert': concert, 'user': user, 'type': 'select-tickets'})
+                            'concert': concert, 'user': user})
             
             #adding booked seat (and number to order)
             else:
@@ -138,17 +138,35 @@ def buy(request, concert_id):
         if number_of_tickets == 0:
             error = "Please, select your ticket(s)."
             return render(request, 'ticketing/buy.html', {'messages': error,
-                            'concert': concert, 'user': user, 'type': 'select-tickets'})
+                            'concert': concert, 'user': user})
         
         #in case everything is okay, the user is ready to pay
-        return render(request, 'ticketing/buy.html', {'user': user, 'concert': concert, 'total': total, 'type': 'make-payment'})
-
-    elif request.method == 'PUT':
-        print("hello")
-
+        return redirect('/payment')
 
     # pass the user select tickets
-    return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert, 'type': 'select-tickets'})
+    return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert})
+
+def pay(request):
+    """
+    paying for selected tickets --> user must be logged in
+    """
+    # check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        # retrieve data from form
+        card_number = int(request.POST.get('card_number'))
+        cvv = request.POST.get('cvv')
+        exp_month = request.POST.get('expiration_month')
+        exp_year = request.POST.get('expiration_year')
+        holder_name = request.POST.get('holder_name')
+
+        #in case everything is okay, the user has successfully purchased tickets
+        return render(request, 'ticketing/purchase-success.html')
+
+    # pass the user make a payment
+    return render(request, 'ticketing/payment.html/')
 
 
 def all_concerts(request,concert=None,error=None):

@@ -15,5 +15,6 @@ urlpatterns = [
     path('support/', views.support_ticket, name="support"),
     path('concerts/', views.all_concerts, name="list-concerts"),
     path('buy/<int:concert_id>/', views.buy, name='buy'),
+    path('payment/', views.pay, name='pay'),
     path('search/', views.searched, name='searched')
 ]
