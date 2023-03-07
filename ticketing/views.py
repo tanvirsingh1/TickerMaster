@@ -122,17 +122,17 @@ def buy(request, concert_id):
             #order info
             quantity = int(quantity)
             number_of_tickets += quantity
-            seat_name = concert.venues.first().seat_types.filter(id=(i+1)).first().name
-            seat_price = concert.venues.first().seat_types.filter(id=(i+1)).first().price
-            seats_available = concert.venues.first().seat_types.filter(id=(i+1)).first().quantity
+            seat_name = concert.venues.first().seat_types.filter(id=i+1).first().name
+            seat_price = concert.venues.first().seat_types.filter(id=i+1).first().price
+            seats_available = concert.venues.first().seat_types.filter(id=i+1).first().quantity
             total += seat_price * quantity
-            
+           
             #in case user selected more tickets than available
             if seats_available < quantity:
                 error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " + seat_name + " available."
                 return render(request, 'ticketing/buy.html', {'messages': error,
                             'concert': concert, 'user': user})
-            
+
             #adding booked seat (and number to order)
             else:
                 seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
@@ -143,9 +143,10 @@ def buy(request, concert_id):
             error = "Please, select your ticket(s)."
             return render(request, 'ticketing/buy.html', {'messages': error,
                             'concert': concert, 'user': user})
-        
+
         #in case everything is okay, the user is ready to pay
-        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
+        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, 'booked_seats': booked_seats, \
+                                                          'concert_id': concert_id})
         return HttpResponseRedirect(url)
 
     # pass the user select tickets
@@ -179,8 +180,9 @@ def pay(request):
         #in case user selected more tickets than available
         if not card_number.isdigit() or not cvv.isdigit():
             error = "The provided information is invalid."
-            return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, 'booked_seats': booked_seats, 'concert_id': concert_id})
-            
+            return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, \
+                                                'booked_seats': booked_seats, 'concert_id': concert_id})
+          
         #in case everything is okay, the user has successfully purchased tickets
         else:
 
@@ -207,7 +209,8 @@ def pay(request):
 
             #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
             #htmlMessageTextVar = ""
-            #emails.send_email(recipient=user.email, subject="Your Tickets", message=plainTextMessageVar, html_message=htmlMessageTextVar)
+            #emails.send_email(recipient=user.email, subject="Your Tickets", message=plainTextMessageVar, \
+            # html_message=htmlMessageTextVar)
 
             return render(request, 'ticketing/purchase-success.html')
 
