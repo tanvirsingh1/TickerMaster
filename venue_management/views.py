@@ -524,6 +524,15 @@ def delete_seat(request, seat_id):
     return redirect('/venue/logout')
 
 
+def set_restrictions(request, concert_id):
+    """
+
+    :param request: (Django) object of the request's properties
+    :param concert_id:
+    :return:
+    """
+
+
 def buy(request, concert_id):
     """Buy concept based on the selected concert"""
     # Retrieve the selected concert using the concert_id parameter

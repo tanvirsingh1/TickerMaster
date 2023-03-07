@@ -2,6 +2,7 @@
 models.py - Contains all data models for the application
 """
 
+import math
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core import validators
@@ -141,6 +142,8 @@ class Concert(models.Model):
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
     # venue - created by the ManyToMany field in Venue
+    # restrictions - created by ForeignKey in SeatRestriction
+
 
     def __str__(self):
         """
@@ -170,6 +173,25 @@ class SeatType(models.Model):
         """
         return str(self.name)
 
+
+class SeatRestriction(models.Model):
+    """
+    Holds a seating restriction for a specific seat type on a Concert.
+    """
+    available = models.IntegerField(verbose_name="Percent Available", validators=(
+        validators.MinValueValidator(limit_value=0),
+        validators.MaxValueValidator(limit_value=100)
+    ))
+    seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, verbose_name="Seat Type")
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert", related_name="restrictions")
+
+    def get_available_seats(self):
+        """
+        Will calculate and return the number of available seats of this type
+        for the associated Concert.
+        :return: available seats of this type for the associated concert
+        """
+        return math.floor(self.seat_type.quantity * (self.available / 100))
 
 class Venue(models.Model):
     """
