@@ -232,14 +232,14 @@ def all_concerts(request,concert=None,error=None):
     if concert:
         print(concert)
         concert2 = [concert]
-        return render(request, 'Ticketing/concert.html', {'conc': concert2})
+        return render(request, 'ticketing/concert.html', {'conc': concert2})
 
     concert_list = Concert.objects.all()
     # arguments to call to your database, and how many arguments you want per page
     p = Paginator(Concert.objects.all(), 3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'Ticketing/concert.html', {'concerts':concert_list, \
+    return render(request, 'ticketing/concert.html', {'concerts':concert_list, \
                                         'conc':concerts,'error':error})
 
 
@@ -279,7 +279,7 @@ def compare_tickets_view(request):
             'form': form,
         }
 
-    return render(request, 'Ticketing/compare_tickets.html', context)
+    return render(request, 'ticketing/compare_tickets.html', context)
 
 def notifications(request):
     """ view for user notification """
