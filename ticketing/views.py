@@ -108,14 +108,17 @@ def buy(request, concert_id):
     """
     select a ticket --> login, registration required
     """
-    # check if the user is logged in
-    # check if the user is logged in
-    if not request.user.is_authenticated:
-        return redirect('/login')
 
     # get info about this request - info about user and concert
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
+
+    # check if the user is logged in
+    if not user.is_authenticated:
+        return redirect('/login')
+
+    if not isinstance(user, Eventgoer):
+        return redirect('/')
 
     if request.method == 'POST':
         # retrieve data from form
