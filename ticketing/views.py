@@ -11,7 +11,6 @@ from django.contrib.auth import authenticate, login, logout as lo
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from utils import emails
 
 from venue_management.models import Concert, SeatType, Venue
 from .forms import RegisterForm, SupportTicketForm, NotificationForm, CompareTicketsForm
@@ -87,7 +86,7 @@ def register_window(request):
     return render(request, 'ticketing/register.html', {'form': form})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='/venue/login')
 def logout(request):
     """
     Logs the current user out
@@ -95,7 +94,7 @@ def logout(request):
     :return: redirects home
     """
     lo(request)
-    return redirect('/')
+    return redirect('/venue')
 
 # support ticket view for storing customer complaints
 def support_ticket(request):
@@ -130,7 +129,14 @@ def buy(request, concert_id):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-        return redirect('/')
+        concerts = Concert.objects.all()
+        seat_type = SeatType.objects.all()
+        venue = Venue.objects.all()
+
+        error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
+            can buy Tickets."
+        return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, \
+                                        'venue' : venue, 'message': error, 'url': '/'})
 
     if request.method == 'POST':
         # retrieve data from form

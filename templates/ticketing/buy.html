@@ -13,6 +13,7 @@
   <!--Error Notification-->
   {% if messages %}
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong style="color: black;">Error: </strong>
     {{ messages }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -80,6 +81,7 @@
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
                               <input type="hidden" class="seat_price" value="{{i.price}}">
                               <h6 class="card-subtitle mb-2 text-muted">Available: {{i.quantity}}</h6>
+                              <br>
                               <div class="input-group col-sm-6" id="select-qnty">
                                 <button class="btn-sm btn-secondary qnty_bnt" type="button"
                                   onclick="decr_quantity()">-</button>
