@@ -667,8 +667,17 @@ def set_restrictions(request, concert_id):
                     # Get the values from the POST and add to db
                     available = int(request.POST[f'{seat_entry.id}-available'])
 
-                    restriction = SeatRestriction(seat_type=seat_entry, concert=concert, available=available)
-                    restriction.save()
+                    # Try to update one if it exists already
+                    try:
+                        # If it exists, update the restriction.
+                        restriction = concert.restrictions.get(seat_type=seat_entry)
+                        restriction.available = available
+                        restriction.save()
+                    except SeatRestriction.DoesNotExist:
+                        # Doesn't exist. Create a new seat restriction object
+                        restriction = SeatRestriction(seat_type=seat_entry, concert=concert, available=available)
+                        restriction.save()
+
                 # Redirect the user
                 return redirect(f"/venue/panel/concert/{concert_id}")
 
