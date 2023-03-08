@@ -262,15 +262,13 @@ def view_orders(request):
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
                 'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
                 'message': error, 'url': '/'})
-    
-    print()
     # pass the user select tickets
-    #return render(request, 'ticketing/order.html/', {'user': user, 'orders': user.orders.all})
+    return render(request, 'ticketing/order.html/', {'user': user, 'orders': user.orders.all})
 
 
 def all_concerts(request, concert=None, error=None):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
-      html"""
+    """All concerts models retrieves all the concerts from the database  and using paginator \
+        the data is passed to the html"""
     if concert:
         print(concert)
         concert2 = [concert]
