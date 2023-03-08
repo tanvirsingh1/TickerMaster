@@ -81,7 +81,7 @@ def register_window(request):
             user = authenticate(request, email=email, password=password, model=Eventgoer)
             login(request, user)
             # needs to specify where the redirect page goes
-            return redirect('/login')
+            return redirect('/')
     else:
         form = RegisterForm()
     return render(request, 'ticketing/register.html', {'form': form})
@@ -96,6 +96,51 @@ def logout(request):
     """
     lo(request)
     return redirect('/')
+
+@login_required(login_url='/login')
+def account(request):
+    """
+    Serves the Eventgoer's account details page and accepts updated form data.
+    :param request: (Django) object of the request's properties
+    :return: account details page
+    """
+    # Ensure the user is an eventgoer
+    if isinstance(request.user, Eventgoer):
+        # Check for a form submission
+        if request.method == 'POST':
+            # Process update form submission
+            try:
+                # Grab passwords from the form
+                current_password = request.POST['password']
+                if authenticate(request, email=request.user.email, password=current_password,\
+                                 model=Eventgoer):
+                    request.user.first_name = request.POST['first_name']
+                    request.user.last_name = request.POST['last_name']
+                    if 'new_password' in request.POST.keys() and \
+                        request.POST['new_password'] is not None \
+                            and request.POST['new_password'] != "":
+                        # Set the new password, if provided in the form
+                        request.user.set_password(request.POST['new_password'])
+
+                    # Save the user's account
+                    request.user.save()
+                    # User account information updated
+                    return render(request, 'ticketing/account.html', {
+                        "success_message": "Successfully updated account data!"
+                    })
+                # Provided password was incorrect
+                return render(request, 'ticketing/account.html', {
+                    "error_message": "The password you gave was incorrect. Please try again."
+                })
+            except (NameError, KeyError):
+                # Invalid information received
+                return render(request, 'ticketing/account.html', {
+                    "error_message":"Failed to update account data! Invalid form contents received."
+                })
+        # Serve account page
+        return render(request, 'ticketing/account.html')
+    return redirect('venue_management:account')
+
 
 # support ticket view for storing customer complaints
 def support_ticket(request):
