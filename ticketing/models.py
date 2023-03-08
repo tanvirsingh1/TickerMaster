@@ -112,15 +112,15 @@ class SupportTicket(models.Model):
         """
         return str(self.subject)
 
+
 class Ticket(models.Model):
     """
     Describes a ticket that is purchased for a concert
     """
     seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE,
-                                    verbose_name="Seat Type")
+                                  verbose_name="Seat Type", related_name="tickets")
     concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert",
-                                    related_name="tickets")
-
+                                related_name="tickets")
 
 
 class Order(models.Model):
@@ -131,9 +131,10 @@ class Order(models.Model):
     purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
                                   verbose_name="Purchaser", related_name="orders")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
-    payment_info = models.ForeignKey(PaymentInfo, verbose_name="Payment Info", on_delete=models.deletion.PROTECT, related_name="orders", null=True)
+    payment_info = models.ForeignKey(PaymentInfo, verbose_name="Payment Info", on_delete=models.deletion.PROTECT,
+                                     related_name="orders", null=True)
 
-  #order info
+    # order info
     order_date = models.DateField(default=date.today)
 
     def order_total_price(self) -> float:

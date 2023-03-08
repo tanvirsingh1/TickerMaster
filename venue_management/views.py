@@ -420,6 +420,7 @@ def manage_concert(request, concert_id):
             if concert.venues.first().managers.contains(request.user):
                 return render(request, 'venue_management/manage_concert.html', {
                     'concert': concert,
+                    'ticket_count': len(concert.tickets.all()),
                     'mapping': mapping
                 })
 

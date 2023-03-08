@@ -57,7 +57,7 @@
                     <tr>
                       <th class="col-5" id="{{ seat_type.id }}">{{ seat_type.name }}</th>
                       <td class="col-2">
-                          {{ seat_type.quantity }}
+                          {{ seat_type.quantity }} ({{ seat_type.tickets.count }} sold)
                       </td>
                       <td class="col-2">
                         ${{ seat_type.price }}
