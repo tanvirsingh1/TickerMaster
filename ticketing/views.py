@@ -2,16 +2,12 @@
 views.py - Responsible for handling this application's views
 """
 
-from urllib.parse import urlencode
-import ast
 from datetime import date
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout as lo
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.http import HttpResponseRedirect
 from utils import emails
 
 from venue_management.models import Concert, SeatType, Venue
@@ -177,10 +173,9 @@ def buy(request, concert_id):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
-            can buy Tickets."
-        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
-                                                       'seatype': SeatType.objects.all(), 'venue': Venue.objects.all(), \
+        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts can buy Tickets."
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(),
+                                                       'seatype': SeatType.objects.all(), 'venue': Venue.objects.all(),
                                                        'message': error, 'url': '/'})
 
     if request.method == 'POST':
