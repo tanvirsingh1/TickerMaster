@@ -122,7 +122,9 @@
          style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed; padding-bottom: 60px;">
       <ul class="pagination">
         {% if conc.has_previous %}
-          <a class="page-link" href="?page={{ conc.previous_page_number }}">&laquo</a></li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ conc.previous_page_number }}">&laquo</a>
+          </li>
         {% endif %}
         <li class="page-item disabled"><a href="#" class="page-link"> {{ conc.number }}</a></li>
         {% if conc.has_next %}
