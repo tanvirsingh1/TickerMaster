@@ -92,7 +92,7 @@
                         {% for seat_type in concert.venues.first.seat_types.all %}
                           <tr>
                             <td>{{ seat_type.name }}</td>
-                            <td>{{ seat_type.price }}</td>
+                            <td>${{ seat_type.price }}</td>
                           </tr>
                         {% endfor %}
                         </tbody>
