@@ -86,7 +86,7 @@ def register_window(request):
     return render(request, 'ticketing/register.html', {'form': form})
 
 
-@login_required(login_url='/venue/login')
+@login_required(login_url='/login')
 def logout(request):
     """
     Logs the current user out
@@ -94,7 +94,7 @@ def logout(request):
     :return: redirects home
     """
     lo(request)
-    return redirect('/venue')
+    return redirect('/')
 
 # support ticket view for storing customer complaints
 def support_ticket(request):
@@ -258,7 +258,7 @@ def view_orders(request):
 
     if not isinstance(user, Eventgoer):
 
-        error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
+        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
             can have orders."
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
                 'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
