@@ -100,7 +100,8 @@ class Ticket(models.Model):
     """
     seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, \
                                   verbose_name="Seat Type")
-    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert")
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert",
+                                related_name="tickets")
 
 
 
