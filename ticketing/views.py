@@ -130,7 +130,7 @@ def buy(request, concert_id):
 
     if not isinstance(user, Eventgoer):
 
-        error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
+        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
             can buy Tickets."
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
                 'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
