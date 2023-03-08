@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout as lo
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from ticketing.models import Eventgoer
 
 from .forms import RegisterForm, PromoCodeForm
 from .models import VenueManager, PromoCode, Venue, Location, Concert, SeatType, SeatRestriction
@@ -41,12 +42,17 @@ def login_manager_window(request):
 
         user = authenticate(request, email=email, password=password, model=VenueManager)
 
-        if user is not None:
+        # Ensure user exists and check if they are a venue manager
+        if user is not None and isinstance(user, VenueManager):
             login(request, user)
             return redirect('/venue/panel')
+        if isinstance(user, Eventgoer):
+            # User is an eventgoer. Give an error message
+            error = "The account you provided is an Eventgoer. Please log into the Client Site instead."
+        else:
+            # Invalid credentials provided.
+            error = 'Invalid username or password. Please try again.'
 
-        error = 'Invalid username or password. Please try again.'
-        print(error)
         return render(request, 'venue_management/login.html', {'messages': error})
 
     return render(request, 'venue_management/login.html')
