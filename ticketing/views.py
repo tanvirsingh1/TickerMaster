@@ -257,7 +257,6 @@ def view_orders(request):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-
         error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
             can have orders."
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
