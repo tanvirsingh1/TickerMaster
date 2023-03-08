@@ -3,6 +3,9 @@ Hello professor! We added an example database with some pre-filled data in case 
 it out. Just delete the existing db.sqlite3 file in the project directory (if it exists)
 and put the one from this folder into the project root directory.
 
+The goal of including this is to show our project at its best with pre-populated data while keeping things easier on
+you.
+
 ## Credentials  
 ### Eventgoer (Client Site)  
 **Email:** `demo@example.com`  
@@ -17,4 +20,4 @@ _Use this if you want to check out how our models function in more depth._
 > **Note:** _This is not meant to be accessed by normal users._  
 
 **Username:** `Burton`  
-**Password:** `password123`  
+**Password:** `password123!`  
