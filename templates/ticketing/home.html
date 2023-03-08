@@ -96,7 +96,7 @@
 
 
     <div class="carousel slide" data-bs-touch="false" id="carouselExampleControlsNoTouching"
-        style="height: 100vh; display: flex;  flex-wrap: nowrap; overflow-x: scroll; -webkit-overflow-scrolling: touch;">
+        style="height: 100vh; display: flex;  flex-wrap: nowrap; overflow-x: hidden; -webkit-overflow-scrolling: touch;">
         <div class="carousel-inner">
 
             <!--Error Notification-->
@@ -114,9 +114,9 @@
 
             
             {% for concert in concerts %}
-            <div class="carousel-item{% if forloop.first %} active{% endif %}">
-                <img alt="concertpic" class="d-block w-100" src="{{ concert.concert_image.url }}"
-                    style="filter: brightness(50%); object-fit: fit; height: 100%; width: 100%;">
+            <div class="carousel-item{% if forloop.first %} active{% endif %} mh-100" style="max-height: 100vh">
+                <img alt="concertpic" class="d-block w-100 mh-100" src="{{ concert.concert_image.url }}"
+                    style="filter: brightness(50%); object-fit: fit; height: 100%; width: 100%; max-height: 100%">
                 <div class="carousel-caption"
                     style="position: absolute; top: 46%; left: 70%; transform: translate(-50%, -50%);">
                     <h3>{{ concert.name }}</h3><br />
