@@ -247,7 +247,8 @@ def pay(request):
 
 #See orders for eventgoers
 def view_orders(request):
-
+    """See all orders of the eventgoer"""
+    
     # get user of the request
     user = request.user
 
