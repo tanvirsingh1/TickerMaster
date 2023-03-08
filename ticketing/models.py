@@ -99,10 +99,10 @@ class Ticket(models.Model):
     """
     Describes a ticket that is purchased for a concert
     """
-    seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, \
-                                  verbose_name="Seat Type")
+    seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE,
+                                    verbose_name="Seat Type")
     concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert",
-                                related_name="tickets")
+                                    related_name="tickets")
 
 
 
