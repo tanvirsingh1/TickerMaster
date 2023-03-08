@@ -6,6 +6,8 @@ and put the one from this folder into the project root directory.
 The goal of including this is to show our project at its best with pre-populated data while keeping things easier on
 you.
 
+> **NOTE:** You may need to run `python manage.py migrate` if using this database file. It might be slightly outdated.
+
 ## Credentials  
 ### Eventgoer (Client Site)  
 **Email:** `demo@example.com`  
