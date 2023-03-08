@@ -303,7 +303,11 @@ def edit_venue(request, venue_id):
                 venue.name = request.POST['name']
                 venue.description = request.POST['description']
                 venue.website = request.POST['website']
-                venue.image = request.FILES.get('venue_image')
+                image = request.FILES.get('venue_image')
+                # Update the image if a new one is available
+                if image is not None:
+                    venue.image = image
+
                 venue.save()
 
                 # Venue Location information
@@ -456,8 +460,12 @@ def edit_concert(request, concert_id):
                 concert.artist_name = request.POST['artist_name']
                 concert.concert_date = request.POST['concert_date']
                 concert.min_age = request.POST['min_age']
-                concert.concert_image = request.FILES.get('concert_image')
+                image = request.FILES.get('concert_image')
+                # Update the image if a new one is available
+                if image is not None:
+                    concert.concert_image = image
                 concert.description = request.POST['description']
+
                 concert.save()
 
                 return redirect(f'/venue/panel/concert/{concert_id}/')
