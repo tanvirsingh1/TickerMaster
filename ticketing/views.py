@@ -124,7 +124,7 @@ def buy(request, concert_id):
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
 
-    # check if the user is logged in
+    # check if the user is logged in and is an Eventgoer
     if not user.is_authenticated:
         return redirect('/login')
 
@@ -243,6 +243,29 @@ def pay(request):
     concert_id = request.GET.get('concert_id')
     return render(request, 'ticketing/payment.html/', {'total': total, \
             'booked_seats': booked_seats, 'concert_id': concert_id})
+
+
+#See orders for eventgoers
+def view_orders(request):
+
+    # get user of the request
+    user = request.user
+
+    # check if the user is logged in and is an Eventgoer
+    if not user.is_authenticated:
+        return redirect('/login')
+
+    if not isinstance(user, Eventgoer):
+
+        error = "Your account is registered as a Venue Manager. Only EventGoer accounts \
+            can have orders."
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
+                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
+                'message': error, 'url': '/'})
+    
+    print()
+    # pass the user select tickets
+    #return render(request, 'ticketing/order.html/', {'user': user, 'orders': user.orders.all})
 
 
 def all_concerts(request, concert=None, error=None):

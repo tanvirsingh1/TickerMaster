@@ -26,7 +26,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-          {% if not request.user.is_eventgoer %}
+          {% if request.user.is_authenticated and request.user.venues%}
           <li><a class="nav-link" href="{% url 'venue_management:index' %}">Manager Site</a></li>
           {% endif %}
 
@@ -50,10 +50,10 @@
                 {{ request.user }}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% if request.user.is_eventgoer %}
-                <a class="dropdown-item" href="/tickets">My Orders</a>
-                {% else %}
+                {% if request.user.venues %}
                 <a class="dropdown-item" href="{% url 'venue_management:panel' %}">Venue Panel</a>
+                {% else %}
+                <a class="dropdown-item" href="/tickets">My Orders</a>
                 {% endif %}
                 <a class="dropdown-item" href="/account">My Account</a>
                 <div class="dropdown-divider"></div>

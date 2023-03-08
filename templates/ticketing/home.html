@@ -20,78 +20,78 @@
 </head>
 
 <body style="background-color: #101827;">
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #1f2937; height: 9vh;">
-        <div class="container-fluid">
-          <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-            data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    
-              {% if not request.user.is_eventgoer %}
-              <li><a class="nav-link" href="{% url 'venue_management:index' %}">Manager Site</a></li>
-              {% endif %}
-    
-              <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
-    
-              &nbsp;
-              <li><a class="nav-item nav-link" href="/about">About Us</a></li>
-            </ul>
-          </div>
-          <a class="navbar-brand" href="/" style="color: #8eccff; font-family: sans-serif; letter-spacing: 2px">
-            <h1><b>TicketSprint</b></h1>
-          </a>
-          <div class="justify-content-end" id="navbarSupportedContent">
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    
-                {% if request.user.is_authenticated %}
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    {{ request.user }}
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    {% if request.user.is_eventgoer %}
-                    <a class="dropdown-item" href="/tickets">My Orders</a>
-                    {% else %}
-                    <a class="dropdown-item" href="{% url 'venue_management:panel' %}">Venue Panel</a>
-                    {% endif %}
-                    <a class="dropdown-item" href="/account">My Account</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'ticketing:logout' %}">Logout</a>
-                  </div>
-                </li>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #1f2937; height: 9vh;">
+    <div class="container-fluid">
+      <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+        data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+          {% if request.user.is_authenticated and request.user.venues%}
+          <li><a class="nav-link" href="{% url 'venue_management:index' %}">Manager Site</a></li>
+          {% endif %}
+
+          <li><a class="nav-link" href="{% url 'ticketing:list-concerts' %}">Concerts</a></li>
+
+          &nbsp;
+          <li><a class="nav-item nav-link" href="/about">About Us</a></li>
+        </ul>
+      </div>
+      <a class="navbar-brand" href="/" style="color: #8eccff; font-family: sans-serif; letter-spacing: 2px">
+        <h1><b>TicketSprint</b></h1>
+      </a>
+      <div class="justify-content-end" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+            {% if request.user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                {{ request.user }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% if request.user.venues %}
+                <a class="dropdown-item" href="{% url 'venue_management:panel' %}">Venue Panel</a>
                 {% else %}
-                <li class="nav-item dropdown">
-                  <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
-                    id="navbarDropdownLogin" role="button">
-                    <i class="bi bi-person"></i> Login
-                  </a>
-                  <ul aria-labelledby="navbarDropdownLogin" class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{% url 'ticketing:login' %}">Login</a></li>
-                    <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Login</a></li>
-                  </ul>
-                </li>
-    
-                <li class="nav-item dropdown">
-                  <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
-                    id="navbarDropdownRegister" role="button">
-                    <i class="bi bi-person"></i> Register
-                  </a>
-                  <ul aria-labelledby="navbarDropdownRegister" class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{% url 'ticketing:register' %}">Register</a></li>
-                    <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Register</a></li>
-                  </ul>
-                </li>
+                <a class="dropdown-item" href="/tickets">My Orders</a>
                 {% endif %}
-    
+                <a class="dropdown-item" href="/account">My Account</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'ticketing:logout' %}">Logout</a>
+              </div>
+            </li>
+            {% else %}
+            <li class="nav-item dropdown">
+              <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
+                id="navbarDropdownLogin" role="button">
+                <i class="bi bi-person"></i> Login
+              </a>
+              <ul aria-labelledby="navbarDropdownLogin" class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'ticketing:login' %}">Login</a></li>
+                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Login</a></li>
               </ul>
-            </div>
-          </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href=""
+                id="navbarDropdownRegister" role="button">
+                <i class="bi bi-person"></i> Register
+              </a>
+              <ul aria-labelledby="navbarDropdownRegister" class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'ticketing:register' %}">Register</a></li>
+                <li><a class="dropdown-item" href="{% url 'venue_management:login' %}">Manager Register</a></li>
+              </ul>
+            </li>
+            {% endif %}
+
+          </ul>
         </div>
-      </nav>
+      </div>
+    </div>
+  </nav>
     <br /><br />
 
 

@@ -15,6 +15,8 @@
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <div class="card my-5">
+          <br>
+          <h2 class = "text-center">Manager Login</h2>
           <form class="card-body cardbody-color p-lg-5" method="POST" action="{% url 'venue_management:login' %}">
             {% csrf_token %}
             <div class="text-center">
