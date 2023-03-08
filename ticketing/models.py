@@ -4,7 +4,6 @@ models.py - Contains all data models for the application
 
 from datetime import date
 from django.db import models
-from django.core import validators
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 
