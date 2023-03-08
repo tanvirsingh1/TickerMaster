@@ -13,6 +13,7 @@
   <!--Error Notification-->
   {% if messages %}
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong style="color: black;">Error: </strong>
     {{ messages }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
@@ -30,7 +31,7 @@
           <span class="badge bg-primary rounded-pill" id="number-of-tickets">0</span>
         </h4>
         <ul class="list-group mb-3" id="cart"></ul>
-        
+
         <br>
         <h3 class="my-3" id="total">Total: $0.00</h3>
 
@@ -54,6 +55,11 @@
             <div>
               <!--Ticket Selection-->
               <h4 class="mb-3">Tickets</h4>
+              {% if not concert.venues.first.seat_types.all %}
+              <div class="alert alert-dark" role="alert">
+                This concert has no seats.
+              </div>
+              {% else %}
               <div id="carousel" class="carousel slide carousel-fade" data-interval="false"
                 style="margin: 0; padding: 0; height: max-content;">
                 <div class="carousel-inner">
@@ -77,6 +83,7 @@
                               <input type="hidden" class="seat_name" value="{{i.name}}">
                               <h6 class="card-subtitle mb-2 text-muted">${{i.price}}</h6>
                               <input type="hidden" class="seat_price" value="{{i.price}}">
+                              <h6 class="card-subtitle mb-2 text-muted">Available: {{i.quantity}}</h6>
                               <br>
                               <div class="input-group col-sm-6" id="select-qnty">
                                 <button class="btn-sm btn-secondary qnty_bnt" type="button"
@@ -102,6 +109,7 @@
 
                 </div>
               </div>
+              {% endif %}
 
               <hr class="my-4">
 

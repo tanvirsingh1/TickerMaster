@@ -7,7 +7,8 @@ import ast
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout as lo
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
@@ -85,6 +86,16 @@ def register_window(request):
     return render(request, 'ticketing/register.html', {'form': form})
 
 
+@login_required(login_url='/login')
+def logout(request):
+    """
+    Logs the current user out
+    :param request: (Django) object of the request's properties
+    :return: redirects home
+    """
+    lo(request)
+    return redirect('/')
+
 # support ticket view for storing customer complaints
 def support_ticket(request):
     """
@@ -113,12 +124,17 @@ def buy(request, concert_id):
     user = request.user
     concert = Concert.objects.get(pk=concert_id)
 
-    # check if the user is logged in
+    # check if the user is logged in and is an Eventgoer
     if not user.is_authenticated:
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-        return redirect('/')
+
+        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
+            can buy Tickets."
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
+                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
+                'message': error, 'url': '/'})
 
     if request.method == 'POST':
         # retrieve data from form
@@ -229,9 +245,31 @@ def pay(request):
             'booked_seats': booked_seats, 'concert_id': concert_id})
 
 
+#See orders for eventgoers
+def view_orders(request):
+    """See all orders of the eventgoer"""
+
+    # get user of the request
+    user = request.user
+
+    # check if the user is logged in and is an Eventgoer
+    if not user.is_authenticated:
+        return redirect('/login')
+
+    if not isinstance(user, Eventgoer):
+
+        error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
+            can have orders."
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
+                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
+                'message': error, 'url': '/'})
+    # pass the user select tickets
+    return render(request, 'ticketing/order.html/', {'user': user, 'orders': user.orders.all})
+
+
 def all_concerts(request, concert=None, error=None):
-    """All concerts models retrieves all the concerts from the database  and using paginator the data is passed to the
-      html"""
+    """All concerts models retrieves all the concerts from the database  and using paginator \
+        the data is passed to the html"""
     if concert:
         print(concert)
         concert2 = [concert]

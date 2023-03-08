@@ -18,5 +18,6 @@ urlpatterns = [
     path('payment/', views.pay, name='pay'),
     path('search/', views.searched, name='searched'),
     path('compare-tickets/', views.compare_tickets_view, name='compare_tickets'),
-    path('notifications/', views.notifications, name='notifications')
+    path('notifications/', views.notifications, name='notifications'),
+    path('logout/', views.logout, name="logout")
 ]
