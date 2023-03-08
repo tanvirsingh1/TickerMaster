@@ -4,6 +4,7 @@ models.py - Contains all data models for the application
 
 from datetime import date
 from django.db import models
+from django.core import validators
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 
@@ -30,6 +31,10 @@ class Eventgoer(AbstractBaseUser):
     first_name = models.CharField(max_length=30, verbose_name='First Name')
     last_name = models.CharField(max_length=30, verbose_name='Last Name')
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
+    balance = models.FloatField(verbose_name="User Balance", default=5000, validators=(
+        validators.MinValueValidator(limit_value=0)
+    ))
+
     is_active = models.BooleanField(verbose_name='Is Active', default=True)
     is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
     is_superuser = models.BooleanField(verbose_name='Is Superuser', default=False)
@@ -77,6 +82,21 @@ class Eventgoer(AbstractBaseUser):
         return self.is_superuser
 
 
+class PaymentInfo(models.Model):
+    """
+    Contains payment information for a user.
+    """
+    user = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE, verbose_name="Eventgoer",
+                             related_name="payment_info")
+
+    # Card details
+    card_number = models.CharField(max_length=16, verbose_name="Credit Card Number", null=False)
+    cvv = models.CharField(max_length=4, verbose_name="CVV", null=False)
+    exp_month = models.CharField(max_length=2, verbose_name="Exipration month", null=False)
+    exp_year = models.CharField(max_length=4, verbose_name="Exipration year", null=False)
+    holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
+
+
 class SupportTicket(models.Model):
     """
     Model representing a support ticket.
@@ -113,13 +133,7 @@ class Order(models.Model):
     purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
                                   verbose_name="Purchaser", related_name="orders")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
-
-  #payment info
-    card_number = models.CharField(max_length=16, verbose_name="Credit Card Number", null=False)
-    cvv = models.CharField(max_length=4, verbose_name="CVV", null=False)
-    exp_month = models.CharField(max_length=2, verbose_name="Exipration month", null=False)
-    exp_year = models.CharField(max_length=4, verbose_name="Exipration year", null=False)
-    holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
+    payment_info = models.ForeignKey(PaymentInfo, verbose_name="Payment Info", related_name="orders", null=True)
 
   #order info
     order_date = models.DateField(default=date.today)
