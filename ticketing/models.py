@@ -110,7 +110,7 @@ class Order(models.Model):
     """
 
     purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
-                                  verbose_name="Purchaser")
+                                  verbose_name="Purchaser", related_name="orders")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
 
   #payment info
