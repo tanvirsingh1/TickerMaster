@@ -133,7 +133,7 @@ class Order(models.Model):
     purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
                                   verbose_name="Purchaser", related_name="orders")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
-    payment_info = models.ForeignKey(PaymentInfo, verbose_name="Payment Info", related_name="orders", null=True)
+    payment_info = models.ForeignKey(PaymentInfo, verbose_name="Payment Info", on_delete=models.deletion.PROTECT, related_name="orders", null=True)
 
   #order info
     order_date = models.DateField(default=date.today)
