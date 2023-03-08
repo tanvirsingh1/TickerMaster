@@ -257,8 +257,7 @@ def pay(request):
         order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
         exp_month = request.POST.get('expiration_month'), \
             exp_year = request.POST.get('expiration_year'), \
-            holder_name = request.POST.get('holder_name'), order_date = date.today(), \
-            total = total)
+            holder_name = request.POST.get('holder_name'), order_date = date.today())
         order.save()
 
         #update ticket's number in the database
