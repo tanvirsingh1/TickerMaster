@@ -2,6 +2,7 @@
 models.py - Contains all data models for the application
 """
 
+from datetime import date
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
@@ -122,6 +123,7 @@ class Order(models.Model):
     holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
 
   #order info
+    order_date = models.DateField(default=date.today)
     total = models.FloatField(verbose_name="Price", validators=(
         validators.MinValueValidator(limit_value=0),
         validators.MaxValueValidator(limit_value=100_000)

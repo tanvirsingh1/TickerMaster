@@ -4,6 +4,7 @@ views.py - Responsible for handling this application's views
 
 from urllib.parse import urlencode
 import ast
+from datetime import date
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -211,7 +212,8 @@ def pay(request):
         order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
         exp_month = request.POST.get('expiration_month'), \
             exp_year = request.POST.get('expiration_year'), \
-            holder_name = request.POST.get('holder_name'), total = total)
+            holder_name = request.POST.get('holder_name'), order_date = date.today(), \
+            total = total)
         order.save()
 
         #update ticket's number in the database
@@ -263,8 +265,9 @@ def view_orders(request):
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
                 'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
                 'message': error, 'url': '/'})
+
     # pass the user select tickets
-    return render(request, 'ticketing/order.html/', {'user': user, 'orders': user.orders.all})
+    return render(request, 'ticketing/order.html/', {'orders': request.user.orders.all()})
 
 
 def all_concerts(request, concert=None, error=None):
