@@ -105,15 +105,14 @@
                 window.history.pushState(null, null, "{{ url }}");
             </script>
             <br /><br />
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Error: </strong>
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="error" aria-label="Close"></button>
             </div>
             {% endif %}
 
-
-
+            
             {% for concert in concerts %}
             <div class="carousel-item{% if forloop.first %} active{% endif %}">
                 <img alt="concertpic" class="d-block w-100" src="{{ concert.concert_image.url }}"
