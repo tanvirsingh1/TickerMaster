@@ -6,7 +6,6 @@ from datetime import date
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
-from django.core import validators
 
 from venue_management.models import Concert, SeatType
 from .manager import UserManager
@@ -124,7 +123,13 @@ class Order(models.Model):
 
   #order info
     order_date = models.DateField(default=date.today)
-    total = models.FloatField(verbose_name="Price", validators=(
-        validators.MinValueValidator(limit_value=0),
-        validators.MaxValueValidator(limit_value=100_000)
-    ), null=False)
+
+    def order_total_price(self) -> float:
+        """
+        Gets the total price of all tickets in the order.
+        :return: total price of all tickets in the order
+        """
+        price = 0
+        for ticket in self.tickets.all():
+            price += ticket.seat_type.price
+        return price
