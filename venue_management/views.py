@@ -410,11 +410,13 @@ def manage_concert(request, concert_id):
         # Check if the concert exists
         if Concert.objects.filter(pk=concert_id).exists():
             concert = Concert.objects.get(pk=concert_id)
+            mapping = [restriction.seat_type.id for restriction in concert.restrictions.all()]
 
             # Check if the user is a manager of the venue that manages the concert
             if concert.venues.first().managers.contains(request.user):
                 return render(request, 'venue_management/manage_concert.html', {
-                    'concert': concert
+                    'concert': concert,
+                    'mapping': mapping
                 })
 
         # User doesn't have permission to the venue of this concert
