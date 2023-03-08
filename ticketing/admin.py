@@ -9,3 +9,4 @@ from . import models
 admin.site.register(models.Eventgoer)
 admin.site.register(models.Order)
 admin.site.register(models.Ticket)
+admin.site.register(models.PaymentInfo)
