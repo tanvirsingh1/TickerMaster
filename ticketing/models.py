@@ -2,11 +2,11 @@
 models.py - Contains all data models for the application
 """
 
+from datetime import date
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 from django.core import validators
-from datetime import date
 
 from venue_management.models import Concert, SeatType
 from .manager import UserManager
@@ -101,7 +101,7 @@ class Ticket(models.Model):
     """
     seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, \
                                   verbose_name="Seat Type")
-    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert", 
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert",
                                 related_name="tickets")
 
 
