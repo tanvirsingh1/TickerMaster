@@ -31,9 +31,7 @@ class Eventgoer(AbstractBaseUser):
     first_name = models.CharField(max_length=30, verbose_name='First Name')
     last_name = models.CharField(max_length=30, verbose_name='Last Name')
     email = models.EmailField(max_length=40, unique=True, verbose_name='Email')
-    balance = models.FloatField(verbose_name="User Balance", default=5000, validators=(
-        validators.MinValueValidator(limit_value=0)
-    ))
+    balance = models.FloatField(verbose_name="User Balance", default=5000)
 
     is_active = models.BooleanField(verbose_name='Is Active', default=True)
     is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
