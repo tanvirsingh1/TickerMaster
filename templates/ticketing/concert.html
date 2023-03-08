@@ -117,7 +117,7 @@
     </div>
   {% endfor %}
   <br/>
-  {% if conc|length > 1 %}
+  {% if conc|length > 1 or conc.number >= 1 %}
     <nav aria-label="Page navigation example"
          style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed; padding-bottom: 60px;">
       <ul class="pagination">
