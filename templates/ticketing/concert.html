@@ -1,152 +1,136 @@
 {% extends 'ticketing/base.html' %}
-{% block title %}Venue All Concerts{% endblock %}
+{% block title %}All Concerts{% endblock %}
 
 {% block body %}
- {% load static %}
- <br/> <br/><br/><br/>
-    {% if error %}
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Error: </strong>{{ error }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-    {% endif %}
+  {% load static %}
+  <br/> <br/><br/><br/>
+  {% if error %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Error: </strong>{{ error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
   <link href="{% static 'css/venue.css' %}" rel="stylesheet">
 
-<div class="row align-items-center">
-  <div class="col-md-6">
-    <h1 style="font-family: 'Segoe UI Black'; color: white;">All Concerts</h1>
-  </div>
-  <div class="col-md-6">
-    <form class="d-flex" method="POST", action="{% url 'ticketing:searched' %}">
-        {% csrf_token %}
-      <input class="form-control me-2" name ="searched" type="search" placeholder="Search Your Favourite Artist!"
-             aria-label="Search" id="title" style="background-color: #ffffff; color: #000000">
-      <button class="btn btn-success me-2" type="submit" id="searchform" style="background-color: #28a745">
-          Search</button>
-      <button class="btn btn-danger" type="reset" id="clearForm" style="background-color: #dc3545">Clear</button>
-    </form>
-  </div>
-  </div>
-</div>
-
-
-
-{% for concert in conc %}
-<div class="accordion" id="accordionExample{{ forloop.counter }}">
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-        data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
-        aria-controls="collapse{{ forloop.counter }}">
- <div class="container">
   <div class="row align-items-center">
-    <div class="col-md-2">
-      {% if concert.concert_image %}
-  <img src="{{ concert.concert_image.url }}" alt="" style="width: 200px; height: 160px;">
-{% endif %}
+    <div class="col-md-6">
+      <h1 style="font-family: 'Segoe UI Black'; color: white;">All Concerts</h1>
     </div>
-    <div class="col-md-8 text-center">
-      <h2>{{ concert.name }}</h2>
-      <div class="row">
-        <div class="col">
-          <p class="text-muted">
-            <span>Performed by:</span> {{ concert.artist_name }}
-          </p>
+    <div class="col-md-6">
+      <form class="d-flex" method="POST" , action="{% url 'ticketing:searched' %}">
+        {% csrf_token %}
+        <input class="form-control me-2" name="searched" type="search" placeholder="Search Your Favourite Artist!"
+               aria-label="Search" id="title" style="background-color: #ffffff; color: #000000">
+        <button class="btn btn-success me-2" type="submit" id="searchform" style="background-color: #28a745">
+          Search
+        </button>
+        <button class="btn btn-danger" type="reset" id="clearForm" style="background-color: #dc3545">Clear</button>
+      </form>
+    </div>
+  </div>
+  </div>
+
+  {% for concert in conc %}
+    <div class="accordion" id="accordionExample{{ forloop.counter }}">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
+                  aria-controls="collapse{{ forloop.counter }}">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col-md-2">
+                  {% if concert.concert_image %}
+                    <img src="{{ concert.concert_image.url }}" alt="" style="width: 200px; height: 160px;">
+                  {% endif %}
+                </div>
+                <div class="col-md-8 text-center">
+                  <h2>{{ concert.name }}</h2>
+                  <div class="row">
+                    <div class="col">
+                      <p class="text-muted">
+                        <span>Performed by:</span> {{ concert.artist_name }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </button>
+        </h2>
+        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
+             aria-labelledby="heading{{ forloop.counter }}">
+          <div class="accordion-body">
+            <div class="container">
+              <div class="row mb-3">
+                <div class="col-md-5">
+                  <h5 class="fw-bold">Description</h5>
+                  <p>{{ concert.description }}</p>
+                </div>
+
+                <div class="col-md-5">
+                  <div class="row">
+                    <div class="col-md-5">
+                      <h5 class="fw-bold">Concert Time</h5>
+                      <p>{{ concert.concert_date }}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <h5 class="fw-bold">Minimum Age</h5>
+                      <p>{{ concert.min_age }}</p>
+                    </div>
+
+                    <div class="col-md-3">
+                      <table style="border-collapse: collapse;">
+                        <thead>
+                        <tr>
+                          <th>Type</th>
+                          <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for seat_type in concert.venues.first.seat_types.all %}
+                          <tr>
+                            <td>{{ seat_type.name }}</td>
+                            <td>{{ seat_type.price }}</td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <a href="{% url 'ticketing:buy' concert.id %}">
+                  <button type="button" class="btn btn-primary" id="buy-tickets-btn">Buy Tickets</button>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-      </button>
-    </h2>
-    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
-         aria-labelledby="heading{{ forloop.counter }}" >
-      <div class="accordion-body">
-<div class="container">
- <div class="row mb-3">
-  <div class="col-md-5">
-    <h5 class="fw-bold">Description</h5>
-    <p>{{ concert.description }}</p>
-  </div>
-
-  <div class="col-md-5">
-    <div class="row">
-      <div class="col-md-5">
-        <h5 class="fw-bold">Concert Time</h5>
-        <p>{{ concert.concert_date }}</p>
-      </div>
-      <div class="col-md-4">
-        <h5 class="fw-bold">Minimum Age</h5>
-        <p>{{ concert.min_age }}</p>
-      </div>
-
-      <div  class="col-md-3">
-           <table style="border-collapse: collapse;" >
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for seat_type in concert.venues.first.seat_types.all %}
-    <tr>
-      <td>{{ seat_type.name}}</td>
-      <td>{{ seat_type.price }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-      </div>
-
     </div>
-  </div>
-</div>
-  </div>
-  <div class="row">
-    <div class="col-md-12 text-center">
-        <a href="{% url 'ticketing:buy' concert.id  %}">
-      <button type="button" class="btn btn-primary" id="buy-tickets-btn">Buy Tickets</button>
-      </a>
-    </div>
-  </div>
-</div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-    {% endfor %}
-
-
-
-
-    <br/>
-{% if conc|length > 1 %}
-<nav aria-label="Page navigation example" style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed;" >
-  <ul class="pagination">
-
-
-    {% if conc.has_previous %}
-
-        <a class="page-link" href="?page={{ conc.previous_page_number }}">&laquo</a></li>
-
-
-    {% endif %}
-<li class="page-item disabled"><a href="#" class="page-link" > {{ conc.number }}</a> </li>
-
-    {% if conc.has_next %}
-            <li class="page-item">
-                <a class="page-link "href="?page={{ conc.next_page_number }}">&raquo</a></li>
-
-
-    {% endif %}
-   </ul>
-</nav>
-    {% endif %}
-    <br/>
-
-
+  {% endfor %}
+  <br/>
+  {% if conc|length > 1 %}
+    <nav aria-label="Page navigation example"
+         style="bottom: 0.5px; margin-top:10px; margin-left: 40px;position: fixed; padding-bottom: 60px;">
+      <ul class="pagination">
+        {% if conc.has_previous %}
+          <a class="page-link" href="?page={{ conc.previous_page_number }}">&laquo</a></li>
+        {% endif %}
+        <li class="page-item disabled"><a href="#" class="page-link"> {{ conc.number }}</a></li>
+        {% if conc.has_next %}
+          <li class="page-item">
+            <a class="page-link " href="?page={{ conc.next_page_number }}">&raquo</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+  <br/><br/><br/><br/><br/><p></p>
 {% endblock %}
