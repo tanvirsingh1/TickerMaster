@@ -9,6 +9,7 @@ from django.core import validators
 
 from .manager import UserManager
 
+
 class VenueManager(AbstractBaseUser):
     """
     Sets out the attributes for a Venue Manager's account.
@@ -86,6 +87,7 @@ class Location(models.Model):
     """
     Describes a location/address
     """
+
     class Province(models.TextChoices):
         """
         A list of valid provinces
@@ -119,7 +121,6 @@ class Location(models.Model):
         """
         return f"{self.street_num} {self.street_name}, {self.city}, {self.get_province()}"
 
-
     def get_province(self):
         """
         Gets the name of the province that is associated with this location
@@ -141,9 +142,9 @@ class Concert(models.Model):
     ))
     concert_image = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True)
+
     # venue - created by the ManyToMany field in Venue
     # restrictions - created by ForeignKey in SeatRestriction
-
 
     def __str__(self):
         """
@@ -165,6 +166,7 @@ class SeatType(models.Model):
         validators.MinValueValidator(limit_value=0),
         validators.MaxValueValidator(limit_value=100_000)
     ))
+
     # venue - created by the ManyToMany field in Venue
 
     def __str__(self):
@@ -193,6 +195,7 @@ class SeatRestriction(models.Model):
         :return: available seats of this type for the associated concert
         """
         return math.floor(self.seat_type.quantity * (self.available / 100))
+
 
 class Venue(models.Model):
     """
