@@ -20,5 +20,6 @@ urlpatterns = [
     path('compare-tickets/', views.compare_tickets_view, name='compare_tickets'),
     path('notifications/', views.notifications, name='notifications'),
     path('logout/', views.logout, name="logout"),
-    path('orders/', views.view_orders, name="my_orders")
+    path('orders/', views.view_orders, name="my_orders"),
+    path('account/', views.account, name="account")
 ]

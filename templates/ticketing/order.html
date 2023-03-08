@@ -13,6 +13,12 @@
     <div class="col-md-6 offset-md-3">
 
         <h2>My Orders</h2>
+        {% if not orders %}
+        <br>
+        <div class="alert alert-dark" role="alert">
+            You have no orders yet.
+        </div>
+        {% else %}
         {% for i in orders %}
         <br>
         <div class="card">
@@ -44,6 +50,7 @@
             </div>
         </div>
         {% endfor %}
+        {%endif%}
         <br><br><br><br><br>
 
     </div>
