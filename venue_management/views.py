@@ -35,6 +35,8 @@ def login_manager_window(request):
     # Send the user to the panel if already authenticated as a VenueManager.
     if request.user.is_authenticated and isinstance(request.user, VenueManager):
         return redirect('/venue/panel')
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
 
     if request.method == 'POST':
         email = request.POST['email']
@@ -67,6 +69,8 @@ def register_manager_window(request):
     # Send the user to the panel if already authenticated as a VenueManager.
     if request.user.is_authenticated and isinstance(request.user, VenueManager):
         return redirect('/venue/panel')
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
 
     if request.method == "POST":
         form = RegisterForm(data=request.POST)
@@ -92,7 +96,7 @@ def logout(request):
     :return: redirects home
     """
     lo(request)
-    return redirect('/venue')
+    return redirect('/venue/login')
 
 
 @login_required(login_url='/venue/login')
@@ -238,7 +242,16 @@ def panel(request):
 
 @login_required(login_url='/venue/login')
 def add_venue(request):
-    """Adds a new venue to the database"""
+    """
+    Adds a venue to the database
+    :param request: (Django) object of the request's properties
+    :return: venue_management page
+    """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
+
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # General Venue Information
         name = request.POST['name']
@@ -272,6 +285,10 @@ def edit_venue(request, venue_id):
     :param venue_id: The venue ID to edit
     :returns: redirect to appropriate page
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
 
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # Check if the venue exists
@@ -336,6 +353,11 @@ def add_concert(request, venue_id):
     """
     This view is used for adding new concert to the html and using POST request that concert is added to the database
    """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
+
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # Check if the venue exists
         if Venue.objects.filter(pk=venue_id).exists():
@@ -374,6 +396,11 @@ def manage_concert(request, concert_id):
     :param concert_id: the ID of the concert to manage
     :return: concert management page
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
+
     # Ensure the user has permission to do this
     if isinstance(request.user, VenueManager):
         venues = request.user.venues.all()
@@ -408,6 +435,10 @@ def edit_concert(request, concert_id):
     :param concert_id: The concert ID to edit
     :returns: redirect to appropriate page
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
 
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # Check if the concert exists
@@ -441,6 +472,10 @@ def delete_concert(request, concert_id):
     :param request: (Django) object of the request's properties
     :return: refreshes the page or gives an error
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
 
     # Ensure the user has permission to do this
     if isinstance(request.user, VenueManager):
@@ -486,6 +521,11 @@ def add_seat(request, venue_id):
     :param venue_id: The ID of the venue to add it to
     :returns: redirect to appropriate page
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
+
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # Check if the venue exists
         if Venue.objects.filter(pk=venue_id).exists():
@@ -520,6 +560,10 @@ def edit_seat(request, seat_id):
     :param seat_id: The seat type ID to edit
     :returns: redirect to appropriate page
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
 
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         # Check if the seat type exists
@@ -551,6 +595,10 @@ def delete_seat(request, seat_id):
     :param request: (Django) object of the request's properties
     :return: refreshes the page or gives an error
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
 
     # Ensure the user has permission to do this
     if isinstance(request.user, VenueManager):
@@ -595,6 +643,11 @@ def set_restrictions(request, concert_id):
     :param concert_id: the ID of the concert to
     :return:
     """
+    if request.user.is_authenticated and not isinstance(request.user, VenueManager):
+        return redirect('/venue/logout')
+    if not request.user.is_authenticated:
+        return redirect('/venue/login')
+
     # Ensure the user has permission to do this
     if request.method == 'POST' and isinstance(request.user, VenueManager):
         venues = request.user.venues.all()
@@ -620,12 +673,3 @@ def set_restrictions(request, concert_id):
                 return redirect(f"/venue/panel/concert/{concert_id}")
 
     return redirect('/venue/logout/')
-
-
-def buy(request, concert_id):
-    """Buy concept based on the selected concert"""
-    # Retrieve the selected concert using the concert_id parameter
-    concert = Concert.objects.get(pk=concert_id)
-    # Pass the concert data to the template
-    context = {'concert': concert}
-    return render(request, 'venue_management/buy.html', context)
