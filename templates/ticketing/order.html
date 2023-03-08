@@ -3,10 +3,50 @@
 {% load static %}
 {% block stylesheets %}
 <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
+    href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css">
 <link href="{% static 'css/buy.css' %}" rel="stylesheet">
 {% endblock %}
 {% block body %}
+<br><br><br><br><br><br>
+<div class="container">
+
+    <div class="col-md-6 offset-md-3">
+
+        <h2>My Orders</h2>
+        {% for i in orders %}
+        <br>
+        <div class="card">
+            <div class="card-body">
+
+                <!--CONCERT INFO DISPLAY-->
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title" style="color: black;">{{i.tickets.first.concert.name}}
+                        ({{i.tickets.first.concert.artist_name}})</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${{i.total}}</h6>
+                </div>
+                <small class="card-text text-dark"><strong style="color: black;">At:</strong>
+                    {{i.tickets.first.concert.venues.first.name }} -
+                    {{i.tickets.first.concert.venues.first.location}}</small>
+                <br>
+                <small class="card-text text-dark"><strong style="color: black;">On:</strong>
+                    {{i.tickets.first.concert.concert_date }}</small>
+                <hr class="text-dark">
+
+                <!--TICKET INFO DISPLAY-->
+                {% for j in i.tickets.all %}
+                <div class="d-flex justify-content-between">
+                    <p class="card-text" style="color: black; padding: 0; margin: 0;">Seat {{j.seat_type.name}}</p>
+                    <p class="card-subtitle mb-2 text-muted">${{j.seat_type.price}}</p>
+                </div>
+                {% endfor %}
+                <p href="#" class="card-link text-muted" style="padding: 0; margin: 0;">Purchase Date: {{i.order_date}}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        <br><br><br><br><br>
+
+    </div>
 
 
-{% endblock body %}
+    {% endblock body %}

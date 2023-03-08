@@ -53,7 +53,7 @@
                 {% if request.user.venues %}
                 <a class="dropdown-item" href="{% url 'venue_management:panel' %}">Venue Panel</a>
                 {% else %}
-                <a class="dropdown-item" href="/tickets">My Orders</a>
+                <a class="dropdown-item" href="/orders">My Orders</a>
                 {% endif %}
                 <a class="dropdown-item" href="/account">My Account</a>
                 <div class="dropdown-divider"></div>

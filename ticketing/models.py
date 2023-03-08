@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth import get_user_model
 from django.core import validators
+from datetime import date
 
 from venue_management.models import Concert, SeatType
 from .manager import UserManager
@@ -100,7 +101,8 @@ class Ticket(models.Model):
     """
     seat_type = models.ForeignKey(SeatType, on_delete=models.deletion.CASCADE, \
                                   verbose_name="Seat Type")
-    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert")
+    concert = models.ForeignKey(Concert, on_delete=models.deletion.CASCADE, verbose_name="Concert", 
+                                related_name="tickets")
 
 
 
@@ -110,7 +112,7 @@ class Order(models.Model):
     """
 
     purchaser = models.ForeignKey(Eventgoer, on_delete=models.deletion.CASCADE,
-                                  verbose_name="Purchaser")
+                                  verbose_name="Purchaser", related_name="orders")
     tickets = models.ManyToManyField(Ticket, verbose_name="Tickets", related_name="orders")
 
   #payment info
@@ -121,6 +123,7 @@ class Order(models.Model):
     holder_name = models.CharField(max_length=100, verbose_name="Card Holder Name", null=False)
 
   #order info
+    order_date = models.DateField(default=date.today)
     total = models.FloatField(verbose_name="Price", validators=(
         validators.MinValueValidator(limit_value=0),
         validators.MaxValueValidator(limit_value=100_000)
