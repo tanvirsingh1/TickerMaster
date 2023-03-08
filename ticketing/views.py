@@ -12,10 +12,11 @@ from django.contrib.auth import authenticate, login, logout as lo
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from utils import emails
 
 from venue_management.models import Concert, SeatType, Venue
 from .forms import RegisterForm, SupportTicketForm, NotificationForm, CompareTicketsForm
-from .models import Eventgoer, Ticket, Order
+from .models import Eventgoer, Ticket, Order, PaymentInfo
 
 
 def home_window(request):
@@ -28,7 +29,7 @@ def home_window(request):
     seat_type = SeatType.objects.all()
     venue = Venue.objects.all()
 
-    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, 'venue' : venue})
+    return render(request, 'ticketing/home.html', {'concerts': concerts, 'seatype': seat_type, 'venue': venue})
 
 
 def about_window(request):
@@ -97,6 +98,7 @@ def logout(request):
     lo(request)
     return redirect('/')
 
+
 @login_required(login_url='/login')
 def account(request):
     """
@@ -112,12 +114,12 @@ def account(request):
             try:
                 # Grab passwords from the form
                 current_password = request.POST['password']
-                if authenticate(request, email=request.user.email, password=current_password,\
-                                 model=Eventgoer):
+                if authenticate(request, email=request.user.email, password=current_password, \
+                                model=Eventgoer):
                     request.user.first_name = request.POST['first_name']
                     request.user.last_name = request.POST['last_name']
                     if 'new_password' in request.POST.keys() and \
-                        request.POST['new_password'] is not None \
+                            request.POST['new_password'] is not None \
                             and request.POST['new_password'] != "":
                         # Set the new password, if provided in the form
                         request.user.set_password(request.POST['new_password'])
@@ -135,7 +137,7 @@ def account(request):
             except (NameError, KeyError):
                 # Invalid information received
                 return render(request, 'ticketing/account.html', {
-                    "error_message":"Failed to update account data! Invalid form contents received."
+                    "error_message": "Failed to update account data! Invalid form contents received."
                 })
         # Serve account page
         return render(request, 'ticketing/account.html')
@@ -175,55 +177,87 @@ def buy(request, concert_id):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-
         error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
             can buy Tickets."
         return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
-                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
-                'message': error, 'url': '/'})
+                                                       'seatype': SeatType.objects.all(), 'venue': Venue.objects.all(), \
+                                                       'message': error, 'url': '/'})
 
     if request.method == 'POST':
         # retrieve data from form
         quantity = request.POST.get('quantity')
 
-        #forming the customer's order
+        # forming the customer's order
         booked_seats = []
         number_of_tickets = 0
         total = 0
         for i, quantity in enumerate(request.POST.getlist('quantity')):
 
-            #order info
+            # order info
             quantity = int(quantity)
             number_of_tickets += quantity
-            seat_name = concert.venues.first().seat_types.filter(id=i+1).first().name
-            seat_price = concert.venues.first().seat_types.filter(id=i+1).first().price
-            seats_available = concert.venues.first().seat_types.filter(id=i+1).first().quantity
+            seat_name = concert.venues.first().seat_types.filter(id=i + 1).first().name
+            seat_price = concert.venues.first().seat_types.filter(id=i + 1).first().price
+            seats_available = concert.venues.first().seat_types.filter(id=i + 1).first().quantity
             total += seat_price * quantity
 
-            #in case user selected more tickets than available
+            # in case user selected more tickets than available
             if seats_available - quantity < 0:
                 error = "Sorry, only " + str(seats_available) + " ticket(s) for Seat " \
-                    + seat_name + " available."
+                        + seat_name + " available."
                 return render(request, 'ticketing/buy.html', {'messages': error,
-                            'concert': concert, 'user': user})
+                                                              'concert': concert, 'user': user})
 
-            #adding booked seat (and number to order)
-            seat = {"id": i+1, "name": seat_name, "price": seat_price, "quantity": quantity}
+            # adding booked seat (and number to order)
+            seat = {"id": i + 1, "name": seat_name, "price": seat_price, "quantity": quantity}
             booked_seats.append(seat)
 
-        #in case user didn't select any tickets
+        # in case user didn't select any tickets
         if number_of_tickets == 0:
             error = "Please, select your ticket(s)."
             return render(request, 'ticketing/buy.html', {'messages': error,
-                            'concert': concert, 'user': user})
+                                                          'concert': concert, 'user': user})
 
-        #in case everything is okay, the user is ready to pay
-        url = reverse('ticketing:pay') + '?' + urlencode({'total': total, \
-                    'booked_seats': booked_seats, 'concert_id': concert_id})
-        return HttpResponseRedirect(url)
+        # in case everything is okay, the user is ready to pay
+        if request.user.balance - total >= 0:
+            # in case everything is okay, the user has successfully purchased tickets
+            # update database
+            request.user.balance -= total
+            request.user.save()
+
+            for database_seats in concert.venues.first().seat_types.all():
+                for ordered_seats in booked_seats:
+                    if database_seats.id == ordered_seats['id']:
+                        database_seats.quantity -= ordered_seats['quantity']
+                        database_seats.save()
+
+            # Create and save the new order
+            order = Order(purchaser=request.user, order_date=date.today())
+            order.save()
+
+            # create ticket in the database for each purchased ticket
+            for ordered_seats in booked_seats:
+                seattype = SeatType.objects.get(pk=ordered_seats['id'])
+                for _ in range(ordered_seats['quantity']):
+                    ticket = Ticket(seat_type=seattype, concert=concert)
+                    ticket.save()
+                    order.tickets.add(ticket)
+
+            confirmation = 'You have successfully purchased tickets on TicketSprint. \
+                You can view your review your tickets in "My Orders" tab on TicketSprint website.'
+            emails.send_email(recipient=request.user.email, subject="Purchase confirmation", \
+                              message=confirmation)
+        else:
+            error = "You don't have enough balance to proceed. Please, add balance in \
+                'Add Balance' tab."
+            return render(request, 'ticketing/buy.html', {'messages': error,
+                                                          'concert': concert, 'user': user})
+
+        return render(request, 'ticketing/purchase-success.html')
 
     # pass the user select tickets
     return render(request, 'ticketing/buy.html/', {'user': user, 'concert': concert})
+
 
 def pay(request):
     """
@@ -233,65 +267,35 @@ def pay(request):
     if not request.user.is_authenticated:
         return redirect('/login')
 
-
     if request.method == 'POST':
-
-        #extracting past data
-        total = request.POST.get('total')
-        booked_seats = request.POST.get('booked_seats')
-        concert_id = request.POST.get('concert_id')
-        concert = Concert.objects.get(pk=concert_id)
-
         # retrieve data from form for a check
         card_number = request.POST.get('card_number')
         cvv = request.POST.get('cvv')
+        total = request.POST.get('total')
 
-        #in case user selected more tickets than available
+        # in case user selected more tickets than available
         if not card_number.isdigit() or not cvv.isdigit():
             error = "The provided information is invalid."
-            return render(request, 'ticketing/payment.html', {'messages': error, 'total': total, \
-                                    'booked_seats': booked_seats, 'concert_id': concert_id})
+            return render(request, 'ticketing/payment.html', {'messages': error})
 
-        #in case everything is okay, the user has successfully purchased tickets
-        # Create and save the new order
-        order = Order(purchaser = request.user, card_number = card_number, cvv = cvv, \
-        exp_month = request.POST.get('expiration_month'), \
-            exp_year = request.POST.get('expiration_year'), \
-            holder_name = request.POST.get('holder_name'), order_date = date.today())
-        order.save()
+        # in case everything is okay, the user has successfully purchased tickets
+        # Create and save the payment info
+        payment_info = PaymentInfo(user=request.user, card_number=card_number, cvv=cvv,
+                                   exp_month=request.POST.get('expiration_month'),
+                                   exp_year=request.POST.get('expiration_year'),
+                                   holder_name=request.POST.get('holder_name'))
+        payment_info.save()
 
-        #update ticket's number in the database
-        booked_seats = ast.literal_eval(booked_seats)
-        for database_seats in concert.venues.first().seat_types.all():
-            for ordered_seats in booked_seats:
-                if database_seats.id == ordered_seats['id']:
-                    database_seats.quantity -= ordered_seats['quantity']
-                    database_seats.save()
+        request.user.balance += int(total)
+        request.user.save()
 
-        #create ticket in the database for each purchased ticket
-        for ordered_seats in booked_seats:
-            seattype = SeatType.objects.get(pk=ordered_seats['id'])
-            for _ in range(ordered_seats['quantity']):
-                ticket = Ticket(seat_type=seattype, concert=concert)
-                ticket.save()
-                order.tickets.add(ticket)
-
-        #plainTextMessageVar = "Thank you for your purchase. Here are your tickets. Enjoy"
-        #htmlMessageTextVar = ""
-        #emails.send_email(recipient=user.email, subject="Your Tickets", \
-        # message=plainTextMessageVar, html_message=htmlMessageTextVar)
-
-        return render(request, 'ticketing/purchase-success.html')
+        return redirect('/')
 
     # pass the user make a payment
-    total = request.GET.get('total')
-    booked_seats = request.GET.get('booked_seats')
-    concert_id = request.GET.get('concert_id')
-    return render(request, 'ticketing/payment.html/', {'total': total, \
-            'booked_seats': booked_seats, 'concert_id': concert_id})
+    return render(request, 'ticketing/payment.html/')
 
 
-#See orders for eventgoers
+# See orders for eventgoers
 def view_orders(request):
     """See all orders of the eventgoer"""
 
@@ -303,12 +307,11 @@ def view_orders(request):
         return redirect('/login')
 
     if not isinstance(user, Eventgoer):
-
         error = "Your account is registered as a Venue Manager. Only Eventgoer accounts \
             can have orders."
-        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(), \
-                'seatype': SeatType.objects.all(), 'venue' : Venue.objects.all(), \
-                'message': error, 'url': '/'})
+        return render(request, 'ticketing/home.html', {'concerts': Concert.objects.all(),
+                                                       'seatype': SeatType.objects.all(), 'venue': Venue.objects.all(),
+                                                       'message': error, 'url': '/'})
 
     # pass the user select tickets
     return render(request, 'ticketing/order.html/', {'orders': request.user.orders.all()})
@@ -327,8 +330,8 @@ def all_concerts(request, concert=None, error=None):
     p = Paginator(Concert.objects.all(), 3)
     page = request.GET.get('page')
     concerts = p.get_page(page)
-    return render(request, 'ticketing/concert.html', {'concerts':concert_list, \
-                                        'conc':concerts,'error':error})
+    return render(request, 'ticketing/concert.html', {'concerts': concert_list, \
+                                                      'conc': concerts, 'error': error})
 
 
 def searched(request):
@@ -351,6 +354,7 @@ def searched(request):
     else:
         return render(request, "/concerts")
 
+
 def compare_tickets_view(request):
     """ compare tikcet view """
     form = CompareTicketsForm(request.POST or None)
@@ -368,6 +372,7 @@ def compare_tickets_view(request):
         }
 
     return render(request, 'ticketing/compare_tickets.html', context)
+
 
 def notifications(request):
     """ view for user notification """
